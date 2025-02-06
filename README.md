@@ -8,9 +8,23 @@ Este proyecto se basa en el desarrollo de una aplicación para el fichaje facial
 
 ## Estructura
 
-La aplicación consta de un front-end para el perfil de delegación que tomará la imagen de los empleados según lleguen a su centro de trabajo y les confirmará su identidad. Otro front-end personal en el que podrán consultar sus asistencias y un back-end donde los administradores podrán realizar altas de empleados, modificaciones de los datos y baja de empleados.
+La aplicación consta de un front-end para el perfil de delegación(controlador automático) que tomará la imagen de los empleados según lleguen a su centro
+de trabajo y les confirmará su identidad. Otro front-end personal en el que podrán consultar sus asistencias y un back-end donde los administradores 
+podrán realizar altas de empleados, modificaciones de los datos y baja de empleados.
 
 Una base de datos alojada en el mismo servidor que guardará la información relativa a las ausencias, empleados, entrenamientos faciales, etc...
+
+El desarrollo del frontend del controlador se realizará en JAVA para que las librerías de reconocimiento funcionen(Deben mandar imágenes tomadas por la
+webcam para compararlas con las fotos de entrenamiento de la BBDD).
+
+El frontend del usuario y el backend se puede realizar con PHP (Para la conexión con la base de datos y lógica general) 
+y JavaScript (Para el control de formularios).
+
+La base de datos puede ser realizada con MySQL (PHPMyAdmin puede ser el gestor).
+
+El servidor puede ser montado en un pc que corra una máquina virtual con Ubuntu donde se instale LAMP y se puede dar acceso externo mediante la aplicación
+NOIP.
+
 
 ## Progreso
 Organización previa
@@ -37,7 +51,7 @@ Definición del proyecto
 
 Preparación del entorno
 
-1.- Montar servidor de aplicaciones con Wildfly o similar           (  )
+1.- Montar servidor de aplicaciones                                 (  )
 
 2.- Montar servidor BBDD                                            (  )
 
