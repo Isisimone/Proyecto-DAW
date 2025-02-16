@@ -40,7 +40,7 @@ Organización previa
 
 Definición del proyecto
 
-1.- Creación del soporte documental                                 (  )
+1.- Creación del soporte documental                                 (OK)
 
 2.- Definición de cada apartado                                     (  )
 
