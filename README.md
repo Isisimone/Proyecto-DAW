@@ -33,7 +33,7 @@ Organización previa
 
 2.- Estudio de viabilidad (Librería Java para aplicación web)       (  )
 
-3.- Identificación de puntos fuertes de cada miembro                (  )
+3.- Identificación de puntos fuertes de cada miembro                (OK)
 
 4.- Identificación y repartición de tareas                          (  )
 
