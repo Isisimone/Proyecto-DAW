@@ -1,0 +1,128 @@
+/* style.css */
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('fondo2.jpg'); /* Ruta de la imagen de fondo */
+    background-size: cover; /* Asegura que la imagen cubra toda la pantalla */
+    background-position: center center; /* Centra la imagen */
+    background-repeat: no-repeat; /* No permite que la imagen se repita */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+}
+
+/* 📌 Logo en el contenedor principal */
+#logo-container {
+    margin-bottom: 10px; /* Espacio debajo del logo */
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+/* 📌 Ajustar el tamaño del logo */
+#logo {
+    width: 150px; /* Ajusta el tamaño del logo */
+    height: 65;
+}
+
+/* 📌 Contenedor principal */
+.container {
+    background-color: white;
+    padding: 84px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 75%;
+    width: 40%
+}
+
+/* 📌 Estilos del título */
+h1 {
+    font-size: 28px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #26D0CE, #2486AC);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 20px; /* Ajustar el margen superior para que esté debajo del logo */
+}
+
+/* 📌 Contenedor del video con borde de gradiente */
+.camera-container {
+    margin-top: 15px;
+    margin-bottom: 50px;
+    padding: 5px;
+    background: linear-gradient(135deg, #26D0CE, #2486AC);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 360px;
+    height: 270px;
+}
+
+/* 📌 Video más pequeño */
+video {
+    width: 360px;
+    height: 270px;
+    border-radius: 6px;
+    background-color: black;
+}
+
+/* 📌 Botón estilizado */
+#startRecognition {
+    background-color: #2486AC;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: -40px; /* Ajuste en la posición del botón */
+}
+
+#startRecognition:hover {
+    background-color: #26D0CE;
+}
+
+/* 📌 Estado del reconocimiento */
+#status {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* 📌 Estilo del reloj */
+#clock {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.top-right {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.portal-button {
+    text-decoration: none;
+    color: #2486AC;
+    background-color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.portal-button:hover {
+    background-color: #26D0CE;
+}
+

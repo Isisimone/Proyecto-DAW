@@ -1,0 +1,44 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Usuario</title>
+    <link rel="stylesheet" href="user_panel.css">
+</head>
+<body>
+    <div class="user-panel-container">
+        <h1>Iniciar Sesión</h1>
+        <div class="login-form">
+            <input type="text" id="username" placeholder="Usuario">
+            <input type="password" id="password" placeholder="Contraseña">
+            <button onclick="login()">Ingresar</button>
+        </div>
+
+        <div class="records-section" style="display:none;">
+            <h2>Registros de Acceso</h2>
+
+            <div class="filters">
+                <input type="date" id="filterDate" placeholder="Fecha">
+                <input type="text" id="filterUser" placeholder="Usuario">
+                <button onclick="applyFilters()">Filtrar</button>
+                <button onclick="exportToCSV()">Exportar CSV</button>
+            </div>
+
+            <table class="records-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Usuario</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="recordsBody">
+                    <!-- Datos dinámicos -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="user_panel.js"></script>
+</body>
+</html>
