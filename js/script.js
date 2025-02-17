@@ -1,7 +1,8 @@
 const video = document.getElementById('video');
 const fileInput = document.getElementById('fileInput');
 let faceMatcher = null;
-const knownDescriptors = [];
+const knownDescriptors = []; // Almacena los descriptores conocidos
+const UMBRAL_SIMILITUD = 0.6; // Umbral de similitud (ajusta según sea necesario)
 
 Promise.all([
     faceapi.nets.tinyFaceDetector.loadFromUri('js/models'),
@@ -41,16 +42,14 @@ video.addEventListener('play', () => {
         faceapi.draw.drawFaceLandmarks(canvas, area);
         faceapi.draw.drawFaceExpressions(canvas, area);
 
-        /*rostros.forEach(rostro => {
-            console.log("-------------------- Rostro Detectado (" + rostro.detection.score + ") --------------------");
-            console.log("Neutro: " + rostro.expressions.neutral);
-            console.log("Feliz: " + rostro.expressions.happy);
-            console.log("Triste: " + rostro.expressions.sad);
-            console.log("Enojado: " + rostro.expressions.angry);
-            console.log("Temeroso: " + rostro.expressions.fearful);
-            console.log("Disgustado: " + rostro.expressions.disgusted);
-            console.log("Sorprendido: " + rostro.expressions.surprised);
-        });*/
+        // Comparar rostros con descriptores conocidos
+        rostros.forEach((rostro) => {
+            const descriptor = rostro.descriptor;
+            const mejorMatch = encontrarMejorCoincidencia(descriptor);
+            if (mejorMatch && mejorMatch.distancia < UMBRAL_SIMILITUD) {
+                alert(`¡Persona reconocida! Coincidencia: ${mejorMatch.nombre}, Distancia: ${mejorMatch.distancia}`);
+            }
+        });
 
     }, 100);
 });
@@ -59,14 +58,17 @@ async function guardarRostro() {
     const rostro = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
     if (rostro) {
         const descriptor = rostro.descriptor;
-        knownDescriptors.push(descriptor);
-        await guardarDescriptorEnServidor(descriptor);
-        actualizarFaceMatcher();
+        const nombre = prompt("Introduce un nombre para este rostro:");
+        if (nombre) {
+            knownDescriptors.push({ nombre, descriptor });
+            await guardarDescriptorEnServidor(nombre, descriptor);
+            actualizarFaceMatcher();
+        }
     }
 }
 
-async function guardarDescriptorEnServidor(descriptor) {
-    const data = { descriptor: Array.from(descriptor) };
+async function guardarDescriptorEnServidor(nombre, descriptor) {
+    const data = {nombre, descriptor: Array.from(descriptor) };
 
     try {
         const response = await fetch('guardar_descriptor.php', {
@@ -90,8 +92,11 @@ function cargarDescriptor(file) {
         const descriptorArray = JSON.parse(event.target.result);
         if (descriptorArray.length === 128) {  // Verifica la longitud del descriptor
             const descriptor = new Float32Array(descriptorArray);
-            knownDescriptors.push(descriptor);
-            actualizarFaceMatcher();
+            const nombre = prompt("Introduce un nombre para este rostro:");
+            if (nombre) {
+                knownDescriptors.push({ nombre, descriptor });
+                actualizarFaceMatcher();
+            }
         } else {
             console.error('Descriptor con longitud incorrecta.');
         }
@@ -112,7 +117,7 @@ function actualizarFaceMatcher() {
         faceMatcher = null;
         return;
     }
-    const labeledDescriptors = knownDescriptors.map((descriptor, index) => new faceapi.LabeledFaceDescriptors(`Rostro ${index}`, [descriptor]));
+    const labeledDescriptors = knownDescriptors.map((item) => new faceapi.LabeledFaceDescriptors(item.nombre, [item.descriptor]));
     faceMatcher = new faceapi.FaceMatcher(labeledDescriptors);
     console.log("FaceMatcher inicializado con descriptores conocidos.");
 }
@@ -126,15 +131,9 @@ async function cargarRostrosAlmacenados() {
             return;
         }
 
-        for (const file of data) {
-            const response = await fetch(`rostros/${file}`);
-            const descriptorArray = await response.json();
-            if (descriptorArray.length === 128) {  // Verifica la longitud del descriptor
-                const descriptor = new Float32Array(descriptorArray);
-                knownDescriptors.push(descriptor);
-            } else {
-                console.error(`Descriptor con longitud incorrecta en el archivo ${file}.`);
-            }
+        for (const item of data) {
+            const descriptor = new Float32Array(item.descriptor);
+            knownDescriptors.push({ nombre: item.nombre, descriptor });
         }
 
         actualizarFaceMatcher();
@@ -143,29 +142,13 @@ async function cargarRostrosAlmacenados() {
     }
 }
 
-function iniciarComparacion() {
-    if (!faceMatcher) {
-        console.error('FaceMatcher no está inicializado.');
-        return;
-    }
-
-    setInterval(async () => {
-        const rostro = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
-        if (rostro) {
-            const descriptor = rostro.descriptor;
-            if (descriptor.length === 128) {  // Verifica la longitud del descriptor
-                const mejorMatch = faceMatcher.findBestMatch(descriptor);
-                console.log(`Rostro comparado con el más cercano: ${mejorMatch.toString()}`);
-                if (mejorMatch.label === 'unknown') {
-                    console.log('No se encontró un rostro coincidente.');
-                } else {
-                    console.log(`Se encontró un match: ${mejorMatch.toString()}`);
-                }
-            } else {
-                console.error('Descriptor detectado con longitud incorrecta.');
-            }
-        } else {
-            console.log('No se detectó ningún rostro para comparar.');
+function encontrarMejorCoincidencia(descriptor) {
+    let mejorMatch = null;
+    for (const item of knownDescriptors) {
+        const distancia = faceapi.euclideanDistance(descriptor, item.descriptor);
+        if (!mejorMatch || distancia < mejorMatch.distancia) {
+            mejorMatch = { nombre: item.nombre, distancia };
         }
-    }, 1000);
+    }
+    return mejorMatch;
 }
