@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control horario facial</title>
-    <link rel="stylesheet" href="/css/registro.css">
+    <link rel="stylesheet" href="css/registro.css">
+    <script src="js/registro.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+	<script defer src="js/face-api.min.js"></script>
 </head>
 <body>
     <div class="top-right">
@@ -13,7 +16,7 @@
     </div>
     <div class="container">
         <div id="logo-container">
-            <img src="/recursos/logo.png" alt="Logo de la Empresa" id="logo">
+            <img src="recursos/logo.png" alt="Logo de la Empresa" id="logo">
         </div>
         <h1>Bienvenido</h1>
         <p id="clock">Cargando hora...</p> <!-- Aquí se mostrará la hora -->
@@ -26,6 +29,6 @@
         <input type="file" id="fileInput" style="display: none;"/>
         <div id="status"></div>
     </div>
-    <script src="/js/registro.js"></script>
+
 </body>
 </html>
