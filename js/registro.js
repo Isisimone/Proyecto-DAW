@@ -1,11 +1,6 @@
 // script.js
 document.getElementById("startRecognition").addEventListener("click", analizaVideo);
-fileInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        cargarDescriptor(file);
-    }
-});
+
 
 //video.addEventListener('play', analizaVideo());
 
@@ -150,7 +145,12 @@ function cargarDescriptor(file) {
     reader.readAsText(file);
 }
 
-
+fileInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        cargarDescriptor(file);
+    }
+});
 
 function actualizarFaceMatcher() {
     if (knownDescriptors.length === 0) {
