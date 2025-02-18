@@ -17,7 +17,7 @@ $archivos = glob($directorio . '*.json');
 
 // Array para almacenar los descriptores
 $descriptores = [];
-$ruta_clave = 'c:/xampp/clave.txt';
+$ruta_clave = '/var/www/clave.txt';
 
 foreach ($archivos as $archivo) {
     // Leer el contenido del archivo
