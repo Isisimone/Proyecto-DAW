@@ -1,7 +1,7 @@
 /* style.css */
 body {
     font-family: Arial, sans-serif;
-    background-image: url('/recursos/fondo2.jpg'); /* Ruta de la imagen de fondo */
+    background-image: url('../recursos/fondo2.jpg'); /* Ruta de la imagen de fondo */
     background-size: cover; /* Asegura que la imagen cubra toda la pantalla */
     background-position: center center; /* Centra la imagen */
     background-repeat: no-repeat; /* No permite que la imagen se repita */
@@ -75,9 +75,15 @@ video {
     border-radius: 6px;
     background-color: black;
 }
+canvas {
+    width: 360px;
+    height: 270px;
+    border-radius: 6px;
+	position: absolute;
+}
 
 /* 📌 Botón estilizado */
-#startRecognition {
+#startRecognition, .btnAzul {
     background-color: #2486AC;
     color: white;
     padding: 10px 20px;
@@ -88,8 +94,37 @@ video {
     margin-top: -40px; /* Ajuste en la posición del botón */
 }
 
-#startRecognition:hover {
+.btnRojo {
+    background-color: #ac2424;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: -40px; /* Ajuste en la posición del botón */
+}
+.btnVerde {
+    background-color: #4fac24;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: -40px; /* Ajuste en la posición del botón */
+}
+
+#startRecognition, .btnAzul:hover {
     background-color: #26D0CE;
+}
+
+.btnRojo:hover {
+    background-color: #d02626;
+}
+
+.btnVerde:hover {
+    background-color: #4bd026;
 }
 
 /* 📌 Estado del reconocimiento */
@@ -125,4 +160,9 @@ video {
 .portal-button:hover {
     background-color: #26D0CE;
 }
-
+/*solo hasta que esté el backend*/
+#temporal {
+    padding-top: 50px;
+    display:flex;
+    justify-content: center;
+}

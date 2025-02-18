@@ -7,21 +7,26 @@ header('Content-Type: application/json');
 $directorio = 'rostros/';
 
 // Ruta al archivo que contiene la clave de encriptación
-$ruta_clave = '/var/www/clave.txt';
+$so = PHP_OS;
+if (stripos($so, 'WIN') !== false) {
+    $ruta_clave = 'c:/xampp/clave.txt';
+} else {
+    $ruta_clave = '/var/www/clave.txt';
+}
 
 // Leer la clave de encriptación desde el archivo
 if (!file_exists($ruta_clave)) {
     echo json_encode(['message' => 'Error: No se encontró el archivo de la clave de encriptación.']);
     exit;
+} else {
+    $clave = trim(file_get_contents($ruta_clave)); // Leer y eliminar espacios en blanco
 }
-
-$clave = trim(file_get_contents($ruta_clave)); // Leer y eliminar espacios en blanco
 
 // Verificar si se recibieron los datos necesarios
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = file_get_contents('php://input');
     $data = json_decode($input, true);
-
+    //comprueba si falta alguno de ellos
     if (!isset($data['nombre']) || !isset($data['descriptor'])) {
         // Mensaje de error si falta el nombre o el descriptor
         $error = [];
@@ -35,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // Obtener el nombre y el descriptor
     $nombre = $data['nombre'];
     $descriptor = $data['descriptor'];
 
@@ -65,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Nombre del archivo (usamos el nombre proporcionado)
     $nombreArchivo = $directorio . $nombre . '.json';
 
-    // Guardar el archivo
+    // Guardar el archivo y mostrar el mensaje en consola.
     if (file_put_contents($nombreArchivo, $datos_guardar)) {
         echo json_encode(['message' => 'Descriptor guardado correctamente.']);
     } else {

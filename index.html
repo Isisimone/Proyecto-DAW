@@ -1,30 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Face Detection</title>
-	<style>
-        video, canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-    </style>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-	<script defer src="js/face-api.min.js"></script>
-    <script defer src="js/script.js"></script>
+    <title>Bienvenido - Control Horario Facial</title>
+    <link rel="stylesheet" href="css/iniciostyle.css"> <!-- El archivo CSS que estás usando -->
 </head>
-
 <body>
-    <button onclick="guardarRostro()">Guardar Rostro</button>
-    <video id="video" width="360" height="280" autoplay muted></video>
-    <canvas id="canvas" width="360" height="280"></canvas>
+    <div class="inicio-container">
+        <h1>Bienvenido al Sistema <br>
+            Reconocimiento Facial</h1>
+        <p>Por favor, lea las siguientes reglas antes de proceder:</p>
+        <div class="container">
+            <div id="face-container">
+                <img src="recursos/face.png" alt="Logo cara" id="face">
+            </div>
+        <ul>
+            <li>Recuerde usar su rostro para marcar la entrada y salida.</li>
+            <li>El sistema solo acepta el rostro registrado en la base de datos.</li>
+            <li>Si tiene algún problema, por favor contacte al administrador.</li>
+        </ul>
+        
+        <button id="siguiente" onclick="window.location.href='registro.html';">Siguiente</button>
 
-    <input type="file" id="fileInput" style="display: none;"/>
+
+    </div>
+
 </body>
-
 </html>
