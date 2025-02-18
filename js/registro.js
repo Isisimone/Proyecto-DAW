@@ -1,5 +1,5 @@
 // script.js
-document.getElementById("startRecognition").addEventListener("click", iniciarVideo);
+document.getElementById("startRecognition").addEventListener("click", analizaVideo);
 fileInput.addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -7,9 +7,9 @@ fileInput.addEventListener('change', (event) => {
     }
 });
 
-video.addEventListener('play', analizaVideo());
+//video.addEventListener('play', analizaVideo());
 
-const video = document.getElementById('videoElement');
+const video = document.getElementById('video');
 const estado = document.getElementById('status');
 const fileInput = document.getElementById('fileInput');
 let faceMatcher = null;
