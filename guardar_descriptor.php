@@ -7,7 +7,7 @@ header('Content-Type: application/json');
 $directorio = 'rostros/';
 
 // Ruta al archivo que contiene la clave de encriptación
-$ruta_clave = 'c:/xampp/clave.txt';
+$ruta_clave = '/var/www/clave.txt';
 
 // Leer la clave de encriptación desde el archivo
 if (!file_exists($ruta_clave)) {
