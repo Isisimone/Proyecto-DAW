@@ -1,5 +1,5 @@
 // script.js
-document.getElementById("startRecognition").addEventListener("click", analizaVideo);
+
 
 
 //video.addEventListener('play', analizaVideo());
@@ -151,6 +151,7 @@ fileInput.addEventListener('change', (event) => {
         cargarDescriptor(file);
     }
 });
+document.getElementById("startRecognition").addEventListener("click", analizaVideo);
 
 function actualizarFaceMatcher() {
     if (knownDescriptors.length === 0) {
