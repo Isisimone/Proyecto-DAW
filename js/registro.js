@@ -127,47 +127,51 @@ botonera.addEventListener("click", function(event) {
 
 //Función que analiza el video en busca de rostros
 function analizaVideo() {
-    //return () => { //Devuelve el resultado de la función flecha no definida
-        //Definición del canvas que se superpondrá a la imagen de la webcam
-        const canvas = faceapi.createCanvasFromMedia(video);
-        canvas.id = 'overlay';
-        document.querySelector('.camera-container').append(canvas);
-        const dimensiones = {
-            width: video.width,
-            height: video.height
-        };
-        //Creación del Canvas
-        faceapi.matchDimensions(canvas, dimensiones);
-        botonera.innerHTML=`<BR>`;
-        
-        //  setInterval para analizar el video cada 100ms
-        intervaloAnalisis = setInterval(async () => {
-            //rostros es un array con los rostros detectados en el video
-            const rostros = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors().withFaceExpressions();
-            //Dimensiona el rostro detectado
-            const area = faceapi.resizeResults(rostros, dimensiones);
-            canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-            //Dibuja el rostro detectado en el canvas
-            faceapi.draw.drawDetections(canvas, area);
-            faceapi.draw.drawFaceLandmarks(canvas, area);
-            faceapi.draw.drawFaceExpressions(canvas, area);
-            //Bucle que recorre los rostros detectados
-            rostros.forEach((rostro) => {
-                //Genera el descriptor del rostro detectado(Biometría)
-                const descriptor = rostro.descriptor;
-                //Compara con los rostros conocidos
-                const mejorMatch = encontrarMejorCoincidencia(descriptor);
-                //Si la similitud es mayor que el umbral se muestra el botón de reconocimiento
-                if (mejorMatch && mejorMatch.distancia < UMBRAL_SIMILITUD) {
-                    estado.innerHTML = `¡Persona reconocida! Coincidencia: ${mejorMatch.nombre}, Distancia: ${mejorMatch.distancia}`;                    
-                    botonera.innerHTML = `<button class="btnVerde" id="reconocido">Soy ${mejorMatch.nombre}</button>
+    const canvas = faceapi.createCanvasFromMedia(video);
+    canvas.id = 'overlay';
+    document.querySelector('.camera-container').append(canvas);
+    const dimensiones = {
+        width: video.width,
+        height: video.height
+    };
+    faceapi.matchDimensions(canvas, dimensiones);
+    botonera.innerHTML=`<BR>`;
+    
+    intervaloAnalisis = setInterval(async () => {
+        const rostros = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors().withFaceExpressions();
+        const area = faceapi.resizeResults(rostros, dimensiones);
+        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+        faceapi.draw.drawDetections(canvas, area);
+        faceapi.draw.drawFaceLandmarks(canvas, area);
+        faceapi.draw.drawFaceExpressions(canvas, area);
+
+        rostros.forEach(async (rostro) => {
+            const descriptor = rostro.descriptor;
+            const descriptorArray = Array.from(descriptor); // Convertir a array para enviar
+
+            // Enviar el descriptor al servidor Node.js
+            try {
+                const response = await fetch('http://localhost:3000/recognize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ descriptor: descriptorArray })
+                });
+
+                const result = await response.json();
+                if (result.match) {
+                    estado.innerHTML = `¡Persona reconocida! Coincidencia: ${result.name}, Distancia: ${result.distance}`;
+                    botonera.innerHTML = `<button class="btnVerde" id="reconocido">Soy ${result.name}</button>
                                         <button class="btnRojo" id="noReconocido">Soy otra persona</button>`;
                     clearInterval(intervaloAnalisis);
                 }
-            });
+            } catch (error) {
+                console.error('Error al enviar el descriptor:', error);
+            }
+        });
 
-        }, 100); // Definir aquí el tiempo de análisis
-    //};
+    }, 100);
 }
 
 //Función para detener el análisis del video
@@ -187,7 +191,8 @@ function detenerAnalisis() {
 }
 
 //Función para consultar si hay rostros guardados con los que comparar
-function actualizarFaceMatcher() {
+//Borrar si se usa node.js
+/*function actualizarFaceMatcher() {
     if (descriptoresConocidos.length === 0) {
         console.error('No hay descriptores conocidos.');
         faceMatcher = null;
@@ -197,11 +202,11 @@ function actualizarFaceMatcher() {
     const labeledDescriptors = descriptoresConocidos.map((item) => new faceapi.LabeledFaceDescriptors(item.nombre, [item.descriptor]));
     faceMatcher = new faceapi.FaceMatcher(labeledDescriptors);
     console.log("FaceMatcher inicializado con descriptores conocidos.");
-}
+}*/
 
 //Carga los rostros almacenados en la base de datos
 async function cargarRostrosAlmacenados() {
-    try {
+    /*try {
         const response = await fetch('listar_descriptores.php');
         const data = await response.json();
         //Control de que haya datos
@@ -219,11 +224,12 @@ async function cargarRostrosAlmacenados() {
     } catch (error) {
         //control de errores
         console.error('Error al cargar los descriptores:', error);
-    }
+    }*/
 }
 
 //Función que recorre los descriptores conocidos y devuelve el mejor match
-function encontrarMejorCoincidencia(descriptor) {
+//borrar si se usa node.js
+/*function encontrarMejorCoincidencia(descriptor) {
     let mejorMatch = null;
     for (const item of descriptoresConocidos) {
         const distancia = faceapi.euclideanDistance(descriptor, item.descriptor);
@@ -232,7 +238,7 @@ function encontrarMejorCoincidencia(descriptor) {
         }
     }
     return mejorMatch;
-}
+}*/
 
 //Actualiza el reloj cada segundo
 setInterval(updateClock, 1000);
