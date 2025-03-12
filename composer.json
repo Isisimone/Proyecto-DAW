@@ -1,0 +1,17 @@
+{
+    "name": "usuario/proyecto-daw",
+    "description": "Reconocimiento Facial para Control Horario",
+    "type": "project",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Clases\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "David, Raquel, Isis"
+        }
+    ],
+    "require": {}
+}
