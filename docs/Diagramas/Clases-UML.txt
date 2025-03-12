@@ -1,14 +1,14 @@
 @startuml
 class Usuario {
   +codUsuario: int
-  +nombre: string
-  +contraseña: string
+  +nomLogin: string
+  +contrasena: string
   +correo: string
   +fec_Alta: date
   +nom_Usuario_Alta: string
   +fec_Baja: date
   +nom_Usuario_Baja:string
-  +compararContraseña(pass: string): boolean
+  +compararContrasena(pass: string): boolean
   +crearUsuario(empleado:int): boolean
   +bajaUsuario(empelado:int): boolean
   +modificaUsuario(nombre:string, pass:string): void
@@ -83,7 +83,8 @@ class Marcaje {
   +hor_Marcaje: time
   +fec_Grabacion: date
   +hor_Grabacion: time
-  +incidencia: string
+  +incidencia: boolean
+  +pendiente: boolean
   +foto: string
   +tipoAcceso: string
   +obs: string
@@ -101,7 +102,7 @@ class DatosBiometricos {
 
 class TipoDatoBiometrico {
   +cod_Tipo_Bio: int
-  +des_Bio: string
+  +des_Tipo_Bio: string
   +fec_Alta: date
   +nom_Usuario_Alta: string
   +fec_Baja: date
