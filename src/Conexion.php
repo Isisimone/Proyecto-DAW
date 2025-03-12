@@ -1,6 +1,7 @@
 <?php
-//Espacio de nombres donde se encuentra la clase
+
 namespace Clases;
+
 //Importamos la clase PDO y PDOException para conectar con la BBDD
 use PDO;
 use PDOException;
@@ -46,7 +47,7 @@ class Conexion {
             //Creo la conexión con la base de datos
             $this->conexion = new PDO($this->dsn,
                 $this->user,
-                $this->password
+                $this->pass
             );
             //Establezco el modo de error de la conexión
             $this->conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

@@ -2,7 +2,7 @@
     "name": "usuario/proyecto-daw",
     "description": "Reconocimiento Facial para Control Horario",
     "type": "project",
-    "license": "proprietary",
+    "license": "GPL-1.0-only",
     "autoload": {
         "psr-4": {
             "Clases\\": "src/"
@@ -13,5 +13,11 @@
             "name": "David, Raquel, Isis"
         }
     ],
-    "require": {}
+    
+    "config": {
+        "optimize-autoloader":true,
+        "allow-plugins": {
+            "kylekatarnls/update-helper": true
+        }
+    }
 }
