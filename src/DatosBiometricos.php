@@ -1,6 +1,9 @@
 <?php
 
 namespace Clases;
+use DateTime;
+use PDO;            //Librerías PDO
+use PDOException;
 
 class DatosBiometricos{
 
@@ -12,21 +15,10 @@ class DatosBiometricos{
     private DateTime $fec_Alta;
     private string $nom_Usuario_Alta;
 
+    
+
     // Constructor
-    public function __construct(
-        int $cod_bio,
-        int $cod_Empleado,
-        int $cod_Tipo,
-        string $dato_Bio,
-        DateTime $fec_Alta,
-        string $nom_Usuario_Alta
-    ) {
-        $this->cod_bio = $cod_bio;
-        $this->cod_Empleado = $cod_Empleado;
-        $this->cod_Tipo = $cod_Tipo;
-        $this->dato_Bio = $dato_Bio;
-        $this->fec_Alta = $fec_Alta;
-        $this->nom_Usuario_Alta = $nom_Usuario_Alta;
+    public function __construct() {
     }
 
     // Getters
@@ -84,9 +76,9 @@ class DatosBiometricos{
         // Crear la conexión
         $conexion = new Conexion();
         // Crear la sentencia SQL
-        $sql = "INSERT INTO tbio (COD_EMPLEADO, COD_TIPO_BIO, DATO_BIO, FEC_ALTA, NOM_USUARIO_ALTA) VALUES (:cod_bio, :cod_Empleado, :cod_Tipo, :dato_Bio, :fec_Alta, :nom_Usuario_Alta)";
+        $sql = "INSERT INTO tbio (COD_EMPLEADO, COD_TIPO_BIO, DATO_BIO, FEC_ALTA, NOM_USUARIO_ALTA) VALUES (:cod_Empleado, :cod_Tipo, :dato_Bio, :fec_Alta, :nom_Usuario_Alta)";
         // Preparar la sentencia
-        $stmt = $conexion->getConexion()->prepare($sql);
+        $stmt = $conexion->conexion->prepare($sql);
         // Asignar valores a los parámetros
         $stmt->bindValue(':cod_Empleado', $this->cod_Empleado, PDO::PARAM_INT);
         $stmt->bindValue(':cod_Tipo', $this->cod_Tipo, PDO::PARAM_INT);
@@ -106,7 +98,7 @@ class DatosBiometricos{
         // Crear la sentencia SQL
         $sql = "DELETE FROM tbio WHERE COD_BIO = :cod_bio";
         // Preparar la sentencia
-        $stmt = $conexion->getConexion()->prepare($sql);
+        $stmt = $conexion->conexion->prepare($sql);
         // Asignar valores a los parámetros
         $stmt->bindValue(':cod_bio', $this->cod_bio, PDO::PARAM_INT);
         // Ejecutar la sentencia
@@ -116,13 +108,13 @@ class DatosBiometricos{
     }
 
     //Método para cargar de la base de datos un registro a partir del código
-    public static function cargar(int $cod_bio){
+    public static function cargar(int $cod_bio): ?DatosBiometricos {
         // Crear la conexión
         $conexion = new Conexion();
         // Crear la sentencia SQL
         $sql = "SELECT * FROM tbio WHERE COD_BIO = :cod_bio";
         // Preparar la sentencia
-        $stmt = $conexion->getConexion()->prepare($sql);
+        $stmt = $conexion->conexion->prepare($sql);
         // Asignar valores a los parámetros
         $stmt->bindValue(':cod_bio', $cod_bio, PDO::PARAM_INT);
         // Ejecutar la sentencia
@@ -133,13 +125,19 @@ class DatosBiometricos{
         if (!$resultado) {
             return null;
         }
-        // Asigna los atributos al objeto
-            setCodBio($resultado['COD_BIO']);
-            setCodEmpleado($resultado['COD_EMPLEADO']);
-            setCodTipo($resultado['COD_TIPO_BIO']);
-            setDatoBio($resultado['DATO_BIO']);
-            setFecAlta(new DateTime($resultado['FEC_ALTA']));
-            setNomUsuarioAlta($resultado['NOM_USUARIO_ALTA']);
-            
+    
+        // Crear una instancia de DatosBiometricos
+        $datosBiometricos = new DatosBiometricos();
+    
+        // Asignar los valores a los atributos del objeto
+        $datosBiometricos->setCodBio($resultado['COD_BIO']);
+        $datosBiometricos->setCodEmpleado($resultado['COD_EMPLEADO']);
+        $datosBiometricos->setCodTipo($resultado['COD_TIPO_BIO']);
+        $datosBiometricos->setDatoBio($resultado['DATO_BIO']);
+        $datosBiometricos->setFecAlta(new DateTime($resultado['FEC_ALTA']));
+        $datosBiometricos->setNomUsuarioAlta($resultado['NOM_USUARIO_ALTA']);
+    
+        // Devolver la instancia de DatosBiometricos
+        return $datosBiometricos;
     }
 }

@@ -13,7 +13,7 @@ class Conexion {
     private $user;
     private $pass;
     private $dsn;
-    protected $conexion;
+    public $conexion;
     
     //Constructor de la clase
     public function __construct(){
