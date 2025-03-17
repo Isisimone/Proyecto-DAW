@@ -162,23 +162,21 @@ class Rol {
     public function grabar(): bool {
         // Crear la conexión
         $conexion = new Conexion();
-        $conn = $conexion->conectar();
         // Consulta
         $sql = "INSERT INTO trol (NOM_ROL, DES_ROL, FEC_ALTA, NOM_USUARIO_ALTA, FEC_BAJA, NOM_USUARIO_BAJA, PRIVILEGIOS) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
+        $stmt = $conexion->conexion->prepare($sql);
         $stmt->bind_param(
             'sssssss',
             $this->nom_Rol,
             $this->descripcion,
-            $this->fec_Alta,
+            $this->fec_Alta->format('d-m-Y'),
             $this->nom_Usuario_Alta,
-            $this->fec_Baja,
+            $this->fec_Baja->format('d-m-Y'),
             $this->nom_Usuario_Baja,
             serialize($this->privilegios)
         );
         $stmt->execute();
-        $stmt->close();
-        $conexion->cerrar();
+        $stmt=null;
         return true;
     }
 
@@ -187,10 +185,9 @@ class Rol {
         $roles = [];
         // Crear la conexión
         $conexion = new Conexion();
-        $conn = $conexion->conectar();
         // Consulta
         $sql = "SELECT * FROM trol";
-        $stmt = $conn->prepare($sql);
+        $stmt = $conexion->conexion->prepare($sql);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
@@ -217,8 +214,7 @@ class Rol {
                 );
             }
         }
-        $stmt->close();
-        $conexion->cerrar();
+        $stmt=null;
         return $roles;
     }
 

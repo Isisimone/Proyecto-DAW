@@ -16,9 +16,9 @@ use Clases\Usuario;
 $ajuste = new Ajuste();
 $datosBiometricos = new DatosBiometricos();
 $empleado = new Empleado();
-//$marcaje = new Marcaje();
+$marcaje = new Marcaje();
 //$privilejio = new Privilejio();
-//$rol = new Rol();
+$rol = new Rol();
 //$tipoDatoBiometrico = new TipoDatoBiometrico();
 //$transaccion = new Transaccion();
 //$usuario = new Usuario();
@@ -58,7 +58,7 @@ $empleado2->setContacto('juanpg@local.com');
 $empleado2->setFecAlta($fecha);
 $empleado2->setNomUsuarioAlta('admon');
 echo $empleado2->getFecBaja();
-$empleado2->grabar($empleado2);
+//$empleado2->grabar($empleado2);
 $empleado2->cargarDatosEmpleado(2);
 var_dump($empleado2);
 $empleado2->darBaja('admon',$fecha);
@@ -68,3 +68,33 @@ $empleado2->setApellido1('Sánchez');
 $empleado2->modificar();
 $empleado2->cargarDatosEmpleado(2);
 var_dump($empleado2);
+
+//Prueba de Marcaje
+$marcaje->setCodTipoMarcaje(1);
+$marcaje->setCodEmpleado(1);
+$marcaje->setCodBio(1);
+$marcaje->setFecMarcaje($fecha);
+$marcaje->setFecGrabacion($fecha);
+$marcaje->setIncidencia(false);
+$marcaje->setPendiente(false);
+$marcaje->setFoto('foto');
+$marcaje->setTipoAcceso(1);
+$marcaje->setObs('observaciones');
+$marcaje->grabar();
+$marcaje = $marcaje->cargar(2);
+var_dump($marcaje);
+echo $marcaje->getFoto();
+$marcajes = $marcaje->cargarMarcajesEntreFechas($fecha, $fecha);
+var_dump($marcajes);
+
+foreach ($marcajes as $marcaje) {
+    if ($marcaje->getCodMarcaje() == 2) {
+        echo $marcaje->getFoto();
+        break;
+    }
+}
+
+//Prueba de Rol
+$rol->cargarRol(1);
+var_dump($rol);
+
