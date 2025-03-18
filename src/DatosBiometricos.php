@@ -21,55 +21,7 @@ class DatosBiometricos{
     public function __construct() {
     }
 
-    // Getters
-    public function getCodBio(): int {
-        return $this->cod_bio;
-    }
-
-    public function getCodEmpleado(): int {
-        return $this->cod_Empleado;
-    }
-
-    public function getCodTipo(): int {
-        return $this->cod_Tipo;
-    }
-
-    public function getDatoBio(): string {
-        return $this->dato_Bio;
-    }
-
-    public function getFecAlta(): DateTime {
-        return $this->fec_Alta;
-    }
-
-    public function getNomUsuarioAlta(): string {
-        return $this->nom_Usuario_Alta;
-    }
-
-    // Setters
-    public function setCodBio(int $cod_bio): void {
-        $this->cod_bio = $cod_bio;
-    }
-
-    public function setCodEmpleado(int $cod_Empleado): void {
-        $this->cod_Empleado = $cod_Empleado;
-    }
-
-    public function setCodTipo(int $cod_Tipo): void {
-        $this->cod_Tipo = $cod_Tipo;
-    }
-
-    public function setDatoBio(string $dato_Bio): void {
-        $this->dato_Bio = $dato_Bio;
-    }
-
-    public function setFecAlta(DateTime $fec_Alta): void {
-        $this->fec_Alta = $fec_Alta;
-    }
-
-    public function setNomUsuarioAlta(string $nom_Usuario_Alta): void {
-        $this->nom_Usuario_Alta = $nom_Usuario_Alta;
-    }
+    
 
    //Método para grabar en la base de datos un nuevo registro a partir del objeto
     public function grabar(): bool {
@@ -140,4 +92,56 @@ class DatosBiometricos{
         // Devolver la instancia de DatosBiometricos
         return $datosBiometricos;
     }
+
+//<<<<<<<<<<<<<<<<<<<<< GETTERS Y SETTERS >>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    // Getters
+public function getCodBio(): int {
+    return $this->cod_bio;
+}
+
+public function getCodEmpleado(): int {
+    return $this->cod_Empleado;
+}
+
+public function getCodTipo(): int {
+    return $this->cod_Tipo;
+}
+
+public function getDatoBio(): string {
+    return $this->dato_Bio;
+}
+
+public function getFecAlta(): DateTime {
+    return $this->fec_Alta;
+}
+
+public function getNomUsuarioAlta(): string {
+    return $this->nom_Usuario_Alta;
+}
+
+// Setters
+public function setCodBio(int $cod_bio): void {
+    $this->cod_bio = $cod_bio;
+}
+
+public function setCodEmpleado(int $cod_Empleado): void {
+    $this->cod_Empleado = $cod_Empleado;
+}
+
+public function setCodTipo(int $cod_Tipo): void {
+    $this->cod_Tipo = $cod_Tipo;
+}
+
+public function setDatoBio(string $dato_Bio): void {
+    $this->dato_Bio = $dato_Bio;
+}
+
+public function setFecAlta(DateTime $fec_Alta): void {
+    $this->fec_Alta = $fec_Alta;
+}
+
+public function setNomUsuarioAlta(string $nom_Usuario_Alta): void {
+    $this->nom_Usuario_Alta = $nom_Usuario_Alta;
+}
 }

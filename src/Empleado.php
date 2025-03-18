@@ -128,7 +128,26 @@ class Empleado {
             $conexion = new Conexion();
             $sql = "SELECT * FROM templeado";
             $stmt = $conexion->conexion->query($sql);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $empleados = [];
+            foreach ($resultados as $resultado) {
+                $empleado = new Empleado();
+                $empleado->cod_Empleado = $resultado['COD_EMPLEADO'];
+                $empleado->cod_Usuario = $resultado['COD_USUARIO'];
+                $empleado->nombre = $resultado['NOM_EMPLEADO'];
+                $empleado->apellido1 = $resultado['APE1_EMPLEADO'];
+                $empleado->apellido2 = $resultado['APE2_EMPLEADO'];
+                $empleado->contacto = $resultado['CONTACTO_EMPLEADO'];
+                $empleado->fec_Alta = new DateTime($resultado['FEC_ALTA']);
+                $empleado->nom_Usuario_Alta = $resultado['NOM_USUARIO_ALTA'];
+                $empleado->fec_Baja = $resultado['FEC_BAJA'] ? new DateTime($resultado['FEC_BAJA']) : null;
+                $empleado->nom_Usuario_Baja = $resultado['NOM_USUARIO_BAJA'] ?? null;
+
+                $empleados[] = $empleado;
+            }
+
+            return $empleados;
         } catch (PDOException $e) {
             error_log("Error al listar empleados: " . $e->getMessage());
             return [];

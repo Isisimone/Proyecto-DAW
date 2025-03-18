@@ -1,6 +1,9 @@
 <?php
 
 namespace Clases;
+use PDO;
+use PDOException;
+use DateTime;
 
 class Rol {
     // Atributos    
@@ -14,7 +17,10 @@ class Rol {
     private Privilegio $privilegios;
 // Constructor
     public function __construct() {
+        $this->fec_Baja = null;
+        $this->nom_Usuario_Baja = null;
     }
+
 
 
 // Destructor
@@ -59,27 +65,22 @@ class Rol {
         $stmt = $conexion->conexion->prepare($sql);
         $stmt->bindValue(':rol', $cod_Rol);
         $stmt->execute();
-        $stmt->store_result();
-        if ($stmt->num_rows > 0) {
-            $stmt->bind_result(
-                $this->cod_Rol,
-                $this->nom_Rol,
-                $this->descripcion,
-                $this->fec_Alta,
-                $this->nom_Usuario_Alta,
-                $this->fec_Baja,
-                $this->nom_Usuario_Baja,
-                unserialize($this->privilegios)
-            );
-            $stmt->fetch();
-            $stmt->close();
-            $conexion->cerrar();
-            return true;
-        } else {
-            $stmt->close();
-            $conexion->cerrar();
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$resultado) {
             return false;
         }
+        
+                $this->cod_Rol = $resultado['COD_ROL'];
+                $this->nom_Rol= $resultado['NOM_ROL'];
+                $this->descripcion= $resultado['DES_ROL'];
+                $this->fec_Alta= new DateTime($resultado['FEC_ALTA']);
+                $this->nom_Usuario_Alta= $resultado['NOM_USUARIO_ALTA'];
+                $this->fec_Baja= $resultado['FEC_BAJA'] ? new DateTime($resultado['FEC_BAJA']) : null;
+                $this->nom_Usuario_Baja= $resultado['NOM_USUARIO_BAJA'] ?? null;
+                $this->privilegios=unserialize($resultado['PRIVILEGIOS']);
+           
+            return true;
     }
 
     //Método para grabar el rol en la bbdd
@@ -87,18 +88,29 @@ class Rol {
         // Crear la conexión
         $conexion = new Conexion();
         // Consulta
-        $sql = "INSERT INTO trol (NOM_ROL, DES_ROL, FEC_ALTA, NOM_USUARIO_ALTA, FEC_BAJA, NOM_USUARIO_BAJA, PRIVILEGIOS) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $conexion->conexion->prepare($sql);
-        $stmt->bind_param(
-            'sssssss',
-            $this->nom_Rol,
-            $this->descripcion,
-            $this->fec_Alta->format('d-m-Y'),
-            $this->nom_Usuario_Alta,
-            $this->fec_Baja->format('d-m-Y'),
-            $this->nom_Usuario_Baja,
-            serialize($this->privilegios)
-        );
+        if ($this->cod_Rol==0 || is_null($this->cod_Rol)){$sql = "INSERT INTO trol (NOM_ROL, DES_ROL, FEC_ALTA, NOM_USUARIO_ALTA, FEC_BAJA, NOM_USUARIO_BAJA, PRIVILEGIOS) 
+            VALUES (:nom_Rol, :descripcion, :fec_Alta, :nom_Usuario_Alta, :fec_Baja, :nom_Usuario_Baja, :privilegios)";
+        $stmt = $conexion->conexion->prepare($sql);    
+        } else {
+            $sql = "UPDATE trol SET 
+            NOM_ROL = :nom_Rol, 
+            DES_ROL = :descripcion, 
+            FEC_ALTA = :fec_Alta, 
+            NOM_USUARIO_ALTA = :nom_Usuario_Alta, 
+            FEC_BAJA = :fec_Baja, 
+            NOM_USUARIO_BAJA = :nom_Usuario_Baja, 
+            PRIVILEGIOS = :privilegios 
+            WHERE COD_ROL = :cod_Rol";
+            $stmt = $conexion->conexion->prepare($sql);
+            $stmt->bindValue(':cod_Rol', $this->cod_Rol, PDO::PARAM_INT);
+        }
+        $stmt->bindValue(':nom_Rol', $this->nom_Rol, PDO::PARAM_STR);
+        $stmt->bindValue(':descripcion', $this->descripcion, PDO::PARAM_STR);
+        $stmt->bindValue(':fec_Alta', $this->fec_Alta->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+        $stmt->bindValue(':nom_Usuario_Alta', $this->nom_Usuario_Alta, PDO::PARAM_STR);
+        $stmt->bindValue(':fec_Baja', $this->fec_Baja ? $this->fec_Baja->format('Y-m-d H:i:s') : null, PDO::PARAM_STR);
+        $stmt->bindValue(':nom_Usuario_Baja', $this->nom_Usuario_Baja, PDO::PARAM_STR);
+        $stmt->bindValue(':privilegios', serialize($this->privilegios), PDO::PARAM_STR);
         $stmt->execute();
         $stmt=null;
         return true;
@@ -113,32 +125,21 @@ class Rol {
         $sql = "SELECT * FROM trol";
         $stmt = $conexion->conexion->prepare($sql);
         $stmt->execute();
-        $stmt->store_result();
-        if ($stmt->num_rows > 0) {
-            $stmt->bind_result(
-                $cod_Rol,
-                $nom_Rol,
-                $descripcion,
-                $fec_Alta,
-                $nom_Usuario_Alta,
-                $fec_Baja,
-                $nom_Usuario_Baja,
-                $privilegios
-            );
-            while ($stmt->fetch()) {
-                $roles[] = new Rol(
-                    $cod_Rol,
-                    $nom_Rol,
-                    $descripcion,
-                    $fec_Alta,
-                    $nom_Usuario_Alta,
-                    $fec_Baja,
-                    $nom_Usuario_Baja,
-                    unserialize($privilegios)
-                );
-            }
+        $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($resultados as $resultado) {
+            $rol = new Rol();
+            $rol->cod_Rol = $resultado['COD_ROL'];
+            $rol->nom_Rol = $resultado['NOM_ROL'];
+            $rol->descripcion = $resultado['DES_ROL'];
+            $rol->fec_Alta = new DateTime($resultado['FEC_ALTA']);
+            $rol->nom_Usuario_Alta = $resultado['NOM_USUARIO_ALTA'];
+            $rol->fec_Baja = $resultado['FEC_BAJA'] ? new DateTime($resultado['FEC_BAJA']) : null;
+            $rol->nom_Usuario_Baja = $resultado['NOM_USUARIO_BAJA'] ?? null;
+            $rol->privilegios = unserialize($resultado['PRIVILEGIOS']);
+            $roles[] = $rol;
         }
-        $stmt=null;
+
         return $roles;
     }
 

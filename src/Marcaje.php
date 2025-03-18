@@ -152,10 +152,10 @@ class Marcaje{
         $consulta->bindValue(':COD_EMPLEADO', $cod_Empleado);
         $consulta->bindValue(':COD_BIO', $cod_bio);
         $consulta->bindValue(':DES_FOTO', $foto);
-        $consulta->bindValue(':FEC_MARCAJE', $fec_Marcaje->format('Y-m-d'));
-        $consulta->bindValue(':HOR_MARCAJE', $fec_Marcaje->format('H:i:s'));
-        $consulta->bindValue(':FEC_GRABACION', $fec_Grabacion->format('Y-m-d'));
-        $consulta->bindValue(':HOR_GRABACION', $fec_Grabacion->format('H:i:s'));
+        $consulta->bindValue(':FEC_MARCAJE', $fec_Marcaje->format('Y-m-d H:i:s'));
+        $consulta->bindValue(':HOR_MARCAJE', $fec_Marcaje->format('H:i:s'));//eliminar
+        $consulta->bindValue(':FEC_GRABACION', $fec_Grabacion->format('Y-m-d H:i:s'));
+        $consulta->bindValue(':HOR_GRABACION', $fec_Grabacion->format('H:i:s'));//eliminar
         $consulta->bindValue(':IND_INCIDENCIA', $incidencia);
         $consulta->bindValue(':IND_PENDIENTE', $pendiente);
         $consulta->bindValue(':COD_TIPO_ACCESO', $tipoAcceso);
@@ -195,8 +195,8 @@ class Marcaje{
         public function cargarMarcajesEntreFechas(DateTime $fechaInicio, DateTime $fechaFin): array {
             $conexion = new Conexion();
             $consulta = $conexion->conexion->prepare("SELECT * FROM tmarcaje WHERE FEC_MARCAJE BETWEEN :fechaInicio AND :fechaFin");
-            $consulta->bindValue(':fechaInicio', $fechaInicio->format('Y-m-d'));
-            $consulta->bindValue(':fechaFin', $fechaFin->format('Y-m-d'));
+            $consulta->bindValue(':fechaInicio', $fechaInicio->format('Y-m-d H:i:s'));
+            $consulta->bindValue(':fechaFin', $fechaFin->format('Y-m-d H:i:s'));
             $consulta->execute();
             $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
             $marcajes = [];
