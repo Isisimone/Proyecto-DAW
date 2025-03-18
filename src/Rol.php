@@ -13,62 +13,9 @@ class Rol {
     private ?string $nom_Usuario_Baja;
     private Privilegio $privilegios;
 // Constructor
-    public function __construct(
-        int $cod_Rol,
-        string $nom_Rol,
-        string $descripcion,
-        DateTime $fec_Alta,
-        string $nom_Usuario_Alta,
-        ?DateTime $fec_Baja = null,
-        ?string $nom_Usuario_Baja = null,
-        Privilegio $privilegios
-    ) {
-        $this->cod_Rol = $cod_Rol;
-        $this->nom_Rol = $nom_Rol;
-        $this->descripcion = $descripcion;
-        $this->fec_Alta = $fec_Alta;
-        $this->nom_Usuario_Alta = $nom_Usuario_Alta;
-        $this->fec_Baja = $fec_Baja;
-        $this->nom_Usuario_Baja = $nom_Usuario_Baja;
-        $this->privilegios = $privilegios;
-    }
-//Asignar permisos a un rol
-    public function asignarPermisos(Privilegio $privilegios): void {
-        $this->privilegios = $privilegios;
+    public function __construct() {
     }
 
-    // Getters
-    public function obtenerPermisos(): Privilegio {
-        return $this->privilegios;
-    }
-
-    public function obtenerRol(): string {
-        return $this->nom_Rol;
-    }
-
-    public function obtenerDescripcion(): string {
-        return $this->descripcion;
-    }
-
-    public function obtenerFechaAlta(): DateTime {
-        return $this->fec_Alta;
-    }
-
-    public function obtenerUsuarioAlta(): string {
-        return $this->nom_Usuario_Alta;
-    }
-
-    public function obtenerFechaBaja(): ?DateTime {
-        return $this->fec_Baja;
-    }
-
-    public function obtenerUsuarioBaja(): ?string {
-        return $this->nom_Usuario_Baja;
-    }
-
-    public function obtenerCodigoRol(): int {
-        return $this->cod_Rol;
-    }
 
 // Destructor
     public function __destruct() {
@@ -81,7 +28,8 @@ class Rol {
         unset($this->nom_Usuario_Baja);
         unset($this->privilegios);
     }
-// Modificar Rol en una sola función
+// Modificar Rol en una sola función con todos los parámetros. Cambia el objeto
+//NO actualiza la BBDD
     public function modificarRol(
         string $nom_Rol,
         string $descripcion,
@@ -100,40 +48,16 @@ class Rol {
         $this->privilegios = $privilegios;
     }
 
-    // Setters
-    public function setNombreRol(string $nom_Rol): void {
-        $this->nom_Rol = $nom_Rol;
-    }
-
-    public function setDescripcion(string $descripcion): void {
-        $this->descripcion = $descripcion;
-    }
-
-    public function setFechaAlta(DateTime $fec_Alta): void {
-        $this->fec_Alta = $fec_Alta;
-    }
-
-    public function setUsuarioAlta(string $nom_Usuario_Alta): void {
-        $this->nom_Usuario_Alta = $nom_Usuario_Alta;
-    }
-
-    public function setFechaBaja(?DateTime $fec_Baja): void {
-        $this->fec_Baja = $fec_Baja;
-    }
-
-    public function setUsuarioBaja(?string $nom_Usuario_Baja): void {
-        $this->nom_Usuario_Baja = $nom_Usuario_Baja;
-    }
+    
 
 //Método para cargar rol de la bbdd a partir del código de rol
     public function cargarRol(int $cod_Rol): bool {
         // Crear la conexión
         $conexion = new Conexion();
-        $conn = $conexion->conectar();
         // Consulta
-        $sql = "SELECT * FROM trol WHERE cod_Rol = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param('i', $cod_Rol);
+        $sql = "SELECT * FROM trol WHERE COD_ROL = :rol";
+        $stmt = $conexion->conexion->prepare($sql);
+        $stmt->bindValue(':rol', $cod_Rol);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
@@ -216,6 +140,73 @@ class Rol {
         }
         $stmt=null;
         return $roles;
+    }
+
+/*
+<<<<<<<<<<<<<<<<<<<<< GETTERS Y SETTERS >>>>>>>>>>>>>>>>>>>>>>
+*/
+
+    
+    // Getters
+    public function getPermisos(): Privilegio {
+        return $this->privilegios;
+    }
+
+    public function getRol(): string {
+        return $this->nom_Rol;
+    }
+
+    public function getDescripcion(): string {
+        return $this->descripcion;
+    }
+
+    public function getFechaAlta(): DateTime {
+        return $this->fec_Alta;
+    }
+
+    public function getUsuarioAlta(): string {
+        return $this->nom_Usuario_Alta;
+    }
+
+    public function getFechaBaja(): ?DateTime {
+        return $this->fec_Baja;
+    }
+
+    public function getUsuarioBaja(): ?string {
+        return $this->nom_Usuario_Baja;
+    }
+
+    public function getCodigoRol(): int {
+        return $this->cod_Rol;
+    }
+
+    // Setters
+    public function setNombreRol(string $nom_Rol): void {
+        $this->nom_Rol = $nom_Rol;
+    }
+
+    public function setDescripcion(string $descripcion): void {
+        $this->descripcion = $descripcion;
+    }
+
+    public function setFechaAlta(DateTime $fec_Alta): void {
+        $this->fec_Alta = $fec_Alta;
+    }
+
+    public function setUsuarioAlta(string $nom_Usuario_Alta): void {
+        $this->nom_Usuario_Alta = $nom_Usuario_Alta;
+    }
+
+    public function setFechaBaja(?DateTime $fec_Baja): void {
+        $this->fec_Baja = $fec_Baja;
+    }
+
+    public function setUsuarioBaja(?string $nom_Usuario_Baja): void {
+        $this->nom_Usuario_Baja = $nom_Usuario_Baja;
+    }
+
+    public function setPermisos(Privilegio $privilegios): void {
+        $this->privilegios = $privilegios;
     }
 
 
