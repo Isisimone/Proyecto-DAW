@@ -1,125 +1,49 @@
 <?php
 
 namespace Clases;
+use PDO;
+use PDOEception;
+use DateTime;
 
 class Usuario{
     // Atributos
-    private int $cod_Usuario;
-    private string $nom_Login;
+    private int $cod_usuario;
+    private string $nom_login;
     private string $des_contrasena;
-    private string $des_Correo;
-    private date $fec_Alta;
-    private string $nom_Usuario_Alta;
-    private ?date $fec_Baja;
-    private ?string $nom_Usuario_Baja;
+    private string $des_correo;
+    private date $fec_alta;
+    private string $nom_usuario_alta;
+    private ?date $fec_baja;
+    private ?string $nom_usuario_baja;
 
     //Método constructor
-    public function __construct(
-        int $cod_Usuario,
-        string $nom_Login,
-        string $des_contrasena,
-        string $des_Correo,
-        date $fec_Alta,
-        string $nom_Usuario_Alta,
-        ?date $fec_Baja = null,
-        ?string $nom_Usuario_Baja = null
-    ) {
-        $this->cod_Usuario = $cod_Usuario;
-        $this->nom_Login = $nom_Login;
-        $this->des_contrasena = $des_contrasena;
-        $this->des_Correo = $des_Correo;
-        $this->fec_Alta = $fec_Alta;
-        $this->nom_Usuario_Alta = $nom_Usuario_Alta;
-        $this->fec_Baja = $fec_Baja;
-        $this->nom_Usuario_Baja = $nom_Usuario_Baja;
+    public function __construct() {
+        $this->fec_Baja = null;
+        $this->nom_Usuario_Baja = null;
     }
 
-    // Getters
-    public function getCodUsuario(): int {
-        return $this->cod_Usuario;
-    }
-
-    public function getNomLogin(): string {
-        return $this->nom_Login;
-    }
-
-    public function getDesContraseña(): string {
-        return $this->des_contrasena;
-    }
-
-    public function getDesCorreo(): string {
-        return $this->des_Correo;
-    }
-
-    public function getFecAlta(): date {
-        return $this->fec_Alta;
-    }
-
-    public function getNomUsuarioAlta(): string {
-        return $this->nom_Usuario_Alta;
-    }
-
-    public function getFecBaja(): ?date {
-        return $this->fec_Baja;
-    }
-
-    public function getNomUsuarioBaja(): ?string {
-        return $this->nom_Usuario_Baja;
-    }
-
-    // Setters
-    public function setCodUsuario(int $cod_Usuario): void {
-        $this->cod_Usuario = $cod_Usuario;
-    }
-
-    public function setNomLogin(string $nom_Login): void {
-        $this->nom_Login = $nom_Login;
-    }
-
-    public function setDesContraseña(string $des_contrasena): void {
-        $this->des_contrasena = $des_contrasena;
-    }
-
-    public function setDesCorreo(string $des_Correo): void {
-        $this->des_Correo = $des_Correo;
-    }
-
-    public function setFecAlta(date $fec_Alta): void {
-        $this->fec_Alta = $fec_Alta;
-    }
-
-    public function setNomUsuarioAlta(string $nom_Usuario_Alta): void {
-        $this->nom_Usuario_Alta = $nom_Usuario_Alta;
-    }
-
-    public function setFecBaja(?date $fec_Baja): void {
-        $this->fec_Baja = $fec_Baja;
-    }
-
-    public function setNomUsuarioBaja(?string $nom_Usuario_Baja): void {
-        $this->nom_Usuario_Baja = $nom_Usuario_Baja;
-    }
+    
 
     // Método para cargar datos de la bbdd
-    public function cargarUsuario(int $cod_Usuario): void {
+    public function cargarUsuario(int $cod_usuario): void {
         try {
             $conexion = new Conexion();
             // Preparo la consulta
-            $consulta = "SELECT * FROM tusuario WHERE cod_Usuario = :cod_Usuario";
-            $stmt = $conexion->prepare($consulta);
-            $stmt->bindParam(':cod_Usuario', $cod_Usuario, PDO::PARAM_INT);
+            $consulta = "SELECT * FROM tusuario WHERE COD_USUARIO = :cod_Usuario";
+            $stmt = $conexion->conexion->prepare($consulta);
+            $stmt->bindParam(':cod_Usuario', $cod_usuario, PDO::PARAM_INT);
             $stmt->execute();
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($usuario) {
-                $this->cod_Usuario = $usuario['cod_Usuario'];
-                $this->nom_Login = $usuario['nom_Login'];
-                $this->des_contrasena = $usuario['des_contrasena'];
-                $this->des_Correo = $usuario['des_Correo'];
-                $this->fec_Alta = new DateTime($usuario['fec_Alta']);
-                $this->nom_Usuario_Alta = $usuario['nom_Usuario_Alta'];
-                $this->fec_Baja = $usuario['fec_Baja'] ? new DateTime($usuario['fec_Baja']) : null;
-                $this->nom_Usuario_Baja = $usuario['nom_Usuario_Baja'];
+                $this->cod_usuario = $usuario['COD_USUARIO'];
+                $this->nom_login = $usuario['NOM_LOGIN'];
+                $this->des_contrasena = $usuario['DES_CONTRASENA'];
+                $this->des_correo = $usuario['DES_CORREO'];
+                $this->fec_alta = new DateTime($usuario['FEC_ALTA']);
+                $this->nom_usuario_alta = $usuario['NOM_USUARIO_ALTA'];
+                $this->fec_baja = $usuario['FEC_BAJA'] ? new DateTime($usuario['FEC_BAJA']) : null;
+                $this->nom_usuario_baja = $usuario['NOM_USUARIO_BAJA'];
             }
         } catch (PDOException $e) {
             echo "Error al cargar el usuario: " . $e->getMessage();
@@ -127,26 +51,32 @@ class Usuario{
     }
 
     //Método que compara contraseñas
-    public function compararContraseña(string $contraseña): bool {
-        return password_verify($contraseña, $this->des_contrasena);
+    public function compararContrasena(string $contrasena): bool {
+        return password_verify($contrasena, $this->des_contrasena);
     }
 
     //Método para crear usuario
-    public function crearUsuario(int $empleado): bool {
+    public function grabar() {
         try {
+            $hashedPassword = password_hash($this->des_contrasena, PASSWORD_DEFAULT);
             $conexion = new Conexion();
-            $consulta = "INSERT INTO tusuario (NOM_LOGIN, DES_CONTRASENA, DES_CORREO, FEC_ALTA, NOM_USUARIO_ALTA) VALUES (:nom_Login, :des_contrasena, :des_Correo, :fec_Alta, :nom_Usuario_Alta)";
+            if ($this->cod_usuario==0 || is_null($this->cod_usuario)){
+                $consulta = "INSERT INTO tusuario (NOM_LOGIN, DES_CONTRASENA, DES_CORREO, FEC_ALTA, NOM_USUARIO_ALTA) VALUES (:nom_Login, :des_contrasena, :des_Correo, :fec_Alta, :nom_Usuario_Alta)";
+            }else{
+                $consulta = "UPDATE tusuario SET NOM_LOGIN = :nom_Login, DES_CONTRASENA = :des_Contrasena, DES_CORREO = :des_Correo,
+                 FEC_ALTA = :fec_Alta, NOM_USUARIO_ALTA = :nom_Usuario_Alta) WHERE COD_USUARIO = :cod_Usuario";
+            }
             $stmt = $conexion->prepare($consulta);
-            $stmt->bindParam(':NOM_LOGIN', $this->nom_Login, PDO::PARAM_STR);
-            $stmt->bindParam(':DES_CONTRASENA', $this->des_contrasena, PDO::PARAM_STR);
-            $stmt->bindParam(':DES_CORREO', $this->des_Correo, PDO::PARAM_STR);
-            $stmt->bindParam(':FEC_ALTA', $this->fec_Alta->format('Y-m-d H:i:s'), PDO::PARAM_STR);
-            $stmt->bindParam(':NOM_USUARIO_ALTA', $this->nom_Usuario_Alta, PDO::PARAM_STR);
+            $stmt->bindValue('nom_Login', $this->nom_login, PDO::PARAM_STR);
+            $stmt->bindValue('des_contrasena', $hashedPassword, PDO::PARAM_STR); // Guardar la contraseña hasheada
+            $stmt->bindValue('des_Correo', $this->des_correo, PDO::PARAM_STR);
+            $stmt->bindValue('fec_Alta', $this->fec_alta->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+            $stmt->bindValue('nom_Usuario_Alta', $this->nom_usuario_alta, PDO::PARAM_STR);
             $stmt->execute();
-            return true;
+            return;
         } catch (PDOException $e) {
             echo "Error al crear el usuario: " . $e->getMessage();
-            return false;
+            return;
         }
     }
 
@@ -184,4 +114,70 @@ class Usuario{
             return false;
         }
     }
+//<<<<<<<<<<<<<<<<<<<<<<<<<< GETTERS Y SETTERS >>>>>>>>>>>>>>>>>>>>>>>>>>
+// Getters
+public function getCodUsuario(): int {
+    return $this->cod_usuario;
+}
+
+public function getNomLogin(): string {
+    return $this->nom_login;
+}
+
+//public function getDesContrasena(): string {
+//    return $this->des_contrasena;
+//}
+
+public function getDesCorreo(): string {
+    return $this->des_correo;
+}
+
+public function getFecAlta(): date {
+    return $this->fec_alta;
+}
+
+public function getNomUsuarioAlta(): string {
+    return $this->nom_usuario_alta;
+}
+
+public function getFecBaja(): ?date {
+    return $this->fec_baja;
+}
+
+public function getNomUsuarioBaja(): ?string {
+    return $this->nom_usuario_baja;
+}
+
+// Setters
+public function setCodUsuario(int $cod_usuario): void {
+    $this->cod_usuario = $cod_usuario;
+}
+
+public function setNomLogin(string $nom_login): void {
+    $this->nom_login = $nom_login;
+}
+
+public function setDesContrasena(string $des_contrasena): void {
+    $this->des_contrasena = $des_contrasena;
+}
+
+public function setDesCorreo(string $des_correo): void {
+    $this->des_correo = $des_correo;
+}
+
+public function setFecAlta(date $fec_alta): void {
+    $this->fec_alta = $fec_alta;
+}
+
+public function setNomUsuarioAlta(string $nom_usuario_alta): void {
+    $this->nom_usuario_alta = $nom_usuario_alta;
+}
+
+public function setFecBaja(?date $fec_baja): void {
+    $this->fec_baja = $fec_baja;
+}
+
+public function setNomUsuarioBaja(?string $nom_usuario_baja): void {
+    $this->nom_usuario_baja = $nom_usuario_baja;
+}
 }

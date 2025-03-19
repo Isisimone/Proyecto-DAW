@@ -61,7 +61,7 @@ class Empleado {
     }
 
     // Método para grabar un nuevo empleado en la base de datos
-    public function crear(): bool {
+    public function grabar(): bool {
         try {
             $conexion = new Conexion();
             $sql = "INSERT INTO templeado (COD_EMPLEADO, COD_USUARIO, NOM_EMPLEADO, APE1_EMPLEADO, APE2_EMPLEADO, CONTACTO_EMPLEADO, FEC_ALTA, NOM_USUARIO_ALTA, FEC_BAJA, NOM_USUARIO_BAJA) 
@@ -123,31 +123,16 @@ class Empleado {
     }
 
     // Método para listar todos los empleados
-    public static function listarEmpleados(): array {
+    public function listarEmpleados() {
         try {
             $conexion = new Conexion();
-            $sql = "SELECT * FROM templeado";
-            $stmt = $conexion->conexion->query($sql);
-            $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            $empleados = [];
-            foreach ($resultados as $resultado) {
-                $empleado = new Empleado();
-                $empleado->cod_Empleado = $resultado['COD_EMPLEADO'];
-                $empleado->cod_Usuario = $resultado['COD_USUARIO'];
-                $empleado->nombre = $resultado['NOM_EMPLEADO'];
-                $empleado->apellido1 = $resultado['APE1_EMPLEADO'];
-                $empleado->apellido2 = $resultado['APE2_EMPLEADO'];
-                $empleado->contacto = $resultado['CONTACTO_EMPLEADO'];
-                $empleado->fec_Alta = new DateTime($resultado['FEC_ALTA']);
-                $empleado->nom_Usuario_Alta = $resultado['NOM_USUARIO_ALTA'];
-                $empleado->fec_Baja = $resultado['FEC_BAJA'] ? new DateTime($resultado['FEC_BAJA']) : null;
-                $empleado->nom_Usuario_Baja = $resultado['NOM_USUARIO_BAJA'] ?? null;
-
-                $empleados[] = $empleado;
-            }
-
-            return $empleados;
+            // Preparo la consulta
+            $consulta = "SELECT * FROM templeado";
+            // Ejecuto la consulta
+            $stmt = $conexion->conexion->prepare($consulta);
+            $stmt->execute();
+            // Devuelvo el resultado de la consulta
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("Error al listar empleados: " . $e->getMessage());
             return [];

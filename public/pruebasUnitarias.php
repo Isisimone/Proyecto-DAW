@@ -21,12 +21,15 @@ $marcaje = new Marcaje();
 //$privilejio = new Privilejio();
 $rol = new Rol();
 $tipoDatoBiometrico = new TipoDatoBiometrico();
-//$transaccion = new Transaccion();
-//$usuario = new Usuario();
+$transaccion = new Transaccion();
+$usuario = new Usuario();
+$fecha = new DateTime();
+
 
 //Prueba de ajustes
-$ajustes = $ajuste->obtenerAjustes();
-//var_dump($ajustes);
+/*$ajustes = $ajuste->obtenerAjustes();
+var_dump($ajustes);*/
+/*
 $ajustes = $ajuste->obtenerAjuste(1);
 //var_dump($ajustes);
 $ajuste->actualizarAjuste(1, 'umbral', '0.8');
@@ -38,15 +41,16 @@ $datosBiometricos->setCodBio(2);
 $datosBiometricos->setCodEmpleado(1);
 $datosBiometricos->setCodTipo(1);
 $datosBiometricos->setDatoBio('dadsdsdsdsds');
-$fecha = new DateTime();
+
 $datosBiometricos->setFecAlta($fecha);
 $datosBiometricos->setNomUsuarioAlta('admin');
 //$datosBiometricos->grabar();
 $datosBiometricos = $datosBiometricos->cargar(6);
 //var_dump($datosBiometricos);
 //$datosBiometricos->eliminar(); 
-
+*/
 //Prueba de Empleado
+/*
 $empleado->cargarDatosEmpleado(1);
 //var_dump($empleado);
 $empleado2 = new Empleado();
@@ -59,7 +63,7 @@ $empleado2->setContacto('juanpg@local.com');
 $empleado2->setFecAlta($fecha);
 $empleado2->setNomUsuarioAlta('admon');
 echo $empleado2->getFecBaja();
-//$empleado2->grabar($empleado2);
+$empleado2->grabar($empleado2);
 $empleado2->cargarDatosEmpleado(2);
 //var_dump($empleado2);
 $empleado2->darBaja('admon',$fecha);
@@ -68,8 +72,9 @@ $empleado2->cargarDatosEmpleado(2);
 $empleado2->setApellido1('Sánchez');
 $empleado2->modificar();
 $empleado2->cargarDatosEmpleado(2);
-//var_dump($empleado2);
-
+$empleados =$empleado2->listarEmpleados();
+var_dump($empleados);*/
+/*
 //Prueba de Marcaje
 $marcaje->setCodTipoMarcaje(1);
 $marcaje->setCodEmpleado(1);
@@ -111,3 +116,30 @@ $tipoDatoBiometrico->setFecAlta($fecha);
 $tipoDatoBiometrico->setCodTipoBio(0);
 $tipoDatoBiometrico->grabar();
 var_dump($tipoDatoBiometrico);
+*/
+/*
+//Prueba de transacciones
+$transaccion->setTipoTrans('mod_usuario');
+$transaccion->setDesTrans('Modificación del usuario Admon');
+$transaccion->setCodObj(2);
+$transaccion->setNomObj('tUsuario');
+$transaccion->setCodUsuario(1);
+$transaccion->setFecSis($fecha);
+$fecha1 = new DateTime('2025-3-17 10:10');
+$fecha2 = new DateTime('2025-3-20 10:10');
+$transaccion->setIpUsuario('127.0.0.1');
+var_dump($transaccion);
+//$transaccion->grabar();
+$transacciones=$transaccion->obtenerTransaccionesEntreFechas($fecha1,$fecha2);
+var_dump($transacciones);*/
+
+//Pruebas de Usuario
+$usuario->cargarUsuario(1);
+$usuario->setDesContrasena('Prueba');
+$usuario->grabar();
+$resultado=$usuario->compararContrasena('Prueba');
+if ($resultado){
+var_dump($usuario);
+} else {
+    echo "Error de login";
+}
