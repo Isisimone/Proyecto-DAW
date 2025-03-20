@@ -23,6 +23,7 @@ class Usuario{
         $this->des_contrasena="";
         $this->nom_Usuario_Baja = null;
         $this->cod_usuario=0;
+        $this->roles[]=null;
     }
 
     
@@ -54,8 +55,8 @@ class Usuario{
     }
 
     //Método que compara contraseñas
-    public function compararContrasena(string $contrasena): bool {
-        return password_verify($contrasena, $this->des_contrasena);
+    public function compararContrasena(string $contrasena, string $hash): bool {
+        return password_verify($contrasena, $hash);
     }
 
     //Método para obtender roles
@@ -67,13 +68,15 @@ class Usuario{
             $stmt = $conexion->conexion->prepare($consulta);
             $stmt->bindValue('cod_usuario',$this->cod_usuario, PDO::PARAM_INT);
             $stmt->execute();
-            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
             if ($resultado){
                 $contador=0;
                 foreach ($resultado as $r){
-                    $rol->cargarRol($r);
-                    $this->roles[$contador]=$rol->getRol();
+                    $codRol = $r['COD_ROL'];
+                    $rol->cargarRol($codRol);
+                    $arrayRoles[$contador]=$rol->getRol();
                 }
+                $this->roles = $arrayRoles;
             } return;
         }catch(PDOException $e){
             echo "Error al cargar los roles: ".$e;
@@ -91,14 +94,13 @@ class Usuario{
             $stmt->bindParam(':nom_login', $nom_login, PDO::PARAM_STR);
             $stmt->execute();
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-    
             if ($usuario && $this->compararContrasena($contrasena, $usuario['DES_CONTRASENA'])) {
                 // Iniciar sesión
-                session_start();
+                $this->cod_usuario = $usuario['COD_USUARIO'];
                 $this->cargarRol();
                 $_SESSION['COD_USUARIO'] = $usuario['COD_USUARIO'];
                 $_SESSION['NOM_USUARIO'] = $usuario['NOM_LOGIN'];
-                $_SESSION['ROLES'] = $this->roles;;
+                $_SESSION['ROLES'] = $this->roles;
                 return true;
             } else {
                 return false;

@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 require '../vendor/autoload.php';
 
@@ -219,4 +220,4 @@ pruebaMarcaje(false,false,false,2);
 pruebaRol(false,false,false,2);
 pruebaTipoBio(false,false,false,1);
 pruebaTransaccion(false,false,false,6); //Sin pasar
-pruebaUsuario(false,false,false,1);
+pruebaUsuario(false,false,true,1);

@@ -5,10 +5,10 @@ require '../vendor/autoload.php';
 
 // Si ya hay una sesión activa, redirigir al dashboard
 if (isset($_SESSION['COD_USUARIO'])) {
-    if (in_array('Admin',$_SESSION['ROLES'])){
+    /*if (in_array('Admin',$_SESSION['ROLES'])){
         header('Location: administracion.php');
         exit();
-    }
+    }*/
     if (in_array('Empleado',$_SESSION['ROLES'])){
         header('Location: empleado.php');
         exit();
@@ -32,12 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $contrasena = $_POST['contrasena'];
 
     // Crear un objeto de la clase Usuario y verificar las credenciales
-    $usuarioObj = new Usuario;
-    echo $usuario." - ". $contrasena;
+    $usuarioObj = new Usuario();
     if ($usuarioObj->iniciarSesion($usuario, $contrasena)) {
-        $error="";
-        //header('Location: wellcome.php'); // Redirigir al dashboard si el login es correcto
-        //exit();
+        header('Location: login.php'); // Redirigir al dashboard si el login es correcto
+        exit();
     } else {
         $error = 'Usuario o contraseña incorrectos'; // Mostrar error si las credenciales son incorrectas
     }

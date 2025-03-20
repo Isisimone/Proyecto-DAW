@@ -11,10 +11,10 @@ let intervaloAnalisis; // Intervalo de análisis del video
 //Promesa de carga de modelos, hasta que no lo estén no se ejecuta el código
 //Necesario para dar tiempo a cargar los modelos de reconocimiento
 Promise.all([
-    faceapi.nets.tinyFaceDetector.loadFromUri('js/models'),
-    faceapi.nets.faceLandmark68Net.loadFromUri('js/models'),
-    faceapi.nets.faceRecognitionNet.loadFromUri('js/models'),
-    faceapi.nets.faceExpressionNet.loadFromUri('js/models')
+    faceapi.nets.tinyFaceDetector.loadFromUri('../js/models'),
+    faceapi.nets.faceLandmark68Net.loadFromUri('../js/models'),
+    faceapi.nets.faceRecognitionNet.loadFromUri('../js/models'),
+    faceapi.nets.faceExpressionNet.loadFromUri('../js/models')
 ]).then(() => {
     iniciarVideo(); 
     cargarRostrosAlmacenados();
@@ -82,7 +82,7 @@ async function guardarDescriptorEnServidor(nombre, descriptor) {
 }
 
 //Carga un descriptor desde un fichero(Actualizar a BBDD)
-function cargarDescriptor(file) {
+/*function cargarDescriptor(file) {
     const reader = new FileReader();
     reader.onload = (event) => {
         const descriptorArray = JSON.parse(event.target.result);
@@ -106,7 +106,7 @@ fileInput.addEventListener('change', (event) => {
     if (file) {
         cargarDescriptor(file);
     }
-});
+});*/
 
 //evento del botón para inicializar el reconocimiento facial
 //document.getElementById("startRecognition").addEventListener("click", analizaVideo());
@@ -136,7 +136,7 @@ function analizaVideo() {
     };
     faceapi.matchDimensions(canvas, dimensiones);
     botonera.innerHTML=`<BR>`;
-    
+    let detecciones=0;
     intervaloAnalisis = setInterval(async () => {
         const rostros = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors().withFaceExpressions();
         const area = faceapi.resizeResults(rostros, dimensiones);
@@ -144,11 +144,14 @@ function analizaVideo() {
         faceapi.draw.drawDetections(canvas, area);
         faceapi.draw.drawFaceLandmarks(canvas, area);
         faceapi.draw.drawFaceExpressions(canvas, area);
-
+        
         rostros.forEach(async (rostro) => {
             const descriptor = rostro.descriptor;
             const descriptorArray = Array.from(descriptor); // Convertir a array para enviar
-
+            detecciones++;
+            if (detecciones>30){
+                detenerAnalisis();
+            }
             // Enviar el descriptor al servidor Node.js
             try {
                 const response = await fetch('http://localhost:3000/recognize', {

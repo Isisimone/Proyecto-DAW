@@ -4,6 +4,7 @@ const { FaceMatcher, LabeledFaceDescriptors } = require('face-api.js');
 const axios = require('axios'); // Para hacer solicitudes HTTP
 const path = require('path');
 
+
 const app = express();
 const port = 3000;
 
@@ -16,7 +17,7 @@ const descriptoresConocidos = [];
 async function cargarDescriptores() {
     try {
         // Hacer una solicitud HTTP al archivo PHP
-        const response = await axios.get('http://localhost/proyecto/Proyecto-DAW/listar_descriptores.php');
+        const response = await axios.get('http://localhost/proyecto/Proyecto-DAW/public/listar_descriptores.php');
         const data = response.data;
 
         // Verificar que la respuesta sea un array
@@ -44,14 +45,16 @@ async function cargarDescriptores() {
 
 // Ruta para reconocer una cara
 app.post('/recognize', (req, res) => {
+    console.log('Solicitud recibida en /recognize');
     if (!faceMatcher) {
         return res.status(500).json({ error: 'FaceMatcher no inicializado' });
     }
 
     const descriptor = new Float32Array(req.body.descriptor);
     const mejorMatch = faceMatcher.findBestMatch(descriptor);
+    console.log(`Distancia del mejor match: ${mejorMatch.distance}`);
 
-    if (mejorMatch.distance < 0.6) { // Ajusta el umbral según sea necesario
+    if (mejorMatch.distance < 0.3) { // Ajusta el umbral según sea necesario
         res.json({ match: true, name: mejorMatch.label, distance: mejorMatch.distance });
     } else {
         res.json({ match: false });
