@@ -18,20 +18,15 @@ class Transaccion{
 
     // Constructor sin parámetros
     public function __construct() {
-        $this->tip_trans="";
-        $this->des_trans="";
-        $this->cod_obj=0;
-        $this->nom_obj="";
-        $this->ip_usuario="";
-        $this->cod_usuario=0;
+        $this->cod_Transaccion=0;
     }
 
     
 
 //Método crear transaccion que escribe en la bbdd a partir del objeto
-    public function grabar() {
-        //try{
-        $conexion = new Conexion();
+    public function nueva() {
+        try{
+        $conexion = new Conexion();    
         $sql = "INSERT INTO ttransacciones (TIP_TRANS, DESC_TRANS, COD_OBJ, NOM_OBJ, COD_USUARIO, FEC_SIS, IP_USUARIO) 
                 VALUES (:tip_trans, :desc_trans, :cod_obj, :nom_obj, :cod_usuario, :fec_sis, :ip_usuario)";
         $stmt = $conexion->conexion->prepare($sql);
@@ -45,10 +40,10 @@ class Transaccion{
         $stmt->execute();
         $stmt=null;
         return;
-        //} catch(PDOException $e) {
-        //    echo("Error al grabar la transacción: " . $e->getMessage());
-        //    return;
-        //}
+        } catch(PDOException $e) {
+            echo("Error al grabar la transacción: " . $e->getMessage());
+            return;
+        }
     }
 
     //Método para obtener transacciones de la bbdd
@@ -67,6 +62,36 @@ class Transaccion{
             return [];
         }
         
+    }
+
+    //Método para obtener una transacción
+    public function cargar(int $cod_tran) {
+        try {
+            $conexion = new Conexion();
+            // Preparo la consulta
+            $consulta = "SELECT * FROM ttransacciones WHERE COD_TRANSACCION = :cod_tran";
+            // Ejecuto la consulta
+            $stmt = $conexion->conexion->prepare($consulta);
+            $stmt->bindValue('cod_tran', $cod_tran, PDO::PARAM_INT);
+            $stmt->execute();
+            // Devuelvo el resultado de la consulta
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$resultado){
+                return;
+            }
+            var_dump($resultado);
+            $this->setCodTransaccion($$resultado['COD_TRANSACCION']);
+            $this->setTipoTrans($resultado['TIP_TRANS']);
+            $this->setDesTrans($resultado['DESC_TRANS']);
+            $this->setCodObj($resultado['COD_OBJ']);
+            $this->setNomObj($resultado['NOM_OBJ']);
+            $this->setCodUsuario($resultado['COD_USUARIO']);
+            $this->setFecSis(new DateTime($resultado['FEC_SIS']));
+            $this->setIpUsuario($resultado['IP_USUARIO']);
+        } catch (PDOException $e) {
+            error_log("Error al listar transacciones: " . $e->getMessage());
+            return [];
+        }
     }
 
     //Método para obtener transacciones de la bbdd a partir del código de usuario

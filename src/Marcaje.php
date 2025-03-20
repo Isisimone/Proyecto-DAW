@@ -23,7 +23,8 @@ class Marcaje{
     private string $obs;
 
     //Método constructor
-    public function __construct(){        
+    public function __construct(){
+        $this->cod_Marcaje = 0;        
     }
 
     // Getters
@@ -137,30 +138,30 @@ class Marcaje{
     //Método para registrar el marcaje en la bbdd
     public function grabar(): bool {
         $conexion = new Conexion();
-        $consulta = $conexion->conexion->prepare("INSERT INTO tmarcaje (COD_TIPO_MARCAJE, COD_EMPLEADO, COD_BIO, DES_FOTO, FEC_MARCAJE, HOR_MARCAJE, FEC_GRABACION, HOR_GRABACION, IND_INCIDENCIA, IND_PENDIENTE, COD_TIPO_ACCESO, DES_OBSERVACIONES) VALUES (:COD_TIPO_MARCAJE, :COD_EMPLEADO, :COD_BIO, :DES_FOTO, :FEC_MARCAJE, :HOR_MARCAJE, :FEC_GRABACION, :HOR_GRABACION, :IND_INCIDENCIA, :IND_PENDIENTE, :COD_TIPO_ACCESO, :DES_OBSERVACIONES)");
-        $cod_Tipo_Marcaje = $this->getCodTipoMarcaje();
-        $cod_Empleado = $this->getCodEmpleado();
-        $cod_bio = $this->getCodBio();
-        $fec_Marcaje = $this->getFecMarcaje();
-        $fec_Grabacion = $this->getFecGrabacion();
-        $incidencia = $this->getIncidencia();
-        $pendiente = $this->getPendiente();
-        $foto = $this->getFoto();
-        $tipoAcceso = $this->getTipoAcceso();
-        $obs = $this->getObs();
-        $consulta->bindValue(':COD_TIPO_MARCAJE', $cod_Tipo_Marcaje);
-        $consulta->bindValue(':COD_EMPLEADO', $cod_Empleado);
-        $consulta->bindValue(':COD_BIO', $cod_bio);
-        $consulta->bindValue(':DES_FOTO', $foto);
-        $consulta->bindValue(':FEC_MARCAJE', $fec_Marcaje->format('Y-m-d H:i:s'));
-        $consulta->bindValue(':HOR_MARCAJE', $fec_Marcaje->format('H:i:s'));//eliminar
-        $consulta->bindValue(':FEC_GRABACION', $fec_Grabacion->format('Y-m-d H:i:s'));
-        $consulta->bindValue(':HOR_GRABACION', $fec_Grabacion->format('H:i:s'));//eliminar
-        $consulta->bindValue(':IND_INCIDENCIA', $incidencia);
-        $consulta->bindValue(':IND_PENDIENTE', $pendiente);
-        $consulta->bindValue(':COD_TIPO_ACCESO', $tipoAcceso);
-        $consulta->bindValue(':DES_OBSERVACIONES', $obs);
-        $consulta->execute();
+        if ($this->cod_Marcaje==0 || is_null($this->cod_Marcaje)){
+            $sql = "INSERT INTO tmarcaje (COD_TIPO_MARCAJE, COD_EMPLEADO, COD_BIO, DES_FOTO, FEC_MARCAJE, FEC_GRABACION, IND_INCIDENCIA, IND_PENDIENTE, COD_TIPO_ACCESO, DES_OBSERVACIONES) 
+            VALUES (:COD_TIPO_MARCAJE, :COD_EMPLEADO, :COD_BIO, :DES_FOTO, :FEC_MARCAJE, :FEC_GRABACION, :IND_INCIDENCIA, :IND_PENDIENTE, :COD_TIPO_ACCESO, :DES_OBSERVACIONES)";
+            $stmt = $conexion->conexion->prepare($sql);
+        }else{
+            $sql ="UPDATE tmarcaje SET COD_TIPO_MARCAJE = :COD_TIPO_MARCAJE, COD_EMPLEADO = :COD_EMPLEADO
+            , COD_BIO = :COD_BIO, DES_FOTO=:DES_FOTO, FEC_MARCAJE=:FEC_MARCAJE
+            , FEC_GRABACION=:FEC_GRABACION, IND_INCIDENCIA=:IND_INCIDENCIA, IND_PENDIENTE=:IND_PENDIENTE
+            , COD_TIPO_ACCESO= :COD_TIPO_ACCESO, DES_OBSERVACIONES =:DES_OBSERVACIONES 
+            WHERE COD_MARCAJE=:cod_Marcaje";
+            $stmt = $conexion->conexion->prepare($sql);
+            $stmt->bindValue(':cod_Marcaje', $this->cod_Marcaje);
+        }
+        $stmt->bindValue(':COD_TIPO_MARCAJE', $this->cod_Tipo_Marcaje);
+        $stmt->bindValue(':COD_EMPLEADO', $this->cod_Empleado);
+        $stmt->bindValue(':COD_BIO', $this->cod_bio);
+        $stmt->bindValue(':DES_FOTO', $this->foto);
+        $stmt->bindValue(':FEC_MARCAJE', $this->fec_Marcaje->format('Y-m-d H:i:s'));
+        $stmt->bindValue(':FEC_GRABACION', $this->fec_Grabacion->format('Y-m-d H:i:s'));
+        $stmt->bindValue(':IND_INCIDENCIA',$this->incidencia);
+        $stmt->bindValue(':IND_PENDIENTE', $this->pendiente);
+        $stmt->bindValue(':COD_TIPO_ACCESO', $this->tipoAcceso);
+        $stmt->bindValue(':DES_OBSERVACIONES', $this->obs);
+        $stmt->execute();
         $conexion = null;
         return true;
     }
@@ -173,7 +174,7 @@ class Marcaje{
         $consulta->execute();
         $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
         if (!$resultado) {
-            return null;
+            return $resultado;
         }
         $this->cod_Marcaje = $resultado['COD_MARCAJE'];
         $this->cod_Tipo_Marcaje = $resultado['COD_TIPO_MARCAJE'];
@@ -199,22 +200,23 @@ class Marcaje{
             $consulta->bindValue(':fechaFin', $fechaFin->format('Y-m-d H:i:s'));
             $consulta->execute();
             $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
-            $marcajes = [];
+            return $resultado;
+            /*$marcajes = [];
             foreach ($resultado as $marcaje) {
-            $marcajeObj = new Marcaje();
-            $marcajeObj->setCodMarcaje($marcaje['COD_MARCAJE']);
-            $marcajeObj->setCodTipoMarcaje($marcaje['COD_TIPO_MARCAJE']);
-            $marcajeObj->setCodEmpleado($marcaje['COD_EMPLEADO']);
-            $marcajeObj->setCodBio($marcaje['COD_BIO']);
-            $marcajeObj->setFecMarcaje(new DateTime($marcaje['FEC_MARCAJE']));
-            $marcajeObj->setFecGrabacion(new DateTime($marcaje['FEC_GRABACION']));
-            $marcajeObj->setIncidencia($marcaje['IND_INCIDENCIA']);
-            $marcajeObj->setPendiente($marcaje['IND_PENDIENTE']);
-            $marcajeObj->setFoto($marcaje['DES_FOTO']);
-            $marcajeObj->setTipoAcceso($marcaje['COD_TIPO_ACCESO']);
-            $marcajeObj->setObs($marcaje['DES_OBSERVACIONES']);
-            $marcajes[] = $marcajeObj;
+                $marcajeObj = new Marcaje();
+                $marcajeObj->setCodMarcaje($marcaje['COD_MARCAJE']);
+                $marcajeObj->setCodTipoMarcaje($marcaje['COD_TIPO_MARCAJE']);
+                $marcajeObj->setCodEmpleado($marcaje['COD_EMPLEADO']);
+                $marcajeObj->setCodBio($marcaje['COD_BIO']);
+                $marcajeObj->setFecMarcaje(new DateTime($marcaje['FEC_MARCAJE']));
+                $marcajeObj->setFecGrabacion(new DateTime($marcaje['FEC_GRABACION']));
+                $marcajeObj->setIncidencia($marcaje['IND_INCIDENCIA']);
+                $marcajeObj->setPendiente($marcaje['IND_PENDIENTE']);
+                $marcajeObj->setFoto($marcaje['DES_FOTO']);
+                $marcajeObj->setTipoAcceso($marcaje['COD_TIPO_ACCESO']);
+                $marcajeObj->setObs($marcaje['DES_OBSERVACIONES']);
+                $marcajes[] = $marcajeObj;
             }
-            return $marcajes;
+            return $marcajes;*/
         }
 }

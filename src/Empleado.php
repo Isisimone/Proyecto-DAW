@@ -21,6 +21,7 @@ class Empleado {
 
     // Método constructor
     public function __construct() {
+        $this->cod_Empleado= 0;
         $this->fec_Baja = null;
         $this->nom_Usuario_Baja = null;
     }
@@ -64,10 +65,17 @@ class Empleado {
     public function grabar(): bool {
         try {
             $conexion = new Conexion();
-            $sql = "INSERT INTO templeado (COD_EMPLEADO, COD_USUARIO, NOM_EMPLEADO, APE1_EMPLEADO, APE2_EMPLEADO, CONTACTO_EMPLEADO, FEC_ALTA, NOM_USUARIO_ALTA, FEC_BAJA, NOM_USUARIO_BAJA) 
-                    VALUES (:cod_Empleado, :cod_Usuario, :nombre, :apellido1, :apellido2, :contacto, :fec_Alta, :nom_Usuario_Alta, :fec_Baja, :nom_Usuario_Baja)";
-            $stmt = $conexion->conexion->prepare($sql);
-            $stmt->bindValue(':cod_Empleado', $this->cod_Empleado, PDO::PARAM_INT);
+            if ($this->cod_Empleado==0 || is_null($this->cod_Empleado)){
+                $sql = "INSERT INTO templeado (COD_USUARIO, NOM_EMPLEADO, APE1_EMPLEADO, APE2_EMPLEADO, CONTACTO_EMPLEADO, FEC_ALTA, NOM_USUARIO_ALTA, FEC_BAJA, NOM_USUARIO_BAJA) 
+                    VALUES (:cod_Usuario, :nombre, :apellido1, :apellido2, :contacto, :fec_Alta, :nom_Usuario_Alta, :fec_Baja, :nom_Usuario_Baja)";
+                $stmt = $conexion->conexion->prepare($sql);
+            } else{
+                $sql = "UPDATE templeado SET COD_USUARIO = :cod_Usuario, NOM_EMPLEADO = :nombre, APE1_EMPLEADO = :apellido1, APE2_EMPLEADO = :apellido2, CONTACTO_EMPLEADO = :contacto 
+                , FEC_ALTA = :fec_Alta, NOM_USUARIO_ALTA = :nom_Usuario_Alta, FEC_BAJA=:fec_Baja, NOM_USUARIO_BAJA = :nom_Usuario_Baja
+                WHERE COD_EMPLEADO = :cod_Empleado";
+                $stmt = $conexion->conexion->prepare($sql);
+                $stmt->bindValue(':cod_Empleado', $this->cod_Empleado, PDO::PARAM_INT);
+            }
             $stmt->bindValue(':cod_Usuario', $this->cod_Usuario, PDO::PARAM_INT);
             $stmt->bindValue(':nombre', $this->nombre, PDO::PARAM_STR);
             $stmt->bindValue(':apellido1', $this->apellido1, PDO::PARAM_STR);
@@ -106,8 +114,7 @@ class Empleado {
     public function modificar(): bool {
         try {
             $conexion = new Conexion();
-            $sql = "UPDATE templeado SET COD_USUARIO = :cod_Usuario, NOM_EMPLEADO = :nombre, APE1_EMPLEADO = :apellido1, APE2_EMPLEADO = :apellido2, CONTACTO_EMPLEADO = :contacto WHERE COD_EMPLEADO = :cod_Empleado";
-            $stmt = $conexion->conexion->prepare($sql);
+            
             $stmt->bindValue(':cod_Empleado', $this->cod_Empleado, PDO::PARAM_INT);
             $stmt->bindValue(':cod_Usuario', $this->cod_Usuario, PDO::PARAM_INT);
             $stmt->bindValue(':nombre', $this->nombre, PDO::PARAM_STR);

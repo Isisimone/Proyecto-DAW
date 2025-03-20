@@ -17,6 +17,7 @@ class Rol {
     private Privilegio $privilegios;
 // Constructor
     public function __construct() {
+        $this->cod_Rol=0;
         $this->fec_Baja = null;
         $this->nom_Usuario_Baja = null;
     }

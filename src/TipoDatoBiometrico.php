@@ -16,6 +16,7 @@ class TipoDatoBiometrico{
 
     //Método constructor
     public function __construct() {
+        $this->cod_tipo_bio=0;
         $this->fec_Baja = null;
         $this->nom_Usuario_Baja = null;
     }
@@ -26,14 +27,11 @@ class TipoDatoBiometrico{
         $conexion = new Conexion();
         if ($this->cod_tipo_bio == 0 || is_null($this->cod_tipo_bio)) {
             $consulta = $conexion->conexion->prepare("INSERT INTO ttbio (DES_TIPO_BIO, FEC_ALTA, NOM_USUARIO_ALTA, FEC_BAJA, NOM_USUARIO_BAJA) VALUES (:des_tipo_bio, :fec_Alta, :nom_Usuario_Alta, :fec_Baja, :nom_Usuario_Baja)");
-        echo "crea";
         } else {
             $consulta = $conexion->conexion->prepare("UPDATE ttbio SET DES_TIPO_BIO = :des_tipo_bio, FEC_BAJA = :fec_Baja, NOM_USUARIO_BAJA = :nom_Usuario_Baja, FEC_BAJA = :fec_Baja, NOM_USUARIO_BAJA=:nom_Usuario_Baja WHERE COD_TIPO_BIO = :cod_tipo_bio");
             $consulta->bindValue(':cod_tipo_bio', $this->cod_tipo_bio, PDO::PARAM_INT);
-        echo "mdifica";
         }
             $consulta->bindValue(':des_tipo_bio', $this->des_tipo_bio, PDO::PARAM_STR);
-            echo $this->fec_Alta->format('d-m-Y');
             $consulta->bindValue(':fec_Alta', $this->fec_Alta->format('Y-m-d H:i:s'), PDO::PARAM_STR);
             $consulta->bindValue(':nom_Usuario_Alta', $this->nom_Usuario_Alta, PDO::PARAM_STR);
             if (!is_null($this->fec_Baja)) {

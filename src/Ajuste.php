@@ -39,7 +39,37 @@ class Ajuste {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Método para actualizar un ajuste en la base de datos
+    //Método para crear un nuevo ajuste
+    public function crear(string $nombre, string $valor){
+        $this->id=null;
+        $this->setNombreAjuste($nombre);
+        $this->setValor($valor);
+        $this->grabar();
+    }
+
+    // Método para grabar un ajuste en la base de datos
+    public function grabar() {
+        $conexion = new Conexion();
+        // Preparo la consulta
+        try {
+            if ($this->id==0 || is_null($this->id)){
+                $consulta = "INSERT INTO tajuste (NOM_AJUSTE, VALOR_AJUSTE) VALUES (:nom_ajuste, :valor_ajuste)";
+                $stmt = $conexion->conexion->prepare($consulta); 
+            }else{
+                $consulta = "UPDATE tajuste SET NOM_AJUSTE = :nom_ajuste, VALOR_AJUSTE = :valor_ajuste WHERE ID_AJUSTE = :id_ajuste";
+                $stmt = $conexion->conexion->prepare($consulta); 
+                $stmt->bindParam(':id_ajuste', $id, PDO::PARAM_INT);
+            }
+            $stmt->bindParam(':nom_ajuste', $this->nombre_ajuste, PDO::PARAM_STR);
+            $stmt->bindParam(':valor_ajuste', $this->valor, PDO::PARAM_STR);
+            $stmt->execute();
+            return true;
+        } catch (PDOException $e) {
+            echo "Error al grabar el ajuste: " . $e->getMessage();
+            return false;
+        }
+    }
+
     public function actualizarAjuste($id, $nombre_ajuste, $valor) {
         $conexion = new Conexion();
         // Preparo la consulta
@@ -56,4 +86,30 @@ class Ajuste {
             return false;
         }
     }
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GETTERS Y SETTERS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+public function getId(): int {
+    return $this->id;
+}
+
+public function setId(int $id): void {
+    $this->id = $id;
+}
+
+// Getter y Setter para el atributo nombre_ajuste
+public function getNombreAjuste(): string {
+    return $this->nombre_ajuste;
+}
+
+public function setNombreAjuste(string $nombre_ajuste): void {
+    $this->nombre_ajuste = $nombre_ajuste;
+}
+
+// Getter y Setter para el atributo valor
+public function getValor(): string {
+    return $this->valor;
+}
+
+public function setValor(string $valor): void {
+    $this->valor = $valor;
+}
 }

@@ -11,15 +11,18 @@ class Usuario{
     private string $nom_login;
     private string $des_contrasena;
     private string $des_correo;
-    private date $fec_alta;
+    private DateTime $fec_alta;
     private string $nom_usuario_alta;
-    private ?date $fec_baja;
+    private ?DateTime $fec_baja;
     private ?string $nom_usuario_baja;
+    private array $roles;  
 
     //Método constructor
     public function __construct() {
         $this->fec_Baja = null;
+        $this->des_contrasena="";
         $this->nom_Usuario_Baja = null;
+        $this->cod_usuario=0;
     }
 
     
@@ -55,20 +58,72 @@ class Usuario{
         return password_verify($contrasena, $this->des_contrasena);
     }
 
+    //Método para obtender roles
+    private function cargarRol(){
+        try {
+            $conexion = new Conexion();
+            $rol = new Rol();
+            $consulta = "SELECT * FROM tusuariorol WHERE COD_USUARIO = :cod_usuario";
+            $stmt = $conexion->conexion->prepare($consulta);
+            $stmt->bindValue('cod_usuario',$this->cod_usuario, PDO::PARAM_INT);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($resultado){
+                $contador=0;
+                foreach ($resultado as $r){
+                    $rol->cargarRol($r);
+                    $this->roles[$contador]=$rol->getRol();
+                }
+            } return;
+        }catch(PDOException $e){
+            echo "Error al cargar los roles: ".$e;
+            return;
+        }
+    }
+    
+    //Método para iniciar sesión
+    public function iniciarSesion(string $nom_login, string $contrasena): bool {
+        try {
+            $conexion = new Conexion();
+            // Preparo la consulta
+            $consulta = "SELECT * FROM tusuario WHERE NOM_LOGIN = :nom_login";
+            $stmt = $conexion->conexion->prepare($consulta);
+            $stmt->bindParam(':nom_login', $nom_login, PDO::PARAM_STR);
+            $stmt->execute();
+            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            if ($usuario && $this->compararContrasena($contrasena, $usuario['DES_CONTRASENA'])) {
+                // Iniciar sesión
+                session_start();
+                $this->cargarRol();
+                $_SESSION['COD_USUARIO'] = $usuario['COD_USUARIO'];
+                $_SESSION['NOM_USUARIO'] = $usuario['NOM_LOGIN'];
+                $_SESSION['ROLES'] = $this->roles;;
+                return true;
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            echo "Error al iniciar sesión: " . $e->getMessage();
+            return false;
+        }
+    }
+
     //Método para crear usuario
     public function grabar() {
         try {
-            $hashedPassword = password_hash($this->des_contrasena, PASSWORD_DEFAULT);
             $conexion = new Conexion();
             if ($this->cod_usuario==0 || is_null($this->cod_usuario)){
-                $consulta = "INSERT INTO tusuario (NOM_LOGIN, DES_CONTRASENA, DES_CORREO, FEC_ALTA, NOM_USUARIO_ALTA) VALUES (:nom_Login, :des_contrasena, :des_Correo, :fec_Alta, :nom_Usuario_Alta)";
+                $consulta = "INSERT INTO tusuario (NOM_LOGIN, DES_CONTRASENA, DES_CORREO, FEC_ALTA, NOM_USUARIO_ALTA) VALUES (:nom_Login, :des_Contrasena, :des_Correo, :fec_Alta, :nom_Usuario_Alta)";
+                $stmt = $conexion->conexion->prepare($consulta);
             }else{
                 $consulta = "UPDATE tusuario SET NOM_LOGIN = :nom_Login, DES_CONTRASENA = :des_Contrasena, DES_CORREO = :des_Correo,
-                 FEC_ALTA = :fec_Alta, NOM_USUARIO_ALTA = :nom_Usuario_Alta) WHERE COD_USUARIO = :cod_Usuario";
+                 FEC_ALTA = :fec_Alta, NOM_USUARIO_ALTA = :nom_Usuario_Alta WHERE COD_USUARIO = :cod_Usuario";
+                 $stmt = $conexion->conexion->prepare($consulta);
+                 $stmt->bindValue('cod_Usuario', $this->cod_usuario, PDO::PARAM_INT);
             }
-            $stmt = $conexion->prepare($consulta);
             $stmt->bindValue('nom_Login', $this->nom_login, PDO::PARAM_STR);
-            $stmt->bindValue('des_contrasena', $hashedPassword, PDO::PARAM_STR); // Guardar la contraseña hasheada
+            $stmt->bindValue('des_Contrasena', $this->des_contrasena, PDO::PARAM_STR); // Guardar la contraseña hasheada
             $stmt->bindValue('des_Correo', $this->des_correo, PDO::PARAM_STR);
             $stmt->bindValue('fec_Alta', $this->fec_alta->format('Y-m-d H:i:s'), PDO::PARAM_STR);
             $stmt->bindValue('nom_Usuario_Alta', $this->nom_usuario_alta, PDO::PARAM_STR);
@@ -83,11 +138,12 @@ class Usuario{
     //Método para modificar usuario con parámetros nombre y password
     public function modificarUsuario(string $nombre, string $password): bool {
         try {
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             $conexion = new Conexion();
             $consulta = "UPDATE tusuario SET NOM_LOGIN = :NOM_LOGIN, DES_CONTRASENA = :des_contrasena WHERE COD_USUARIO = :cod_Usuario";
-            $stmt = $conexion->prepare($consulta);
+            $stmt = $conexion->conexion->prepare($consulta);
             $stmt->bindParam(':NOM_LOGIN', $nombre, PDO::PARAM_STR);
-            $stmt->bindParam(':DES_CONTRASENA', $password, PDO::PARAM_STR);
+            $stmt->bindParam(':DES_CONTRASENA', $hashedPassword, PDO::PARAM_STR);
             $stmt->bindParam(':COD_USUARIO', $this->cod_Usuario, PDO::PARAM_INT);
             $stmt->execute();
             return true;
@@ -102,7 +158,7 @@ class Usuario{
         try {
             $conexion = new Conexion();
             $consulta = "UPDATE tusuario SET FEC_BAJA = :fec_Baja, NOM_USUARIO_BAJA = :nom_Usuario_Baja WHERE COD_USUARIO = :cod_Usuario";
-            $stmt = $conexion->prepare($consulta);
+            $stmt = $conexion->conexion->prepare($consulta);
             $fec_Baja = new DateTime();
             $stmt->bindParam(':FEC_BAJA', $fec_Baja->format('d-m-Y H:i:s'), PDO::PARAM_STR);
             $stmt->bindParam(':NOM_USUARIO_BAJA', $nom_Usuario_Baja, PDO::PARAM_STR);
@@ -124,15 +180,15 @@ public function getNomLogin(): string {
     return $this->nom_login;
 }
 
-//public function getDesContrasena(): string {
-//    return $this->des_contrasena;
-//}
+public function getDesContrasena(): string {
+    return $this->des_contrasena;
+}
 
 public function getDesCorreo(): string {
     return $this->des_correo;
 }
 
-public function getFecAlta(): date {
+public function getFecAlta(): DateTime {
     return $this->fec_alta;
 }
 
@@ -140,7 +196,7 @@ public function getNomUsuarioAlta(): string {
     return $this->nom_usuario_alta;
 }
 
-public function getFecBaja(): ?date {
+public function getFecBaja(): ?DateTime {
     return $this->fec_baja;
 }
 
@@ -158,14 +214,15 @@ public function setNomLogin(string $nom_login): void {
 }
 
 public function setDesContrasena(string $des_contrasena): void {
-    $this->des_contrasena = $des_contrasena;
+    $hashedPassword = password_hash($des_contrasena, PASSWORD_DEFAULT);
+    $this->des_contrasena = $hashedPassword;
 }
 
 public function setDesCorreo(string $des_correo): void {
     $this->des_correo = $des_correo;
 }
 
-public function setFecAlta(date $fec_alta): void {
+public function setFecAlta(DateTime $fec_alta): void {
     $this->fec_alta = $fec_alta;
 }
 
@@ -173,7 +230,7 @@ public function setNomUsuarioAlta(string $nom_usuario_alta): void {
     $this->nom_usuario_alta = $nom_usuario_alta;
 }
 
-public function setFecBaja(?date $fec_baja): void {
+public function setFecBaja(?DateTime $fec_baja): void {
     $this->fec_baja = $fec_baja;
 }
 

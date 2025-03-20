@@ -19,6 +19,7 @@ class DatosBiometricos{
 
     // Constructor
     public function __construct() {
+        $this->cod_bio=0;
     }
 
     
@@ -26,21 +27,34 @@ class DatosBiometricos{
    //Método para grabar en la base de datos un nuevo registro a partir del objeto
     public function grabar(): bool {
         // Crear la conexión
+        try{
         $conexion = new Conexion();
-        // Crear la sentencia SQL
-        $sql = "INSERT INTO tbio (COD_EMPLEADO, COD_TIPO_BIO, DATO_BIO, FEC_ALTA, NOM_USUARIO_ALTA) VALUES (:cod_Empleado, :cod_Tipo, :dato_Bio, :fec_Alta, :nom_Usuario_Alta)";
-        // Preparar la sentencia
-        $stmt = $conexion->conexion->prepare($sql);
+        if ($this->cod_bio==0 || is_null($this->cod_bio)){
+            // Crear la sentencia SQL
+            $sql = "INSERT INTO tbio (COD_EMPLEADO, COD_TIPO_BIO, DATO_BIO, FEC_ALTA, NOM_USUARIO_ALTA) 
+            VALUES (:cod_Empleado, :cod_Tipo, :dato_Bio, :fec_Alta, :nom_Usuario_Alta)";
+            // Preparar la sentencia
+            $stmt = $conexion->conexion->prepare($sql);
+        } else {
+            $sql="UPDATE tbio SET COD_EMPLEADO = :cod_Empleado, COD_TIPO_BIO = :cod_Tipo, DATO_BIO = :dato_Bio, 
+            FEC_ALTA = :fec_Alta, NOM_USUARIO_ALTA = :nom_Usuario_Alta 
+            WHERE COD_BIO = :cod_Bio";
+            $stmt = $conexion->conexion->prepare($sql);
+            $stmt->bindValue('cod_Bio', $this->cod_bio, PDO::PARAM_INT);
+        }
         // Asignar valores a los parámetros
-        $stmt->bindValue(':cod_Empleado', $this->cod_Empleado, PDO::PARAM_INT);
-        $stmt->bindValue(':cod_Tipo', $this->cod_Tipo, PDO::PARAM_INT);
-        $stmt->bindValue(':dato_Bio', $this->dato_Bio, PDO::PARAM_STR);
-        $stmt->bindValue(':fec_Alta', $this->fec_Alta->format('Y-m-d H:i:s'), PDO::PARAM_STR);
-        $stmt->bindValue(':nom_Usuario_Alta', $this->nom_Usuario_Alta, PDO::PARAM_STR);
+        $stmt->bindValue('cod_Empleado', $this->cod_Empleado, PDO::PARAM_INT);
+        $stmt->bindValue('cod_Tipo', $this->cod_Tipo, PDO::PARAM_INT);
+        $stmt->bindValue('dato_Bio', $this->dato_Bio, PDO::PARAM_STR);
+        $stmt->bindValue('fec_Alta', $this->fec_Alta->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+        $stmt->bindValue('nom_Usuario_Alta', $this->nom_Usuario_Alta, PDO::PARAM_STR);
         // Ejecutar la sentencia
         $stmt->execute();
         // Devolver el resultado de la sentencia
         return $stmt->rowCount() > 0;
+        } catch(PDOException $e){
+            echo "Error al grabar:".$e;
+        }
     }
 
     //Método para eliminar un registro de la base de datos a partir del objeto
