@@ -7,6 +7,7 @@ let faceMatcher = null;
 const descriptoresConocidos = []; // Almacena los descriptores conocidos
 const UMBRAL_SIMILITUD = 0.6; // Umbral de similitud (ajusta según sea necesario)
 let intervaloAnalisis; // Intervalo de análisis del video
+let ultimoID="";
 
 //Promesa de carga de modelos, hasta que no lo estén no se ejecuta el código
 //Necesario para dar tiempo a cargar los modelos de reconocimiento
@@ -15,9 +16,8 @@ Promise.all([
     faceapi.nets.faceLandmark68Net.loadFromUri('../js/models'),
     faceapi.nets.faceRecognitionNet.loadFromUri('../js/models'),
     faceapi.nets.faceExpressionNet.loadFromUri('../js/models')
-]).then(() => {
-    iniciarVideo(); 
-    cargarRostrosAlmacenados();
+    ]).then(() => {
+    iniciarVideo();
 });
 
 //Inicia la webcam si está disponible o muestra error en estado
@@ -79,45 +79,15 @@ async function guardarDescriptorEnServidor(nombre, descriptor) {
     } catch (error) {
         console.error('Error al guardar el descriptor:', error);
     }
+
+    recargarDescriptores();
 }
-
-//Carga un descriptor desde un fichero(Actualizar a BBDD)
-/*function cargarDescriptor(file) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-        const descriptorArray = JSON.parse(event.target.result);
-        if (descriptorArray.length === 128) {  
-            const descriptor = new Float32Array(descriptorArray);
-            const nombre = prompt("Introduce un nombre para este rostro:");
-            if (nombre) {
-                descriptoresConocidos.push({ nombre, descriptor });
-                actualizarFaceMatcher();
-            }
-        } else {
-            console.error('Descriptor con longitud incorrecta.');
-        }
-    };
-    reader.readAsText(file);
-}
-
-//si cambian los ficheros en el input se carga el descriptor
-fileInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        cargarDescriptor(file);
-    }
-});*/
-
-//evento del botón para inicializar el reconocimiento facial
-//document.getElementById("startRecognition").addEventListener("click", analizaVideo());
-//document.getElementById("reconocido").addEventListener("click", detenerAnalisis());
-//document.getElementById("noReconocido").addEventListener("click", detenerAnalisis());
-
 
 // Agregar un event listener al div con id "botonera"
 botonera.addEventListener("click", function(event) {
     if (event.target && event.target.id === "reconocido") {
         detenerAnalisis();
+        fichar(ultimoID);
     } else if (event.target && event.target.id === "noReconocido") {
         analizaVideo();
     } else if (event.target && event.target.id === "startRecognition") {
@@ -164,8 +134,9 @@ function analizaVideo() {
 
                 const result = await response.json();
                 if (result.match) {
-                    estado.innerHTML = `¡Persona reconocida! Coincidencia: ${result.name}, Distancia: ${result.distance}`;
-                    botonera.innerHTML = `<button class="btnVerde" id="reconocido">Soy ${result.name}</button>
+                    estado.innerHTML = `¡Persona reconocida! Coincidencia: ${result.nombre}, Distancia: ${result.distance}, Empleado:${result.empleado}`;
+                    ultimoID = `${result.empleado}`;
+                    botonera.innerHTML = `<button class="btnVerde" id="reconocido">Soy ${result.nombre}</button>
                                         <button class="btnRojo" id="noReconocido">Soy otra persona</button>`;
                     clearInterval(intervaloAnalisis);
                 }
@@ -193,55 +164,38 @@ function detenerAnalisis() {
      estado.innerHTML = `Que tengas un buen día.`;
 }
 
-//Función para consultar si hay rostros guardados con los que comparar
-//Borrar si se usa node.js
-/*function actualizarFaceMatcher() {
-    if (descriptoresConocidos.length === 0) {
-        console.error('No hay descriptores conocidos.');
-        faceMatcher = null;
-        return;
-    }
-    //en caso contrario los carga en el faceMatcher
-    const labeledDescriptors = descriptoresConocidos.map((item) => new faceapi.LabeledFaceDescriptors(item.nombre, [item.descriptor]));
-    faceMatcher = new faceapi.FaceMatcher(labeledDescriptors);
-    console.log("FaceMatcher inicializado con descriptores conocidos.");
-}*/
+async function recargarDescriptores() {
+    try {
+        const response = await fetch('http://localhost:3000/reload-descriptors', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
 
-//Carga los rostros almacenados en la base de datos
-async function cargarRostrosAlmacenados() {
-    /*try {
-        const response = await fetch('listar_descriptores.php');
-        const data = await response.json();
-        //Control de que haya datos
-        if (data.length === 0) {
-            console.error('No hay descriptores almacenados.');
-            return;
-        }
-        //Recorre los datos y los almacena en descriptores
-        for (const item of data) {
-            const descriptor = new Float32Array(item.descriptor);
-            descriptoresConocidos.push({ nombre: item.nombre, descriptor });
-        }
-        //Actualiza el faceMatcher para usarlo despues en las comparaciones
-        actualizarFaceMatcher();
+        const result = await response.json();
+        console.log(result.message); // Mostrar el mensaje del servidor
     } catch (error) {
-        //control de errores
-        console.error('Error al cargar los descriptores:', error);
-    }*/
+        console.error('Error al recargar los descriptores:', error);
+    }
 }
 
-//Función que recorre los descriptores conocidos y devuelve el mejor match
-//borrar si se usa node.js
-/*function encontrarMejorCoincidencia(descriptor) {
-    let mejorMatch = null;
-    for (const item of descriptoresConocidos) {
-        const distancia = faceapi.euclideanDistance(descriptor, item.descriptor);
-        if (!mejorMatch || distancia < mejorMatch.distancia) {
-            mejorMatch = { nombre: item.nombre, distancia };
-        }
+async function fichar(id){
+    try {
+        const response = await fetch('http://localhost:3000/fichar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({id}), // Enviar el ID del empleado
+        });
+        console.log(id);
+        const result = await response.json();
+        console.log(result.message); // Mostrar el mensaje del servidor
+    } catch (error) {
+        console.error('Error al fichar:', error);
     }
-    return mejorMatch;
-}*/
+}
 
 //Actualiza el reloj cada segundo
 setInterval(updateClock, 1000);

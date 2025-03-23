@@ -1,27 +1,24 @@
 <?php
 session_start();
 require '../vendor/autoload.php';
-/*
+
 // Si ya hay una sesión activa, redirigir al dashboard
 if (isset($_SESSION['COD_USUARIO'])) {
-    if (in_array('Admin',$_SESSION['ROLES'])){
-        //header('Location: administracion.php');
-        //exit();
-        $admin=true;
-    }
     if (in_array('Empleado',$_SESSION['ROLES'])){
         header('Location: empleado.php');
         exit();
     }
     if (in_array('Conserje',$_SESSION['ROLES'])){
-        header('Location: wellcome.php');
-        exit();
+        
+    }else {
+        header('Location: login.php');
+            exit();
     }
     
 } else {
     header('Location: login.php');
         exit();
-}*/
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
