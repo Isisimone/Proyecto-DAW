@@ -1,3 +1,4 @@
+//Definición de los requisitos.
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -5,27 +6,21 @@ const { FaceMatcher, LabeledFaceDescriptors } = require('face-api.js');
 const axios = require('axios'); // Para hacer solicitudes HTTP
 const path = require('path');
 
-
+//Definición para el servicio web
 const app = express();
 const port = 3000;
-const clavesTemporales = {}; // Objeto para almacenar claves temporales
+// Objeto para almacenar claves temporales
+const clavesTemporales = {}; 
 
-// Habilitar CORS para todas las rutas
+// Habilitar CORS para todas las rutas, eliminar en producción <<<<<<<< PRODUCCION >>>>>>>>
 app.use(cors());
-
-/*app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*'); // Permitir todos los orígenes
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-});*/
-
+//Necesario para gestionar las solicitudes POST
 app.use(bodyParser.json());
-
+//variables para comparar los rostros
 let faceMatcher = null;
 const descriptoresConocidos = [];
 
-//Función para lanzar registro
+//Función para realizar el marcaje enviando los datos a registrar.php
 async function registrar(empleado, cod_bio,cod_tipo,foto,fec,incidencia,pendiente,obs,foto){
     const datos = {
         empleado: empleado, // ID del empleado
@@ -35,15 +30,16 @@ async function registrar(empleado, cod_bio,cod_tipo,foto,fec,incidencia,pendient
         fec_marcaje: fec, // Fecha de marcaje
         incidencia: incidencia, // Indicador de incidencia
         pendiente: pendiente, // Indicador de pendiente
-        obs: obs, // Observaciones
-        foto: foto
+        obs: obs // Observaciones
     };
     // Enviar los datos con axios
         axios.post('http://localhost/Proyecto-DAW/public/registrar.php', datos)
         .then(response => {
+            //Loggeamos la respuesta
             console.log('Respuesta del servidor:', response.data);
         })
         .catch(error => {
+            //Mostramos error en caso contrario
             console.error('Error al enviar los datos:', error.message);
 });
 }
@@ -54,8 +50,9 @@ async function cargarDescriptores() {
         // Limpiar los descriptores existentes
         descriptoresConocidos.length = 0;
 
-        // Hacer una solicitud HTTP al archivo PHP
+        // Hacer una solicitud HTTP a listar_descriptores.PHP
         const response = await axios.get('http://localhost/Proyecto-DAW/public/listar_descriptores.php');
+        //Guardamos los datos
         const data = response.data;
 
         // Verificar que la respuesta sea un array
@@ -63,9 +60,11 @@ async function cargarDescriptores() {
             throw new Error('La respuesta no es un array de descriptores.');
         }
 
-        // Procesar los descriptores
+        // Procesar los descriptores obtenidos
         data.forEach((item) => {
+            //Comprobamos que tengan el formato
             if (item.nombre && item.descriptor && Array.isArray(item.descriptor)) {
+                //Añadimos al array los datos
                 descriptoresConocidos.push({
                     empleado: item.cod_empleado,
                     cod_tipo: item.cod_tipo,
@@ -74,40 +73,51 @@ async function cargarDescriptores() {
                     descriptor: new Float32Array(item.descriptor) // Convertir a Float32Array
                 });
             } else {
-                console.warn('Descriptor inválido:', item);
+                //Mostramos el error si lo hay
+                console.error('Descriptor inválido:', item);
             }
         });
-
+        //Loggeamos el exito
         console.log('Descriptores cargados correctamente desde PHP.');
     } catch (error) {
+        //Mostramos el error
         console.error('Error al cargar los descriptores:', error.message);
         throw error; // Propagar el error para manejarlo en la ruta
     }
 }
 
-// Ruta para reconocer una cara
+// Ruta del servicio web para reconocer una cara
 app.post('/recognize', (req, res) => {
+    //Loggeamos la solicitud recibida
     console.log('Solicitud recibida en /recognize');
+    //Si no están iniciado los descriptores mostramos error y lo devolvemos
     if (!faceMatcher) {
+        console.error('FaceMatcher no inicializado');
         return res.status(500).json({ error: 'FaceMatcher no inicializado' });
     }
-
+    //Creamos un descriptor con los datos recibidos para compararlo
     const descriptor = new Float32Array(req.body.descriptor);
+    //Obtenemos el mejor match
     const mejorMatch = faceMatcher.findBestMatch(descriptor);
-    if (mejorMatch.distance < 0.7) { // Ajusta el umbral según sea necesario
+    //Si está por debajo del umbral se descompone el campo label para obtener datos de
+    //identificación. El umbral, cuanto más bajo, más exigente es
+    if (mejorMatch.distance < 0.7) { // Ajusta el umbral según sea necesario<<<<<< PARAMETRO >>>>>>>>
+        //Descomponemos label
         const [id_empleado, nombre,codtipo,codbio] = mejorMatch.label.split('-');
         // Generar una clave aleatoria
         const clave = Math.random().toString(36).substring(2, 15);
 
-        // Asociar la clave con el ID del empleado
+        // Asociar la clave con el ID del empleado para evitar inyección maliciosa del id_empelado
         clavesTemporales[clave] = id_empleado;
-
+        //Devolvemos datos
         res.json({ match: true, cod_bio:codbio,cod_tipo: codtipo,empleado: clave, nombre: nombre, distance: mejorMatch.distance });
     } else {
+        //Si no hubo match devolvemos false
         res.json({ match: false });
     }
 });
-//Ruta para recargar descriptores cuando se ha añadido uno nuevo.
+
+//Ruta del servicio web para recargar descriptores cuando se ha añadido uno nuevo.
 app.post('/reload-descriptors', async (req, res) => {
     try {
         // Limpiar los descriptores existentes
@@ -118,33 +128,41 @@ app.post('/reload-descriptors', async (req, res) => {
 
         // Verificar que hay descriptores cargados
         if (descriptoresConocidos.length === 0) {
+            console.error('No se cargaron descriptores.');
             return res.status(500).json({ error: 'No se cargaron descriptores.' });
         }
 
-        // Crear LabeledFaceDescriptors
+        // Crear LabeledFaceDescriptors, en el label añadimos el empleado, nombre y tipo
         const labeledDescriptors = descriptoresConocidos.map((item) => (
             new LabeledFaceDescriptors(`${item.empleado}-${item.nombre}-${item.cod_tipo}-${item.cod_bio}`, [item.descriptor])
         ));
 
         // Actualizar FaceMatcher
         faceMatcher = new FaceMatcher(labeledDescriptors);
+        //Loggeamos el exito
         console.log('FaceMatcher actualizado con nuevos descriptores.');
-
+        //Devolvemos mensaje de exito
         res.json({ message: 'Descriptores recargados correctamente.' });
     } catch (error) {
+        //En caso de error mostramos error
         console.error('Error al recargar los descriptores:', error.message);
         res.status(500).json({ error: 'Error al recargar los descriptores.' });
+        throw error; // Propagar el error para manejarlo en la ruta
     }
 });
 
-//Confirmación de identidad
+//servicio web de confirmación de identidad y fichaje
 app.post('/fichar', async (req, res) => {
     try{
+        //Cargamos los campos del body del POST
         const { id, cod_bio, cod_tipo,fecha, incidencia,pendiente,obs, foto } = req.body; // Recoger el ID del empleado enviado por el cliente
-        // Validar la clave
+        // Validar la clave obtenida del POST para conocer el empleado correspondiente
         if (!clavesTemporales[id]) {
+            //Si no existe lanzamos error
+            console.error('Clave inválida o expirada.');
             return res.status(400).json({ error: 'Clave inválida o expirada.' });
         }
+        //Si no incluye una fecha la creamos
         if (!fecha){
             fec=new Date().toISOString();
         } else{
@@ -155,36 +173,46 @@ app.post('/fichar', async (req, res) => {
 
         // Eliminar la clave para que no pueda reutilizarse
         delete clavesTemporales[id];
-        console.log(`Cod_Bio:${cod_bio}`);
+        //Hacemos el marcaje en la BBDD
         registrar(id_empleado,cod_bio,cod_tipo,'',fec,incidencia,pendiente,obs, foto);
-        
+        //Loggeamos el fichaje
         console.log(`Empleado que fichó: ${id_empleado} con Clave ${id}`); // Mostrar en consola
-
+        //Devolvemos mensaje
         res.json({ message: `Empleado ${id_empleado} fichado correctamente.` });
     }catch (error){
+        //Si hay error lo mostramos
         console.error('Error al fichar:', error.message);
         res.status(500).json({ error: 'Error al fichar en el servidor.' });
+        throw error; // Propagar el error para manejarlo en la ruta
     }
 });
 
 
-// Iniciar el servidor
+// Iniciar el servicio web para escuchar las peticiones
 app.listen(port, async () => {
+    //Loggeamos el estado del servidor node.js
     console.log(`Servidor corriendo en http://localhost:${port}`);
-    await cargarDescriptores(); // Cargar descriptores desde PHP
+   try{
+        await cargarDescriptores(); // Cargar descriptores desde PHP
 
-    // Verificar que hay descriptores cargados
-    if (descriptoresConocidos.length === 0) {
-        console.error('No se cargaron descriptores. FaceMatcher no se inicializará.');
-        return;
+        // Verificar que hay descriptores cargados
+        if (descriptoresConocidos.length === 0) {
+            console.error('No se cargaron descriptores. FaceMatcher no se inicializará.');
+            return;
+        }
+
+        // Crear LabeledFaceDescriptors
+        const labeledDescriptors = descriptoresConocidos.map((item) => (
+            //en la creaciój definimos los datos de label que después deberemos descomponer
+            new LabeledFaceDescriptors(`${item.empleado}-${item.nombre}-${item.cod_tipo}-${item.cod_bio}`, [item.descriptor])
+        ));
+
+        // Inicializar FaceMatcher
+        faceMatcher = new FaceMatcher(labeledDescriptors);
+        //Loggeamos el exito al inicializar los descriptores
+        console.log('FaceMatcher inicializado con descriptores conocidos.');
+    }catch(error){
+        console.error('Error al iniciar el servicio:', error.message);
+        throw error;
     }
-
-    // Crear LabeledFaceDescriptors
-    const labeledDescriptors = descriptoresConocidos.map((item) => (
-        new LabeledFaceDescriptors(`${item.empleado}-${item.nombre}-${item.cod_tipo}-${item.cod_bio}`, [item.descriptor])
-    ));
-
-    // Inicializar FaceMatcher
-    faceMatcher = new FaceMatcher(labeledDescriptors);
-    console.log('FaceMatcher inicializado con descriptores conocidos.');
 });
