@@ -8,6 +8,16 @@ require '../vendor/autoload.php';
 
 use Clases\Conexion;
 
+// Lista de direcciones IP permitidas
+$ip_permitidas = ['127.0.0.1', '::1']; // Localhost
+
+// Verificar si la IP del cliente está en la lista de permitidas
+if (!in_array($_SERVER['REMOTE_ADDR'], $ip_permitidas)) {
+    http_response_code(403); // Código de estado 403: Prohibido
+    echo json_encode(['message' => 'Acceso no autorizado.']);
+    exit;
+}
+
 // Crear una instancia de la clase Conexion
 $conn = new Conexion();
 
@@ -19,7 +29,7 @@ if (!$conn) {
 }
 
 // Consulta SQL para obtener los datos de la tabla tbio donde COD_TIPO_BIO = 1
-$sql = "SELECT COD_EMPLEADO, DATO_BIO FROM tbio WHERE COD_TIPO_BIO = 1";
+$sql = "SELECT COD_BIO, COD_TIPO_BIO, COD_EMPLEADO, DATO_BIO FROM tbio WHERE COD_TIPO_BIO = 1";
 $stmt = $conn->conexion->prepare($sql);
 $stmt->execute();
 // Array para almacenar los descriptores
@@ -48,6 +58,8 @@ if ($stmt->rowCount() > 0) {
         // Verificar que los datos tengan el formato correcto
         if (isset($data['nombre']) && isset($data['descriptor'])) {
             $descriptores[] = [
+                'cod_tipo' => $row['COD_TIPO_BIO'],
+                'cod_bio' => $row['COD_BIO'],
                 'cod_empleado' => $row['COD_EMPLEADO'],
                 'nombre' => $data['nombre'],
                 'descriptor' => $data['descriptor']

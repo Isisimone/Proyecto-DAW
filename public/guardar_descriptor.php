@@ -8,9 +8,12 @@ header('Content-Type: application/json');
 require '../vendor/autoload.php';
 
 use Clases\Conexion;
+use Clases\DatosBiometricos;
+use DateTime;
 
 // Crear una instancia de la clase Conexion
 $conn = new Conexion();
+$bio = new DatosBiometricos();
 
 
 // Verificar si la conexión fue exitosa
@@ -85,20 +88,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Insertar los datos en la base de datos
     try {
         // Preparar la consulta SQL
-        $sql = "INSERT INTO tbio (COD_TIPO_BIO, DATO_BIO, COD_EMPLEADO) VALUES (:cod_tipo_bio, :dato_bio, :cod_empleado)";
-        $stmt = $conn->conexion->prepare($sql);
+        //$sql = "INSERT INTO tbio (COD_TIPO_BIO, DATO_BIO, COD_EMPLEADO) VALUES (:cod_tipo_bio, :dato_bio, :cod_empleado)";
+        //$stmt = $conn->conexion->prepare($sql);
 
         // Asignar valores a los parámetros
         $cod_tipo_bio = 1; // COD_TIPO_BIO siempre será 1
         $dato_bio = $datos_guardar; // Datos encriptados
-        $cod_empleado = 1; // Usamos el nombre como COD_EMPLEADO
+        $cod_empleado = 1; // Usamos temporalmente el COD_EMPLEADO=1
+        $fecha=new DateTime(); //Fecha actual
+        $usuario='Admon'; // Usamos temporalmente el usuario
+
+        $bio->setCodTipo($cod_tipo_bio);
+        $bio->setDatoBio($dato_bio);
+        $bio->setCodEmpleado($cod_empleado);
+        $bio->setFecAlta($fecha->format('Y-m-d H:i:s'));
+        $bio->setNomUsuarioAlta($usuario);
+        $bio->grabar();
 
         // Ejecutar la consulta
-        $stmt->execute([
+        /*$stmt->execute([
             ':cod_tipo_bio' => $cod_tipo_bio,
             ':dato_bio' => $dato_bio,
             ':cod_empleado' => $cod_empleado
-        ]);
+        ]);*/
 
         // Mensaje de éxito
         echo json_encode(['message' => 'Descriptor guardado correctamente en la base de datos.']);

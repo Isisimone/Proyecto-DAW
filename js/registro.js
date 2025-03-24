@@ -8,6 +8,8 @@ const descriptoresConocidos = []; // Almacena los descriptores conocidos
 const UMBRAL_SIMILITUD = 0.6; // Umbral de similitud (ajusta según sea necesario)
 let intervaloAnalisis; // Intervalo de análisis del video
 let ultimoID="";
+let ultimoCodTipo="";
+let ultimoCodBio="";
 
 //Promesa de carga de modelos, hasta que no lo estén no se ejecuta el código
 //Necesario para dar tiempo a cargar los modelos de reconocimiento
@@ -136,6 +138,8 @@ function analizaVideo() {
                 if (result.match) {
                     estado.innerHTML = `¡Persona reconocida! Coincidencia: ${result.nombre}, Distancia: ${result.distance}, Empleado:${result.empleado}`;
                     ultimoID = `${result.empleado}`;
+                    ultimoCodBio = `${result.cod_bio}`;
+                    ultimoCodTipo = `${result.cod_tipo}`;
                     botonera.innerHTML = `<button class="btnVerde" id="reconocido">Soy ${result.nombre}</button>
                                         <button class="btnRojo" id="noReconocido">Soy otra persona</button>`;
                     clearInterval(intervaloAnalisis);
@@ -180,18 +184,42 @@ async function recargarDescriptores() {
     }
 }
 
-async function fichar(id){
+async function fichar(idD){
     try {
+        // Crear un canvas para capturar la imagen
+        const canvas = document.createElement('canvas');
+        const scaleFactor = 0.5; // Escalar al 50% del tamaño original
+        canvas.width = video.videoWidth * scaleFactor;
+        canvas.height = video.videoHeight * scaleFactor;
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convertir la imagen a Base64
+        const fotoBase64 = canvas.toDataURL('image/jpeg', 0.7); // Puedes usar 'image/png' si prefieres PNG
+
+        
+        
+        // Crear el objeto de datos a enviar
+        const datos ={
+            id: idD,
+            cod_bio: ultimoCodBio,
+            cod_tipo: ultimoCodTipo,
+            fecha: new Date().toISOString(),
+            incidencia:0,
+            pendiente:0,
+            obs: "",
+            foto: fotoBase64 // Incluir la imagen capturada
+        };
+        // Enviar los datos al servidor
         const response = await fetch('http://localhost:3000/fichar', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({id}), // Enviar el ID del empleado
+            body: JSON.stringify(datos), // Enviar el ID del empleado
         });
-        console.log(id);
+        
         const result = await response.json();
-        console.log(result.message); // Mostrar el mensaje del servidor
     } catch (error) {
         console.error('Error al fichar:', error);
     }

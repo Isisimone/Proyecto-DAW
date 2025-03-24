@@ -25,6 +25,29 @@ app.use(bodyParser.json());
 let faceMatcher = null;
 const descriptoresConocidos = [];
 
+//Función para lanzar registro
+async function registrar(empleado, cod_bio,cod_tipo,foto,fec,incidencia,pendiente,obs,foto){
+    const datos = {
+        empleado: empleado, // ID del empleado
+        bio: cod_bio, // Código biométrico
+        foto: foto, // Foto en formato base64
+        tipo_acceso: cod_tipo, // Tipo de acceso
+        fec_marcaje: fec, // Fecha de marcaje
+        incidencia: incidencia, // Indicador de incidencia
+        pendiente: pendiente, // Indicador de pendiente
+        obs: obs, // Observaciones
+        foto: foto
+    };
+    // Enviar los datos con axios
+        axios.post('http://localhost/Proyecto-DAW/public/registrar.php', datos)
+        .then(response => {
+            console.log('Respuesta del servidor:', response.data);
+        })
+        .catch(error => {
+            console.error('Error al enviar los datos:', error.message);
+});
+}
+
 // Función para cargar descriptores desde el archivo PHP
 async function cargarDescriptores() {
     try {
@@ -45,6 +68,8 @@ async function cargarDescriptores() {
             if (item.nombre && item.descriptor && Array.isArray(item.descriptor)) {
                 descriptoresConocidos.push({
                     empleado: item.cod_empleado,
+                    cod_tipo: item.cod_tipo,
+                    cod_bio: item.cod_bio,
                     nombre: item.nombre,
                     descriptor: new Float32Array(item.descriptor) // Convertir a Float32Array
                 });
@@ -70,14 +95,14 @@ app.post('/recognize', (req, res) => {
     const descriptor = new Float32Array(req.body.descriptor);
     const mejorMatch = faceMatcher.findBestMatch(descriptor);
     if (mejorMatch.distance < 0.7) { // Ajusta el umbral según sea necesario
-        const [id_empleado, nombre] = mejorMatch.label.split('-');
+        const [id_empleado, nombre,codtipo,codbio] = mejorMatch.label.split('-');
         // Generar una clave aleatoria
         const clave = Math.random().toString(36).substring(2, 15);
 
         // Asociar la clave con el ID del empleado
         clavesTemporales[clave] = id_empleado;
 
-        res.json({ match: true, empleado: clave, nombre: nombre, distance: mejorMatch.distance });
+        res.json({ match: true, cod_bio:codbio,cod_tipo: codtipo,empleado: clave, nombre: nombre, distance: mejorMatch.distance });
     } else {
         res.json({ match: false });
     }
@@ -98,7 +123,7 @@ app.post('/reload-descriptors', async (req, res) => {
 
         // Crear LabeledFaceDescriptors
         const labeledDescriptors = descriptoresConocidos.map((item) => (
-            new LabeledFaceDescriptors(`${item.empleado}-${item.nombre}`, [item.descriptor])
+            new LabeledFaceDescriptors(`${item.empleado}-${item.nombre}-${item.cod_tipo}-${item.cod_bio}`, [item.descriptor])
         ));
 
         // Actualizar FaceMatcher
@@ -115,18 +140,23 @@ app.post('/reload-descriptors', async (req, res) => {
 //Confirmación de identidad
 app.post('/fichar', async (req, res) => {
     try{
-        const { id } = req.body; // Recoger el ID del empleado enviado por el cliente
+        const { id, cod_bio, cod_tipo,fecha, incidencia,pendiente,obs, foto } = req.body; // Recoger el ID del empleado enviado por el cliente
         // Validar la clave
         if (!clavesTemporales[id]) {
             return res.status(400).json({ error: 'Clave inválida o expirada.' });
         }
-
+        if (!fecha){
+            fec=new Date().toISOString();
+        } else{
+            fec=fecha;
+        }
         // Recuperar el ID del empleado asociado a la clave
         const id_empleado = clavesTemporales[id];
 
         // Eliminar la clave para que no pueda reutilizarse
         delete clavesTemporales[id];
-
+        console.log(`Cod_Bio:${cod_bio}`);
+        registrar(id_empleado,cod_bio,cod_tipo,'',fec,incidencia,pendiente,obs, foto);
         
         console.log(`Empleado que fichó: ${id_empleado} con Clave ${id}`); // Mostrar en consola
 
@@ -151,7 +181,7 @@ app.listen(port, async () => {
 
     // Crear LabeledFaceDescriptors
     const labeledDescriptors = descriptoresConocidos.map((item) => (
-        new LabeledFaceDescriptors(`${item.empleado}-${item.nombre}`, [item.descriptor])
+        new LabeledFaceDescriptors(`${item.empleado}-${item.nombre}-${item.cod_tipo}-${item.cod_bio}`, [item.descriptor])
     ));
 
     // Inicializar FaceMatcher

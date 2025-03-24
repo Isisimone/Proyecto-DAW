@@ -27,97 +27,6 @@ class Marcaje{
         $this->cod_Marcaje = 0;        
     }
 
-    // Getters
-    public function getCodMarcaje(): int {
-        return $this->cod_Marcaje;
-    }
-
-    public function getCodTipoMarcaje(): int {
-        return $this->cod_Tipo_Marcaje;
-    }
-
-    public function getCodEmpleado(): int {
-        return $this->cod_Empleado;
-    }
-
-    public function getCodBio(): int {
-        return $this->cod_bio;
-    }
-
-    public function getFecMarcaje(): DateTime {
-        return $this->fec_Marcaje;
-    }
-
-    public function getFecGrabacion(): DateTime {
-        return $this->fec_Grabacion;
-    }
-
-    public function getIncidencia(): bool {
-        return $this->incidencia;
-    }
-
-    public function getPendiente(): bool {
-        return $this->pendiente;
-    }
-
-    public function getFoto(): string {
-        return $this->foto;
-    }
-
-    public function getTipoAcceso(): string {
-        return $this->tipoAcceso;
-    }
-
-    public function getObs(): string {
-        return $this->obs;
-    }
-
-
-    // Setters
-
-    public function setCodMarcaje(int $cod_Marcaje): void {
-        $this->cod_Marcaje = $cod_Marcaje;
-    }
-
-    public function setCodTipoMarcaje(int $cod_Tipo_Marcaje): void {
-        $this->cod_Tipo_Marcaje = $cod_Tipo_Marcaje;
-    }
-
-    public function setCodEmpleado(int $cod_Empleado): void {
-        $this->cod_Empleado = $cod_Empleado;
-    }
-
-    public function setCodBio(int $cod_bio): void {
-        $this->cod_bio = $cod_bio;
-    }
-
-    public function setFecMarcaje(DateTime $fec_Marcaje): void {
-        $this->fec_Marcaje = $fec_Marcaje;
-    }
-
-    public function setFecGrabacion(DateTime $fec_Grabacion): void {
-        $this->fec_Grabacion = $fec_Grabacion;
-    }
-
-    public function setIncidencia(bool $incidencia): void {
-        $this->incidencia = $incidencia;
-    }
-
-    public function setPendiente(bool $pendiente): void {
-        $this->pendiente = $pendiente;
-    }
-
-    public function setFoto(string $foto): void {
-        $this->foto = $foto;
-    }
-
-    public function setTipoAcceso(string $tipoAcceso): void {
-        $this->tipoAcceso = $tipoAcceso;
-    }
-
-    public function setObs(string $obs): void {
-        $this->obs = $obs;
-    }
 
 
     //Destructor
@@ -133,6 +42,31 @@ class Marcaje{
         unset($this->foto);
         unset($this->tipoAcceso);
         unset($this->obs);
+    }
+
+    //Método para obtener el último marcaje
+    public function ultimoMarcaje($empleado){
+        $conexion = new Conexion();
+        $consulta = $conexion->conexion->prepare("SELECT COD_TIPO_MARCAJE FROM tmarcaje WHERE COD_EMPLEADO = :cod ORDER BY FEC_MARCAJE DESC LIMIT 1");
+        $consulta->bindValue(':cod', $empleado, PDO::PARAM_INT);
+        $consulta->execute();
+        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+            return $resultado['COD_TIPO_MARCAJE'];
+    }
+
+    //Método para marcar de una sola vez
+    public function marcar($tipo,$empleado,$cod_bio,$fec_Mar,$fec_Grab,$incidencia,$pendiente,$foto,$tipo_acceso,$obs){
+        $this->setCodTipoMarcaje($tipo);
+        $this->setCodEmpleado($empleado);
+        $this->setCodBio($cod_bio);
+        $this->setFecMarcaje(new DateTime($fec_Mar));
+        $this->setFecGrabacion(new DateTime($fec_Grab));
+        $this->setIncidencia($incidencia);
+        $this->setPendiente($pendiente);
+        $this->setFoto($foto);
+        $this->setTipoAcceso($tipo_acceso);
+        $this->setObs($obs);
+        $this->grabar();
     }
 
     //Método para registrar el marcaje en la bbdd
@@ -219,4 +153,97 @@ class Marcaje{
             }
             return $marcajes;*/
         }
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<   GETTERS Y SETTERS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    // Getters
+    public function getCodMarcaje(): int {
+        return $this->cod_Marcaje;
+    }
+
+    public function getCodTipoMarcaje(): int {
+        return $this->cod_Tipo_Marcaje;
+    }
+
+    public function getCodEmpleado(): int {
+        return $this->cod_Empleado;
+    }
+
+    public function getCodBio(): int {
+        return $this->cod_bio;
+    }
+
+    public function getFecMarcaje(): DateTime {
+        return $this->fec_Marcaje;
+    }
+
+    public function getFecGrabacion(): DateTime {
+        return $this->fec_Grabacion;
+    }
+
+    public function getIncidencia(): int {
+        return $this->incidencia;
+    }
+
+    public function getPendiente(): int {
+        return $this->pendiente;
+    }
+
+    public function getFoto(): string {
+        return $this->foto;
+    }
+
+    public function getTipoAcceso(): string {
+        return $this->tipoAcceso;
+    }
+
+    public function getObs(): string {
+        return $this->obs;
+    }
+
+
+    // Setters
+
+    public function setCodMarcaje(int $cod_Marcaje): void {
+        $this->cod_Marcaje = $cod_Marcaje;
+    }
+
+    public function setCodTipoMarcaje(int $cod_Tipo_Marcaje): void {
+        $this->cod_Tipo_Marcaje = $cod_Tipo_Marcaje;
+    }
+
+    public function setCodEmpleado(int $cod_Empleado): void {
+        $this->cod_Empleado = $cod_Empleado;
+    }
+
+    public function setCodBio(int $cod_bio): void {
+        $this->cod_bio = $cod_bio;
+    }
+
+    public function setFecMarcaje(DateTime $fec_Marcaje): void {
+        $this->fec_Marcaje = $fec_Marcaje;
+    }
+
+    public function setFecGrabacion(DateTime $fec_Grabacion): void {
+        $this->fec_Grabacion = $fec_Grabacion;
+    }
+
+    public function setIncidencia(int $incidencia): void {
+        $this->incidencia = $incidencia;
+    }
+
+    public function setPendiente(int $pendiente): void {
+        $this->pendiente = $pendiente;
+    }
+
+    public function setFoto(string $foto): void {
+        $this->foto = $foto;
+    }
+
+    public function setTipoAcceso(string $tipoAcceso): void {
+        $this->tipoAcceso = $tipoAcceso;
+    }
+
+    public function setObs(string $obs): void {
+        $this->obs = $obs;
+    }
+
 }
