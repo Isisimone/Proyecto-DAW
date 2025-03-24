@@ -1,6 +1,7 @@
 <?php
 
 namespace Clases;
+//Cargo librerías
 use DateTime;
 use PDO;            //Librerías PDO
 use PDOException;
@@ -19,7 +20,7 @@ class DatosBiometricos{
 
     // Constructor
     public function __construct() {
-        $this->cod_bio=0;
+        $this->cod_bio=0; //no puede ser null
     }
 
     
@@ -29,17 +30,22 @@ class DatosBiometricos{
         // Crear la conexión
         try{
         $conexion = new Conexion();
+        //Si no hay cod_bio se define un INSERT
         if ($this->cod_bio==0 || is_null($this->cod_bio)){
             // Crear la sentencia SQL
             $sql = "INSERT INTO tbio (COD_EMPLEADO, COD_TIPO_BIO, DATO_BIO, FEC_ALTA, NOM_USUARIO_ALTA) 
             VALUES (:cod_Empleado, :cod_Tipo, :dato_Bio, :fec_Alta, :nom_Usuario_Alta)";
             // Preparar la sentencia
             $stmt = $conexion->conexion->prepare($sql);
+        //Si hay cod_bio prepara un UPDATE
         } else {
+            //crea la sentencia
             $sql="UPDATE tbio SET COD_EMPLEADO = :cod_Empleado, COD_TIPO_BIO = :cod_Tipo, DATO_BIO = :dato_Bio, 
             FEC_ALTA = :fec_Alta, NOM_USUARIO_ALTA = :nom_Usuario_Alta 
             WHERE COD_BIO = :cod_Bio";
+            //Prepara la sentencia
             $stmt = $conexion->conexion->prepare($sql);
+            //Añade el parámetro cod_bio
             $stmt->bindValue('cod_Bio', $this->cod_bio, PDO::PARAM_INT);
         }
         // Asignar valores a los parámetros
@@ -53,6 +59,7 @@ class DatosBiometricos{
         // Devolver el resultado de la sentencia
         return $stmt->rowCount() > 0;
         } catch(PDOException $e){
+            //En caso de error muestra mensaje
             echo "Error al grabar:".$e;
         }
     }
@@ -106,6 +113,39 @@ class DatosBiometricos{
         // Devolver la instancia de DatosBiometricos
         return $datosBiometricos;
     }
+
+    //Método para obtener todos los registros por tipo
+    public static function listarPorTipo(int $cod_tipo): array {
+        //Crea la conexión  
+        $conexion = new Conexion();
+        //Define la sentencia SQL
+        $sql = "SELECT * FROM tbio WHERE COD_TIPO_BIO = :cod_tipo";
+        //Preparamos la consulta
+        $stmt = $conexion->conexion->prepare($sql);
+        //Parámetros
+        $stmt->bindValue(':cod_tipo', $cod_tipo, PDO::PARAM_INT);
+        //Ejecuta
+        $stmt->execute();
+        //Vuelca los resultados
+        $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        //Defino un array para almacenar los objetos de tipo DatosBiometricos
+        $lista = [];
+        //Recorre los resultados
+        foreach ($resultados as $resultado) {
+            //Crea un objeto y vuelca los datos en él
+            $datosBiometricos = new DatosBiometricos();
+            $datosBiometricos->setCodBio($resultado['COD_BIO']);
+            $datosBiometricos->setCodEmpleado($resultado['COD_EMPLEADO']);
+            $datosBiometricos->setCodTipo($resultado['COD_TIPO_BIO']);
+            $datosBiometricos->setDatoBio($resultado['DATO_BIO']);
+            $datosBiometricos->setFecAlta(new DateTime($resultado['FEC_ALTA']));
+            $datosBiometricos->setNomUsuarioAlta($resultado['NOM_USUARIO_ALTA']);
+            //Se añade a la lista
+            $lista[] = $datosBiometricos;
+        }
+    //Devuelve un array de objetos DatosBiometricos
+    return $lista;
+}
 
 //<<<<<<<<<<<<<<<<<<<<< GETTERS Y SETTERS >>>>>>>>>>>>>>>>>>>>>>>>>>
 

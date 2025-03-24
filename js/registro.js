@@ -67,16 +67,18 @@ async function guardarRostro() {
         const descriptor = rostro.descriptor;
         const nombre = prompt("Introduce un nombre para este rostro:");
         if (nombre) {
-            //descriptoresConocidos.push({ nombre, descriptor }); //Esto es solo para uso local
-            await guardarDescriptorEnServidor(nombre, descriptor);
+            //Mandamos el descriptor empleado y usuario que realiza el alta
+            //Modificar cuando haya <<<<<<<<<<< BACK-END >>>>>>>>>>>>>>>>
+            await guardarDescriptorEnServidor(nombre, descriptor,1,'Admon');
             //actualizarFaceMatcher();
         }
     }
 }
 
 //Llama al PHP que realiza los cambios en el servidor <<<<meter parámetros desde administración.php>>>
-async function guardarDescriptorEnServidor(nombre, descriptor) {
-    const data = {nombre, descriptor: Array.from(descriptor) };//Aquí se deben introducir el cod_Empleado y el usuario_Alta
+async function guardarDescriptorEnServidor(nombre, descriptor,empleado,usuario) {
+    //Agrupamos los datos a enviar
+    const data = {nombre, descriptor: Array.from(descriptor),empleado,usuario };//Aquí se deben introducir el cod_Empleado y el usuario_Alta
     try {
         //Se manda por POST los datos al servidor definiendo en response el envío y los datos.
         const response = await fetch('guardar_descriptor.php', {

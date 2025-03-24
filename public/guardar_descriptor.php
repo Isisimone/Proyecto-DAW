@@ -64,12 +64,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Obtener el nombre y el descriptor de los datos obtenidos
+    // Obtener el nombre y el descriptor de los datos obtenidos y el empleado y usuario
     $nombre = $data['nombre'];
-    //$miembros_label = explode('-', $data['nombre']);
-    //$empleado = $miembros_label[2];
-    //var_dump($nombre);
-    $empleado=1;
+    $usuarioData = $data['usuario'];
+    $empleado=$data['empleado'];
     $descriptor = $data['descriptor'];
 
     // Verificar que el descriptor tenga 128 valores
@@ -77,9 +75,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['message' => 'Error: El descriptor debe tener 128 valores.']);
         exit;
     }
-
-    // Convertir el array a JSON
-    $json_data = json_encode($data);
+    // Convertir el array a JSON solo del nombre y el descriptor
+    $datos_descriptor = [
+        'nombre'=>$data['nombre'],
+        'descriptor'=>$data['descriptor']
+    ];
+    $json_data = json_encode($datos_descriptor);
 
     // Encriptar los datos
     $metodo = 'AES-256-CBC'; // Método de encriptación
@@ -96,9 +97,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Asignar valores a los parámetros
         $cod_tipo_bio = 1; // COD_TIPO_BIO siempre será 1, ya que este método es para rostros
         $dato_bio = $datos_guardar; // Datos encriptados
-        $cod_empleado = $empleado; // Usamos el dato obtenido mediante explode
+        $cod_empleado = $empleado; //Empleado
         $fecha=new DateTime(); //Fecha actual
-        $usuario='Admon'; // Usamos temporalmente este usuario <<<<<<<<< ADMINISTRACION.PHP >>>>>>
+        $usuario=$usuarioData; //Usuario de Alta
         //Grabamos los parámetros del objeto $bio
         $bio->setCodBio(0);//Indicamos con 0 que es nuevo. Debería de cargar igualmente 0 en el constructor
         $bio->setCodTipo($cod_tipo_bio);

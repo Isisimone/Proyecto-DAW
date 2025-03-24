@@ -1,21 +1,24 @@
 <?php
 session_start();
+//Carga librerías de Composer
 require '../vendor/autoload.php';
 
-// Si ya hay una sesión activa, redirigir al dashboard
+// Si ya hay una sesión activa, redirige según ROL
 if (isset($_SESSION['COD_USUARIO'])) {
     if (in_array('Empleado',$_SESSION['ROLES'])){
         header('Location: empleado.php');
         exit();
     }
     if (in_array('Conserje',$_SESSION['ROLES'])){
-        
+        //Espacio para iniciar si no se descarta el rol
     }else {
+        //Si no tiene el rol Conserje vuelve a login para que le redirija
         header('Location: login.php');
             exit();
     }
     
 } else {
+    //Si no hay sesión manda a login
     header('Location: login.php');
         exit();
 }
@@ -28,7 +31,6 @@ if (isset($_SESSION['COD_USUARIO'])) {
     <title>Control horario facial</title>
     <link rel="stylesheet" href="../css/registro.css">
     <script defer src="../js/face-api.min.js"></script>
-    <!--<script defer src="https://cdn.jsdelivr.net/npm/face-api.js"></script> Guardar por si falla librería local-->
     <script defer src="../js/registro.js"></script>
 </head>
 <body>

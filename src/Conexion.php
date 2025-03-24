@@ -31,10 +31,12 @@ class Conexion {
         } else {
             //Leo los datos de conexión desde el archivo
             $datos = file($ruta_clave);
+            //Vuelco los datos eliminando espacios en blanco, saltos de línea, etc...
             $this->host = trim($datos[0]);
             $this->db = trim($datos[1]);
             $this->user = trim($datos[2]);
             $this->pass = trim($datos[3]);
+            //Ceo la cadena de conexión
             $this->dsn = "mysql:host={$this->host};dbname={$this->db};charset=utf8mb4";
             //Creo la conexión con la base de datos
             $this->crearConexion();
@@ -42,6 +44,7 @@ class Conexion {
     }
 
     //Método para crear la conexión con la base de datos
+    //Dejo método público durante desarrollo
     public function crearConexion() {
         try {
             //Creo la conexión con la base de datos
@@ -52,6 +55,7 @@ class Conexion {
             //Establezco el modo de error de la conexión
             $this->conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (\PDOException $e) {
+            //En caso de error termina y muestra mensaje
             die("Error al conectar a la base de datos: " . $e->getMessage());
         }
         //Devuelvo la conexión

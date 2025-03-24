@@ -1,7 +1,7 @@
 <?php
 
 namespace Clases;
-
+//Clases a usar
 use DateTime;
 use PDO;
 use PDOException;
@@ -46,15 +46,25 @@ class Marcaje{
 
     //Método para obtener el último marcaje
     public function ultimoMarcaje($empleado){
-        $conexion = new Conexion();
-        $consulta = $conexion->conexion->prepare("SELECT COD_TIPO_MARCAJE FROM tmarcaje WHERE COD_EMPLEADO = :cod ORDER BY FEC_MARCAJE DESC LIMIT 1");
-        $consulta->bindValue(':cod', $empleado, PDO::PARAM_INT);
-        $consulta->execute();
-        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+        try{
+            //Crea una conexión y una consulta SELECT
+            $conexion = new Conexion();
+            $consulta = $conexion->conexion->prepare("SELECT COD_TIPO_MARCAJE FROM tmarcaje WHERE COD_EMPLEADO = :cod ORDER BY FEC_MARCAJE DESC LIMIT 1");
+            //Parametriza y ejecuta
+            $consulta->bindValue(':cod', $empleado, PDO::PARAM_INT);
+            $consulta->execute();
+            //Vuelca el resultado
+            $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+            //Devuelve el tipo de marcaje para saber si entra (1) o sale (2)
             return $resultado['COD_TIPO_MARCAJE'];
+        }catch(PDOException $e){
+            //Muestra error y devuelve false
+            error_log("Error al obtener marcaje: " . $e->getMessage());
+            return false;
+        }
     }
 
-    //Método para marcar de una sola vez
+    //Método para marcar de una sola vez, rellena todos los parámetros
     public function marcar($tipo,$empleado,$cod_bio,$fec_Mar,$fec_Grab,$incidencia,$pendiente,$foto,$tipo_acceso,$obs){
         $this->setCodTipoMarcaje($tipo);
         $this->setCodEmpleado($empleado);
@@ -71,87 +81,104 @@ class Marcaje{
 
     //Método para registrar el marcaje en la bbdd
     public function grabar(): bool {
-        $conexion = new Conexion();
-        if ($this->cod_Marcaje==0 || is_null($this->cod_Marcaje)){
-            $sql = "INSERT INTO tmarcaje (COD_TIPO_MARCAJE, COD_EMPLEADO, COD_BIO, DES_FOTO, FEC_MARCAJE, FEC_GRABACION, IND_INCIDENCIA, IND_PENDIENTE, COD_TIPO_ACCESO, DES_OBSERVACIONES) 
-            VALUES (:COD_TIPO_MARCAJE, :COD_EMPLEADO, :COD_BIO, :DES_FOTO, :FEC_MARCAJE, :FEC_GRABACION, :IND_INCIDENCIA, :IND_PENDIENTE, :COD_TIPO_ACCESO, :DES_OBSERVACIONES)";
-            $stmt = $conexion->conexion->prepare($sql);
-        }else{
-            $sql ="UPDATE tmarcaje SET COD_TIPO_MARCAJE = :COD_TIPO_MARCAJE, COD_EMPLEADO = :COD_EMPLEADO
-            , COD_BIO = :COD_BIO, DES_FOTO=:DES_FOTO, FEC_MARCAJE=:FEC_MARCAJE
-            , FEC_GRABACION=:FEC_GRABACION, IND_INCIDENCIA=:IND_INCIDENCIA, IND_PENDIENTE=:IND_PENDIENTE
-            , COD_TIPO_ACCESO= :COD_TIPO_ACCESO, DES_OBSERVACIONES =:DES_OBSERVACIONES 
-            WHERE COD_MARCAJE=:cod_Marcaje";
-            $stmt = $conexion->conexion->prepare($sql);
-            $stmt->bindValue(':cod_Marcaje', $this->cod_Marcaje);
+        try{
+            $conexion = new Conexion();
+            //Si no hay cod_Marcaje prepara un INSERT
+            if ($this->cod_Marcaje==0 || is_null($this->cod_Marcaje)){
+                $sql = "INSERT INTO tmarcaje (COD_TIPO_MARCAJE, COD_EMPLEADO, COD_BIO, DES_FOTO, FEC_MARCAJE, FEC_GRABACION, IND_INCIDENCIA, IND_PENDIENTE, COD_TIPO_ACCESO, DES_OBSERVACIONES) 
+                VALUES (:COD_TIPO_MARCAJE, :COD_EMPLEADO, :COD_BIO, :DES_FOTO, :FEC_MARCAJE, :FEC_GRABACION, :IND_INCIDENCIA, :IND_PENDIENTE, :COD_TIPO_ACCESO, :DES_OBSERVACIONES)";
+                $stmt = $conexion->conexion->prepare($sql);
+            //Si hay cod_Marcaje prepara un UPDATE
+            }else{
+                $sql ="UPDATE tmarcaje SET COD_TIPO_MARCAJE = :COD_TIPO_MARCAJE, COD_EMPLEADO = :COD_EMPLEADO
+                , COD_BIO = :COD_BIO, DES_FOTO=:DES_FOTO, FEC_MARCAJE=:FEC_MARCAJE
+                , FEC_GRABACION=:FEC_GRABACION, IND_INCIDENCIA=:IND_INCIDENCIA, IND_PENDIENTE=:IND_PENDIENTE
+                , COD_TIPO_ACCESO= :COD_TIPO_ACCESO, DES_OBSERVACIONES =:DES_OBSERVACIONES 
+                WHERE COD_MARCAJE=:cod_Marcaje";
+                $stmt = $conexion->conexion->prepare($sql);
+                $stmt->bindValue(':cod_Marcaje', $this->cod_Marcaje);
+            }
+            //Parametriza la consulta
+            $stmt->bindValue(':COD_TIPO_MARCAJE', $this->cod_Tipo_Marcaje);
+            $stmt->bindValue(':COD_EMPLEADO', $this->cod_Empleado);
+            $stmt->bindValue(':COD_BIO', $this->cod_bio);
+            $stmt->bindValue(':DES_FOTO', $this->foto);
+            $stmt->bindValue(':FEC_MARCAJE', $this->fec_Marcaje->format('Y-m-d H:i:s'));
+            $stmt->bindValue(':FEC_GRABACION', $this->fec_Grabacion->format('Y-m-d H:i:s'));
+            $stmt->bindValue(':IND_INCIDENCIA',$this->incidencia);
+            $stmt->bindValue(':IND_PENDIENTE', $this->pendiente);
+            $stmt->bindValue(':COD_TIPO_ACCESO', $this->tipoAcceso);
+            $stmt->bindValue(':DES_OBSERVACIONES', $this->obs);
+            //Ejecuta la consulta
+            $stmt->execute();
+            //Elimina el objeto conexión
+            $conexion = null;
+            //Devuelve true
+            return true;
+        }catch(PDOException $e){
+            //Muestra error y devuelve false
+            error_log("Error al grabar marcaje: " . $e->getMessage());
+            return false;
         }
-        $stmt->bindValue(':COD_TIPO_MARCAJE', $this->cod_Tipo_Marcaje);
-        $stmt->bindValue(':COD_EMPLEADO', $this->cod_Empleado);
-        $stmt->bindValue(':COD_BIO', $this->cod_bio);
-        $stmt->bindValue(':DES_FOTO', $this->foto);
-        $stmt->bindValue(':FEC_MARCAJE', $this->fec_Marcaje->format('Y-m-d H:i:s'));
-        $stmt->bindValue(':FEC_GRABACION', $this->fec_Grabacion->format('Y-m-d H:i:s'));
-        $stmt->bindValue(':IND_INCIDENCIA',$this->incidencia);
-        $stmt->bindValue(':IND_PENDIENTE', $this->pendiente);
-        $stmt->bindValue(':COD_TIPO_ACCESO', $this->tipoAcceso);
-        $stmt->bindValue(':DES_OBSERVACIONES', $this->obs);
-        $stmt->execute();
-        $conexion = null;
-        return true;
     }
 
     //Método para cargar los datos de un marcaje
     public function cargar(int $cod_Marcaje): Marcaje {
-        $conexion = new Conexion();
-        $consulta = $conexion->conexion->prepare("SELECT * FROM tmarcaje WHERE COD_MARCAJE = :cod_Marcaje");
-        $consulta->bindParam(':cod_Marcaje', $cod_Marcaje);
-        $consulta->execute();
-        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
-        if (!$resultado) {
-            return $resultado;
+        try{
+            //Crea la conexión y prepara la consulta SELECT
+            $conexion = new Conexion();
+            $consulta = $conexion->conexion->prepare("SELECT * FROM tmarcaje WHERE COD_MARCAJE = :cod_Marcaje");
+            //Parmetriza y ejecuta
+            $consulta->bindParam(':cod_Marcaje', $cod_Marcaje);
+            $consulta->execute();
+            //Vuelca el resultado
+            $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+            if (!$resultado) {
+                //si no hay resultado devuelve false
+                return $resultado;
+            }
+            //volcamos el resultado en los parámetros
+            $this->cod_Marcaje = $resultado['COD_MARCAJE'];
+            $this->cod_Tipo_Marcaje = $resultado['COD_TIPO_MARCAJE'];
+            $this->cod_Empleado = $resultado['COD_EMPLEADO'];
+            $this->cod_bio = $resultado['COD_BIO'];
+            $this->fec_Marcaje = new DateTime($resultado['FEC_MARCAJE']);
+            $this->hor_Marcaje = new DateTime($resultado['HOR_MARCAJE']);
+            $this->fec_Grabacion = new DateTime($resultado['FEC_GRABACION']);
+            $this->hor_Grabacion = new DateTime($resultado['HOR_GRABACION']);
+            $this->incidencia = $resultado['IND_INCIDENCIA'];
+            $this->pendiente = $resultado['IND_PENDIENTE'];
+            $this->foto = $resultado['DES_FOTO'];
+            $this->tipoAcceso = $resultado['COD_TIPO_ACCESO'];
+            $this->obs = $resultado['DES_OBSERVACIONES'];
+            //devuelve el objeto mismo
+            return $this;
+        }catch(PDOException $e){
+            //Muestra error y devuelve false
+            error_log("Error al cargar marcaje: " . $e->getMessage());
+            return false;
         }
-        $this->cod_Marcaje = $resultado['COD_MARCAJE'];
-        $this->cod_Tipo_Marcaje = $resultado['COD_TIPO_MARCAJE'];
-        $this->cod_Empleado = $resultado['COD_EMPLEADO'];
-        $this->cod_bio = $resultado['COD_BIO'];
-        $this->fec_Marcaje = new DateTime($resultado['FEC_MARCAJE']);
-        $this->hor_Marcaje = new DateTime($resultado['HOR_MARCAJE']);
-        $this->fec_Grabacion = new DateTime($resultado['FEC_GRABACION']);
-        $this->hor_Grabacion = new DateTime($resultado['HOR_GRABACION']);
-        $this->incidencia = $resultado['IND_INCIDENCIA'];
-        $this->pendiente = $resultado['IND_PENDIENTE'];
-        $this->foto = $resultado['DES_FOTO'];
-        $this->tipoAcceso = $resultado['COD_TIPO_ACCESO'];
-        $this->obs = $resultado['DES_OBSERVACIONES'];
-        return $this;
     }
 
         //Método para cargar conjunto de marcajes entre fechas
         public function cargarMarcajesEntreFechas(DateTime $fechaInicio, DateTime $fechaFin): array {
-            $conexion = new Conexion();
-            $consulta = $conexion->conexion->prepare("SELECT * FROM tmarcaje WHERE FEC_MARCAJE BETWEEN :fechaInicio AND :fechaFin");
-            $consulta->bindValue(':fechaInicio', $fechaInicio->format('Y-m-d H:i:s'));
-            $consulta->bindValue(':fechaFin', $fechaFin->format('Y-m-d H:i:s'));
-            $consulta->execute();
-            $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
-            return $resultado;
-            /*$marcajes = [];
-            foreach ($resultado as $marcaje) {
-                $marcajeObj = new Marcaje();
-                $marcajeObj->setCodMarcaje($marcaje['COD_MARCAJE']);
-                $marcajeObj->setCodTipoMarcaje($marcaje['COD_TIPO_MARCAJE']);
-                $marcajeObj->setCodEmpleado($marcaje['COD_EMPLEADO']);
-                $marcajeObj->setCodBio($marcaje['COD_BIO']);
-                $marcajeObj->setFecMarcaje(new DateTime($marcaje['FEC_MARCAJE']));
-                $marcajeObj->setFecGrabacion(new DateTime($marcaje['FEC_GRABACION']));
-                $marcajeObj->setIncidencia($marcaje['IND_INCIDENCIA']);
-                $marcajeObj->setPendiente($marcaje['IND_PENDIENTE']);
-                $marcajeObj->setFoto($marcaje['DES_FOTO']);
-                $marcajeObj->setTipoAcceso($marcaje['COD_TIPO_ACCESO']);
-                $marcajeObj->setObs($marcaje['DES_OBSERVACIONES']);
-                $marcajes[] = $marcajeObj;
+            try{
+                //Crea conexión de tipo SELECT
+                $conexion = new Conexion();
+                $consulta = $conexion->conexion->prepare("SELECT * FROM tmarcaje WHERE FEC_MARCAJE BETWEEN :fechaInicio AND :fechaFin");
+                //Parametriza y ejecuta
+                $consulta->bindValue(':fechaInicio', $fechaInicio->format('Y-m-d H:i:s'));
+                $consulta->bindValue(':fechaFin', $fechaFin->format('Y-m-d H:i:s'));
+                $consulta->execute();
+                //Vuelca y devuelve el resultado
+                $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
+                return $resultado;
+            }catch(PDOException $e){
+                //Muestra error y devuelve false
+                error_log("Error al cargar marcajes: " . $e->getMessage());
+                return false;
             }
-            return $marcajes;*/
+            
         }
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<   GETTERS Y SETTERS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     // Getters

@@ -1,18 +1,16 @@
 <?php
 session_start();
-
+//Cargamos librerías de Composer
 require '../vendor/autoload.php';
 
 // Si ya hay una sesión activa, redirigir al dashboard
 if (isset($_SESSION['COD_USUARIO'])) {
-    /*if (in_array('Admin',$_SESSION['ROLES'])){
-        header('Location: administracion.php');
-        exit();
-    }*/
+   //Si es empleado redirije a empleado.php
     if (in_array('Empleado',$_SESSION['ROLES'])){
         header('Location: empleado.php');
         exit();
     }
+    //Si es conserje redirije a wellcome.php
     if (in_array('Conserje',$_SESSION['ROLES'])){
         header('Location: wellcome.php');
         exit();
@@ -20,21 +18,23 @@ if (isset($_SESSION['COD_USUARIO'])) {
     
 }
 
+//Clases a usar
 use Clases\Usuario;
 use Clases\Rol;
 use Clases\Transaccion;
-
+//Inicializar datos necesarios
 $error="";
 
-// Si se envía el formulario
+// Si se recibe el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    //Volcamos el usuario y la contraseña enviadas
     $usuario = $_POST['usuario'];
     $contrasena = $_POST['contrasena'];
 
-    // Crear un objeto de la clase Usuario y verificar las credenciales
+    // Crear un objeto de la clase Usuario e iniciamos sesión
     $usuarioObj = new Usuario();
     if ($usuarioObj->iniciarSesion($usuario, $contrasena)) {
-        header('Location: login.php'); // Redirigir al dashboard si el login es correcto
+        header('Location: login.php'); // Redirigir a login.php si el login es correcto para leer $_SESSION
         exit();
     } else {
         $error = 'Usuario o contraseña incorrectos'; // Mostrar error si las credenciales son incorrectas

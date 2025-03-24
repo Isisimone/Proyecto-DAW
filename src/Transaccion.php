@@ -1,6 +1,7 @@
 <?php
 
 namespace Clases;
+//Carga las clases
 use PDO;
 use PDOException;
 use DateTime;
@@ -26,24 +27,28 @@ class Transaccion{
 //Método crear transaccion que escribe en la bbdd a partir del objeto
     public function nueva() {
         try{
-        $conexion = new Conexion();    
-        $sql = "INSERT INTO ttransacciones (TIP_TRANS, DESC_TRANS, COD_OBJ, NOM_OBJ, COD_USUARIO, FEC_SIS, IP_USUARIO) 
+            //Crea la conexión y prepara un insert
+            $conexion = new Conexion();    
+            $sql = "INSERT INTO ttransacciones (TIP_TRANS, DESC_TRANS, COD_OBJ, NOM_OBJ, COD_USUARIO, FEC_SIS, IP_USUARIO) 
                 VALUES (:tip_trans, :desc_trans, :cod_obj, :nom_obj, :cod_usuario, :fec_sis, :ip_usuario)";
-        $stmt = $conexion->conexion->prepare($sql);
-        $stmt->bindValue('tip_trans', $this->tip_trans, PDO::PARAM_STR);
-        $stmt->bindValue('desc_trans', $this->des_trans, PDO::PARAM_STR);
-        $stmt->bindValue('cod_obj', $this->cod_obj, PDO::PARAM_INT);
-        $stmt->bindValue('nom_obj', $this->nom_obj, PDO::PARAM_STR);
-        $stmt->bindValue('cod_usuario', $this->cod_usuario, PDO::PARAM_INT);
-        $stmt->bindValue('fec_sis', $this->fec_sis->format('Y-m-d H:i:s'), PDO::PARAM_STR);
-        $stmt->bindValue('ip_usuario', $this->ip_usuario, PDO::PARAM_STR);
-        $stmt->execute();
-        $stmt=null;
-        return;
-        } catch(PDOException $e) {
-            echo("Error al grabar la transacción: " . $e->getMessage());
+            $stmt = $conexion->conexion->prepare($sql);
+            //Parametriza con los atributos del objeto
+            $stmt->bindValue('tip_trans', $this->tip_trans, PDO::PARAM_STR);
+            $stmt->bindValue('desc_trans', $this->des_trans, PDO::PARAM_STR);
+            $stmt->bindValue('cod_obj', $this->cod_obj, PDO::PARAM_INT);
+            $stmt->bindValue('nom_obj', $this->nom_obj, PDO::PARAM_STR);
+            $stmt->bindValue('cod_usuario', $this->cod_usuario, PDO::PARAM_INT);
+            $stmt->bindValue('fec_sis', $this->fec_sis->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+            $stmt->bindValue('ip_usuario', $this->ip_usuario, PDO::PARAM_STR);
+            //Ejecuta
+            $stmt->execute();
+            $stmt=null;
             return;
-        }
+            } catch(PDOException $e) {
+                //Si hay error muestra mensaje
+                echo("Error al grabar la transacción: " . $e->getMessage());
+                return;
+            }
     }
 
     //Método para obtener transacciones de la bbdd
@@ -58,6 +63,7 @@ class Transaccion{
             // Devuelvo el resultado de la consulta
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
+            //Devuelve el error
             error_log("Error al listar transacciones: " . $e->getMessage());
             return [];
         }
@@ -79,7 +85,7 @@ class Transaccion{
             if (!$resultado){
                 return;
             }
-            var_dump($resultado);
+            //Vuelca el resultado en el objeto
             $this->setCodTransaccion($$resultado['COD_TRANSACCION']);
             $this->setTipoTrans($resultado['TIP_TRANS']);
             $this->setDesTrans($resultado['DESC_TRANS']);
@@ -89,6 +95,7 @@ class Transaccion{
             $this->setFecSis(new DateTime($resultado['FEC_SIS']));
             $this->setIpUsuario($resultado['IP_USUARIO']);
         } catch (PDOException $e) {
+            //Si hay error lo muestra
             error_log("Error al listar transacciones: " . $e->getMessage());
             return [];
         }
@@ -107,6 +114,7 @@ class Transaccion{
             // Devuelvo el resultado de la consulta
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
+            //Muestra el error
             error_log("Error al listar transacciones: " . $e->getMessage());
             return [];
         }

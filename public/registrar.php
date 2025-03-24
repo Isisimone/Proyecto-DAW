@@ -1,7 +1,7 @@
 <?php
-// Incluir la clase Conexion
+// Incluir librerías de Composer
 require '../vendor/autoload.php';
-
+//Uso de la clase Marcaje
 use Clases\Marcaje;
 
 // Lista de direcciones IP permitidas
@@ -23,10 +23,12 @@ if (stripos($so, 'WIN') !== false) {
 
 //Obtengo los datos del POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    //Obtiene datos y decodifica de json al array $data
     $input = file_get_contents('php://input');
     $data = json_decode($input, true);
     // Validar que los datos se hayan recibido correctamente
     if (isset($data['empleado']) && isset($data['bio'])) {
+        //Si es así vuelca los datos a las variables
         $cod_Empleado = intval($data['empleado']);
         $cod_Bio = intval($data['bio']);
         $foto = $data['foto'];
@@ -43,19 +45,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          // Crear un nombre único para la imagen
         $nombreArchivo = 'empleado_' . $cod_Empleado . '_' . time() . '.jpg';
 
-        // Guardar la imagen en la carpeta "uploads"
+        // Guardar la imagen en la carpeta fotos
        if (!file_exists($ruta_foto)) {
             mkdir($ruta_foto, 0777, true); // Crear la carpeta si no existe
         }
+        //define la ruta completa y crea el fichero con la foto
         $rutaArchivo = $ruta_foto . $nombreArchivo;
         file_put_contents($rutaArchivo, $fotoBinaria);
-
-        
+        //Responde con mensaje de confirmación        
         echo json_encode(['message' => 'Datos recibidos correctamente.']);
     } else {
+        //Responde con mensaje de error
         echo json_encode(['message' => 'Faltan datos en la solicitud.']);
     }
 }else{
+    //Mensajes de error
     http_response_code(403); // Código de estado 403: Prohibido
     echo json_encode(['message' => 'Empleado no indicado.']);
     exit;
@@ -74,7 +78,7 @@ if ($tipo_marca==1){
 }
 //Marco la fecha actual como fecha de grabación.
 $fecha_Grab=new DateTime();
-
+//Realizo el marcaje
 $marca->marcar($tipo_marca,$cod_Empleado,$cod_Bio,$fec_Marcaje,$fecha_Grab->format('Y-m-d H:i:s'),$incidencia,$pendiente,$nombreArchivo,$tipo_acceso,$obs);
 
 
