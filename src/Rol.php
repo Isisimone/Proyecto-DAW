@@ -82,7 +82,9 @@ class Rol {
             $this->nom_Usuario_Alta= $resultado['NOM_USUARIO_ALTA'];
             $this->fec_Baja= $resultado['FEC_BAJA'] ? new DateTime($resultado['FEC_BAJA']) : null;
             $this->nom_Usuario_Baja= $resultado['NOM_USUARIO_BAJA'] ?? null;
-            $this->privilegios=unserialize($resultado['PRIVILEGIOS']);   
+            if ($resultado['PRIVILEGIOS']){
+                $this->privilegios=unserialize($resultado['PRIVILEGIOS']);   
+            }
             //Devuelve true
             return true;
         }catch(PDOException $e){

@@ -3,6 +3,7 @@
 namespace Clases;
 //Clases a usar
 use DateTime;
+use DateTimeZone;
 use PDO;
 use PDOException;
 
@@ -44,7 +45,14 @@ class Marcaje{
         unset($this->obs);
     }
 
-    //Método para obtener el último marcaje
+    //Método para convertir fechas de UTC a Europe/Madrid
+    private function convertirFecha(string $fechaUTC): string {
+        $fecha = new DateTime($fechaUTC, new DateTimeZone('UTC'));
+        $fecha->setTimezone(new DateTimeZone('Europe/Madrid'));
+        return $fecha->format('Y-m-d H:i:s');
+    }
+
+    //Método para obtener el TIPO del último marcaje 
     public function ultimoMarcaje($empleado){
         try{
             //Crea una conexión y una consulta SELECT
@@ -57,6 +65,74 @@ class Marcaje{
             $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
             //Devuelve el tipo de marcaje para saber si entra (1) o sale (2)
             return $resultado['COD_TIPO_MARCAJE'];
+        }catch(PDOException $e){
+            //Muestra error y devuelve false
+            error_log("Error al obtener marcaje: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    //Método que devuelve las horas trabajadas en la fecha indicada
+    public function calcularHorasTrabajadas(int $codEmpleado, DateTime $fecha): float {
+        try {
+            // Obtiene los marcajes del día
+            $marcajesDelDia = $this->marcajesHoy($codEmpleado, $fecha);
+    
+            // Inicializa las variables para el cálculo
+            $horasTrabajadas = 0;
+            $ultimoMarcaje = null;
+    
+            foreach ($marcajesDelDia as $marcaje) {
+                //Obtiene el tipo y fecha del marcaje(para la hora)
+                $tipoMarcaje = $marcaje['COD_TIPO_MARCAJE'];
+                $fechaMarcaje = new DateTime($marcaje['FEC_MARCAJE']);
+    
+                if ($tipoMarcaje == 1) {
+                    // Si es un marcaje de entrada, guarda el marcaje para restarlo luego
+                    $ultimoMarcaje = $fechaMarcaje;
+                } elseif ($tipoMarcaje == 2 && $ultimoMarcaje !== null) {
+                    // Si es un marcaje de salida, calcula la diferencia con el último marcaje de entrada
+                    $intervalo = $ultimoMarcaje->diff($fechaMarcaje);
+                    $horasTrabajadas += $intervalo->h + ($intervalo->i / 60); // Convierte minutos a horas
+                    $ultimoMarcaje = null; // Resetea el último marcaje
+                }
+            }
+    
+            // Si el último marcaje es de tipo entrada, ya fuera del bucle, calcula el tiempo hasta ahora
+            //OJO, si se piden las horas de un marcaje incompleto sacará un número enorme de horas.
+            if ($ultimoMarcaje !== null) {
+                $intervalo = $ultimoMarcaje->diff(new DateTime());
+                $horasTrabajadas += $intervalo->h + ($intervalo->i / 60); // Convierte minutos a horas
+            }
+            //Devielve las horas trabajadas(se debería de limitar con parámetro)
+            //<<<<<<<<<<<<<<<<    PARAMETRO >>>>>>>>>>>>>>>>
+            return $horasTrabajadas;
+        } catch (Exception $e) {
+            // Manejo de errores
+            error_log("Error al calcular las horas trabajadas: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    //Método para obtener marcajes del día
+    public function marcajesHoy($empleado, DateTime $fecha){
+        try{
+            //Crea una conexión y una consulta SELECT
+            $conexion = new Conexion();
+            //consulta ascendente de los marcaje de fecha(No tiene en cuenta hora)
+            $consulta = $conexion->conexion->prepare("SELECT COD_TIPO_MARCAJE, FEC_MARCAJE FROM tmarcaje WHERE COD_EMPLEADO = :cod AND DATE(FEC_MARCAJE) = :fec ORDER BY FEC_MARCAJE ASC");
+            //Parametriza y ejecuta
+            $consulta->bindValue(':cod', $empleado, PDO::PARAM_INT);
+            $consulta->bindValue(':fec', $fecha->format('Y-m-d'));
+            $consulta->execute();
+            //Vuelca el resultado
+            $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
+            // Convierte las fechas de UTC a Europe/Madrid
+            foreach ($resultado as &$marcaje) {
+                $marcaje['FEC_MARCAJE'] = $this->convertirFecha($marcaje['FEC_MARCAJE']);
+            }
+            //Devuelve array con el tipo y la fecha de cada marcaje
+            return $resultado;
         }catch(PDOException $e){
             //Muestra error y devuelve false
             error_log("Error al obtener marcaje: " . $e->getMessage());
@@ -122,7 +198,7 @@ class Marcaje{
         }
     }
 
-    //Método para cargar los datos de un marcaje
+    //Método para cargar los datos de un marcaje, devuelve objeto Marcaje
     public function cargar(int $cod_Marcaje): Marcaje {
         try{
             //Crea la conexión y prepara la consulta SELECT
@@ -142,10 +218,8 @@ class Marcaje{
             $this->cod_Tipo_Marcaje = $resultado['COD_TIPO_MARCAJE'];
             $this->cod_Empleado = $resultado['COD_EMPLEADO'];
             $this->cod_bio = $resultado['COD_BIO'];
-            $this->fec_Marcaje = new DateTime($resultado['FEC_MARCAJE']);
-            $this->hor_Marcaje = new DateTime($resultado['HOR_MARCAJE']);
-            $this->fec_Grabacion = new DateTime($resultado['FEC_GRABACION']);
-            $this->hor_Grabacion = new DateTime($resultado['HOR_GRABACION']);
+            $this->fec_Marcaje = new DateTime($this->convertirFecha($resultado['FEC_MARCAJE']));
+            $this->fec_Grabacion = new DateTime($this->convertirFecha($resultado['FEC_GRABACION']));
             $this->incidencia = $resultado['IND_INCIDENCIA'];
             $this->pendiente = $resultado['IND_PENDIENTE'];
             $this->foto = $resultado['DES_FOTO'];
@@ -160,18 +234,30 @@ class Marcaje{
         }
     }
 
-        //Método para cargar conjunto de marcajes entre fechas
-        public function cargarMarcajesEntreFechas(DateTime $fechaInicio, DateTime $fechaFin): array {
+        //Método para cargar conjunto de marcajes entre fechas, devuelve array de registros
+        public function cargarMarcajesEntreFechas(int $empleadoI, int $empleadoF, DateTime $fechaInicio, DateTime $fechaFin): array {
             try{
                 //Crea conexión de tipo SELECT
                 $conexion = new Conexion();
-                $consulta = $conexion->conexion->prepare("SELECT * FROM tmarcaje WHERE FEC_MARCAJE BETWEEN :fechaInicio AND :fechaFin");
+                $consulta = $conexion->conexion->prepare("
+                    SELECT * FROM tmarcaje 
+                    WHERE FEC_MARCAJE BETWEEN :fechaInicio AND :fechaFin 
+                    AND COD_EMPLEADO BETWEEN :empleadoI AND :empleadoF
+                ");
                 //Parametriza y ejecuta
+                $consulta->bindValue(':empleadoI', $empleadoI);
+                $consulta->bindValue(':empleadoF', $empleadoF);
                 $consulta->bindValue(':fechaInicio', $fechaInicio->format('Y-m-d H:i:s'));
                 $consulta->bindValue(':fechaFin', $fechaFin->format('Y-m-d H:i:s'));
                 $consulta->execute();
-                //Vuelca y devuelve el resultado
+                //Vuelca el resultado
                 $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
+                // Convierte las fechas de UTC a Europe/Madrid
+                foreach ($resultado as &$marcaje) {
+                    $marcaje['FEC_MARCAJE'] = $this->convertirFecha($marcaje['FEC_MARCAJE']);
+                    $marcaje['FEC_GRABACION'] = $this->convertirFecha($marcaje['FEC_GRABACION']);
+                }
+                //Devuelve el resultado
                 return $resultado;
             }catch(PDOException $e){
                 //Muestra error y devuelve false
@@ -179,6 +265,37 @@ class Marcaje{
                 return false;
             }
             
+        }
+    
+        //Obtener los últimos marcajes en un array descendente
+        public function obtenerUltimosMarcajes(int $codEmpleado, int $limite = 5): array {
+            try {
+                // Crea la conexión y prepara la consulta SELECT
+                $conexion = new Conexion();
+                $consulta = $conexion->conexion->prepare("SELECT COD_TIPO_MARCAJE, FEC_MARCAJE, DES_FOTO 
+                    FROM tmarcaje 
+                    WHERE COD_EMPLEADO = :codEmpleado 
+                    ORDER BY FEC_MARCAJE DESC 
+                    LIMIT :limite
+                ");
+                // Parametriza y ejecuta
+                $consulta->bindValue(':codEmpleado', $codEmpleado, PDO::PARAM_INT);
+                $consulta->bindValue(':limite', $limite, PDO::PARAM_INT);
+                $consulta->execute();
+                // Vuelca el resultado
+                $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+                // Convierte las fechas de UTC a Europe/Madrid
+                foreach ($resultado as &$marcaje) {
+                    $marcaje['FEC_MARCAJE'] = $this->convertirFecha($marcaje['FEC_MARCAJE']);
+                }
+                //Devuelve el resultado
+                return $resultado;
+            } catch (PDOException $e) {
+                // Muestra error y devuelve un array vacío
+                error_log("Error al obtener los últimos marcajes: " . $e->getMessage());
+                return [];
+            }
         }
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<   GETTERS Y SETTERS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     // Getters

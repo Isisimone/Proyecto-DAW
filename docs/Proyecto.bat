@@ -4,6 +4,8 @@ net session >nul 2>&1
 if %errorLevel% == 0 (
     echo Ejecutando XAMPP como administrador...
     start c:\xampp\xampp-control.exe
+    echo Espera a que cargue XAMPP
+    pause
     start node c:\xampp\htdocs\Proyecto-DAW\js\server.js
 ) else (
     echo Solicitud de privilegios de administrador...

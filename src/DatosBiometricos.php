@@ -23,6 +23,12 @@ class DatosBiometricos{
         $this->cod_bio=0; //no puede ser null
     }
 
+    // Método para convertir fechas de UTC a Europe/Madrid
+    private function convertirFecha(string $fechaUTC): string {
+        $fecha = new DateTime($fechaUTC, new DateTimeZone('UTC'));
+        $fecha->setTimezone(new DateTimeZone('Europe/Madrid'));
+        return $fecha->format('Y-m-d H:i:s');
+    }
     
 
    //Método para grabar en la base de datos un nuevo registro a partir del objeto

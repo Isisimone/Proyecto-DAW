@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-03-2025 a las 16:15:02
+-- Tiempo de generación: 25-03-2025 a las 17:52:33
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -60,7 +60,8 @@ CREATE TABLE `tbio` (
 --
 
 INSERT INTO `tbio` (`COD_BIO`, `COD_TIPO_BIO`, `DATO_BIO`, `COD_EMPLEADO`, `FEC_ALTA`, `NOM_USUARIO_ALTA`) VALUES
-(1, 1, 'dadsdsdsdsds', 1, '2025-03-20 11:45:48', 'Admon');
+(1, 1, 'hSyzhr4xiQj/io4/K2Hh9jlSbTd4c2FBU2wrOFp0NWhTeDJMblBkOG9aZmplYU95MWlLT201OW52VGxlMDFJbHN4RnEvdzQ1Qm8rM1VZWkRQeituZ2o5VTNQbmRPMk52VzJ6M3Z0cGNhM3lGOVU2WlhDZ1owM2JPeU1vakptaE0ra2tlWTJEYXJ1L0laMlZMb1l1cnM4NGlYTlk5azdldEFBNnUwbXBDSHJtZ0x3cnM3UW9aanQ1azhRcHg5eldFVFlqWGZWMmhuTkJaZFBHeDlydVdHeGdlZVdGTnoxNEFlZmJZNVV2Y3N3MEU5YnBQaHBpb3FFL0o2WmNJS3hzM2lNMXZkVkZhL0xnRlBYdyt2VVV2QXN2WkpTMlpGaHpQTk8wM0dOb0pvMVdkQVNUbHVVbkxUSmJTM1lrRWlidXNVY1NuMEkwOFNvVzA4b0tueGY4SXozRk5YYzZUMTNSeXJnbmM5SFFFdzl3Y0lsbDVFSnZQN2hPdnpBc1Z5NlBXUDUxV3ZPWTBBcVJrYklQQWMzM2dEeHNVeGhBN091UzBqVTdQbHRQamYyYWpmUW44dUpLYkFybkYxK05ISTRuSEx2SDJNVzJoRlZCaTcyUnppRHhEL0xuYmE2Wmt1L1Rkb1hnb01DV0ZUZ3kzSXh5Q2RiYzVKUWdFT3FRTUdKZ3gyWU5rVnBSZXBJNTFhUkdoZ2lmM1JXbVRmU3B5M2hVSmtmenYvT0gzaTVOZGplRkI1UkVZcDB2TnQ2VTNUa210VTYzY0RNVE9hQzkyTUhjb2FmVUFKd2N3MzlmSUhHd0hLbnpPWkxGMmxjajRDQThHcUYraFhVSFNmcllqQ2hUeTZYSUppN3lGOVNmOURwZUpoS2ZDVFFmck9odmNNRlNDZzRHOHdEcCtMTHJLWTM5VFdvMWtOU25vdE9udFQzb3hBSlY2ZzdnVVNqdFdWeE1zZWN0elF1NEl3NVJWeXplK2RHZVNOSHU5NjBibnhXdGhHRHp5ZnNvUHd6VnJjQjd1NjhLbnp4YkFXK2dWaDN4ZzhHbHh1REJES0h3Tk1oYmx2S2xDeUpBcHpIS205VWxndnBhT2ZDU0x5ZHRyOS84Z3c5c1hpQ1RMSWJQVE41M0MxVjJNQU1JdTFhMzNrSEVnVlR2bnMvUW8yblhoVVBNSE1Nd3FodHBHeHAvd2IydWxkOFYrR1BBempvQlpabHlRaWZpMDNCa1FpQTJhWmh2cmFUaTdOV1duKzd3dTNkdWlMejNEWWlzQVJzUFVueTVIQlVCb2E4eHFVa0JhZmhVT0pMbkJUdU1OcnNHQzFnT2lMZXNuZ3ErdWxZSWpBMzN6azhCUkdTM3EvNWsxQTgvMjcxcnQzMENVNHhxSStyMXpHR1QwR09Zc0c4bXRsTi9YTzZYM0pPMUFDeFJiY0NIU0ljZEM5bkdiMzlha1VEUjFGeDg3dWI2NVhLeUhQU0dFcUZTUHc4d3g2YWpXOG42ZW5ReUpXMnRReUtCaGNjbVg0blh1Ni9qaDFtanAyOUplTEgrazdnbDd1YkJoRDNsS0JXcFVhZ25WeHpyU0pnOVFEZjVCeDJrNUpSd1RhdFphTmV5N2Eya1MzWTFIQko3SkF2Y2ovRmtXT3ZjRHcwdC9zZTdNK1ZxR0tBcDZDbmo3b2hORU1obFluZUxHeUFtTEo4eDdqU2FLc0Vid0lPdTdpZXZXM0tLNTZxRlVqM0cxeXdvQzI1Zm5GZlBnblZUSUtwSEJRejNKMlpjWUNKeXhjbXV6eUd1WjZrY1ZJeXI5M0c2cC9BeTBLSjVQODlDZUJpS0pFUkxwa2hFcnJPaDJPTkUrcEdXaU42ZmU0bTRWMW4yU0oyVEJWZFN4NzVpcEVSQmZNOVVldk8rVDRVRTRRUEVDclZrUEltL1JsQVlRZEVFa2xtd01mYzNXbG5xbGJ4bkpzaHRpeVNQWnJxWmp1MC83c3E1eFliQXNLTElaSm5VRzJmTXhVVVZwaENxUTNQam9PakZKQm9zT3lwbjZQWGxJTHRjQWFkQzFpQ3JxUkQ0d1cxT1VWQ24yblE5cU5XcUR6bFZEVlRyb1ZHMTRhOEQ4NWcxU2RBWVVkTytzcGh1YTN4cDlXV0RhbG5qaHJUK29pMFphMlVVeDBEQ2dqcURLTmZWcG5LOVN5c0RpMSs3RHFkZW5Id2pkZ0xUeHNMeitBek93d0FLMzFkNnlJUFJrR2YrWDNmL1NsTDFyWjU3Mms1czJEUkNmRHRTNmVrUXRzL2k3Y2lOQVc0bDZkZk1PbEpVUUlKUXdUQ05HMHNwTzRMeGpHYzJ2bDk5MUR4UEZWK25wdERrQ1RaVG8yTDJGQjIyeHViU0NHZ1lHMmNDU3phcnE3YnFFOTUzWHNwMHYrTEw5djVhQ0FiN1QwUnZ6eDZsL3RDbzlzdHJRamYreHI1amxwZFBsRUNpYlJ5TGRiY1l6Q0h4UWFpeVRZc1VBVnFuRC9CL1pTN2tmUnY3WXREYnFKMG50NElMbGg5NHNadlV6M3pxVW1DdEhBdFZ3b0FUTkp4NTZYQzVid3crc1d3Z3JHWFBXdDNlaGZDUms4ZkhaZnkrV0hoTFVnaHBRR0Rnd0FiZVBYajBweUIzNmxmaUNkNS9ZclNQcmU5WGtFOWZadEdnSWcrYm1WRlRsWm4wVTZyRlVKWlpyNnFVbVk1Tk1MTnVYdG5FZ2ZwQTNzM0J2MVpMYjB0V3RoNDgrNHpDcllrVGFRdlVQNXpkYll4bThBbVdZWmVJaUQ5eW5VbUt0bWprcWtHem1Hem5DenVFNk9aTHhBdW41UHVpbC85U0krcUtjUC9BZXk1d2ZQZXJlRW9IbnVyMzFRRFdXNHd3Vm5Hd0ZpQ200eFRVQ0RMQ2VvbVlSM1NmdWhKcVd3VTZWQlNWZ1JzbC84M3lQcVRDeGU3RnR2M3k0RFErWUxaajQvSDBiZFJZR0Z5eHdwZEVRVTlyWStNWVhwSWtseFdMdlF3bGxJQ3hFZnJhdHp2ZjR0Y25oWGlvVlFZam1pVENxUU96RGU0RzdpY2ZhS29wNlhGUmpDQmRtUENVc2FsdWQ1MUZwaUJqR2pTN2x6U0dmcmE3aUU0a2xweXloOWpJMlowTVlqeHVzcTlmUnNZRkJVU2VDZUZkR2cxZ1BjSzhseUxhdjRxT3VyNDdnY3dxNGtxeFdZRm9BOFdKenhTbDN5dlhjdlpsc0xMazJ5NjhjVmtaT0pXWkcrUTNxOGtWZm1KTGwyaEtUeXJOWm8ya3JTZFVqYzdOUXI4dFlqdU91SWpnTkR5ekpMdFZuMGtMRnhFbE5aWk9UK2Z3MkdTaVhGeCtIWXc0V0RKUzJ3ZHlRb0hBdzVrZXErQzUyQ3lNZGtoUHU2ZkdsQTRVTFRDTTNuMEI3QnJsRW9PeFRORVROTFJIZDNFTjVCekZ2SFZnS3FNZkVwc2dVeFd2UnF6cldjcVRLcCtvbURoK3RlTWZKaDl2dHNqbkJOL3h5Nllod1pGeHVvU3I1bUJlcSt0cVlROTE1dVZxRDNoV1ZURXJIdWtqUVJQRVh1NTZZeVN0TWlnZXo4S1VsQ3o0b2dPVWZVczVPdXl6VEFsV2FqWlVPdWJadUloR0ZQY1QxRHFwMmtNdlNIZlRiS1J4Z0I2bExGVHFEeDlxYzFiQnhPUE5jc3Q4ZUFJdHFSZnhWbGVTQ2R2Zi9IR0I0TVliMGQyUTE2NDVBTkVMR0QxeWtYa1ZCZm8zNHJGa2lPVXZVb0p1eWFTUW9tV3dsbGU5RnpkdHFxVVhCNVlnYzdZRFBPS0Z6OUxQSzlDZUoxaUV5ek9TSndocWtPK3diSTVja0RteExYSlllRThxSlNGTHV1T20xR0dLS2ZIY0xWQWgvRVV1eHcybTJrSU5Kck5VWUZ2eFhuam5KUlR0MmNqemQrOXBlbFNWaHhOUEEydXIyTHVyZzNpN0dzc2xWT0VLRW5LNGpuNkF6cGJxRlk0ZDh2b1VuMVhQQ0g3VHA5YXpSbDRudGVjZ3dBa00rVW1mZ09vd1UrKzRlQ0o3OG5yZGlNTFFzWUkrbitmZ1dzRVpzaDZldXdMbW1zeFVkK2dZVEltK3NiVmtwNTBoS2pDajREcmZYK0RqeTV3N2M3UE9xRGNXbEZFQ2hnN0FSSDRVUTAwSUJzOXFsZFFwMEdxNXVHakhWMkxJUXNsV2lwcU9PeVk5T2xwbjFhWHlZMzd0S0VSck1UKy9EWFFpeUh2THNyMHhYQXBzZVFlTUtEOWlhV2hTazlhWndvT2pKdVpNdzM1S0o3WVUvTDFxeUZDaXBiNVZCbmZHdnU4a3QvMDhXRnhSZjVlZUNScmlkOUFVZUNtR1lrUTlXd3QvQXRvTWlVWkdzMUp0bk9tQndFdzlSdjBDVTRRQ002ZFdRNXZPUG9mRHZoV0tsTkdvOENvTXdBd3VjME4wTUlCMS9Ja2lQMGw1THhCaGR2SzhHN3BsaW9ZN1cweXpKWlJYeXRvU05WNm4xL2RBNDNsZEFTdUdzNm9GOExad3ZWMWwvaEpnL1pKaEpyTmNXdGkzREFISEZrZTllOWVYVTUyYXpHSVI1bHl4STVPMHFqRi9pTzBuZ3Z4aFlhRDVpYzQ4cFNHRUV2VGJmb0FiMlRkUksvQ0dEV01uNWt5dDgxSlIyamdidEVjUUdDTU5qbXNzSEQvaHVxOWhnejdyZDlOZGNUZDk5aFYxRmVEemJQTnRSdUhkSVJnPT0=', 1, '2025-03-20 11:45:48', 'Admon'),
+(2, 1, 'hSyzhr4xiQj/io4/K2Hh9jlSbTd4c2FBU2wrOFp0NWhTeDJMblBkOG9aZmplYU95MWlLT201OW52VGxlMDFJbHN4RnEvdzQ1Qm8rM1VZWkRQeituZ2o5VTNQbmRPMk52VzJ6M3Z0cGNhM3lGOVU2WlhDZ1owM2JPeU1vakptaE0ra2tlWTJEYXJ1L0laMlZMb1l1cnM4NGlYTlk5azdldEFBNnUwbXBDSHJtZ0x3cnM3UW9aanQ1azhRcHg5eldFVFlqWGZWMmhuTkJaZFBHeDlydVdHeGdlZVdGTnoxNEFlZmJZNVV2Y3N3MEU5YnBQaHBpb3FFL0o2WmNJS3hzM2lNMXZkVkZhL0xnRlBYdyt2VVV2QXN2WkpTMlpGaHpQTk8wM0dOb0pvMVdkQVNUbHVVbkxUSmJTM1lrRWlidXNVY1NuMEkwOFNvVzA4b0tueGY4SXozRk5YYzZUMTNSeXJnbmM5SFFFdzl3Y0lsbDVFSnZQN2hPdnpBc1Z5NlBXUDUxV3ZPWTBBcVJrYklQQWMzM2dEeHNVeGhBN091UzBqVTdQbHRQamYyYWpmUW44dUpLYkFybkYxK05ISTRuSEx2SDJNVzJoRlZCaTcyUnppRHhEL0xuYmE2Wmt1L1Rkb1hnb01DV0ZUZ3kzSXh5Q2RiYzVKUWdFT3FRTUdKZ3gyWU5rVnBSZXBJNTFhUkdoZ2lmM1JXbVRmU3B5M2hVSmtmenYvT0gzaTVOZGplRkI1UkVZcDB2TnQ2VTNUa210VTYzY0RNVE9hQzkyTUhjb2FmVUFKd2N3MzlmSUhHd0hLbnpPWkxGMmxjajRDQThHcUYraFhVSFNmcllqQ2hUeTZYSUppN3lGOVNmOURwZUpoS2ZDVFFmck9odmNNRlNDZzRHOHdEcCtMTHJLWTM5VFdvMWtOU25vdE9udFQzb3hBSlY2ZzdnVVNqdFdWeE1zZWN0elF1NEl3NVJWeXplK2RHZVNOSHU5NjBibnhXdGhHRHp5ZnNvUHd6VnJjQjd1NjhLbnp4YkFXK2dWaDN4ZzhHbHh1REJES0h3Tk1oYmx2S2xDeUpBcHpIS205VWxndnBhT2ZDU0x5ZHRyOS84Z3c5c1hpQ1RMSWJQVE41M0MxVjJNQU1JdTFhMzNrSEVnVlR2bnMvUW8yblhoVVBNSE1Nd3FodHBHeHAvd2IydWxkOFYrR1BBempvQlpabHlRaWZpMDNCa1FpQTJhWmh2cmFUaTdOV1duKzd3dTNkdWlMejNEWWlzQVJzUFVueTVIQlVCb2E4eHFVa0JhZmhVT0pMbkJUdU1OcnNHQzFnT2lMZXNuZ3ErdWxZSWpBMzN6azhCUkdTM3EvNWsxQTgvMjcxcnQzMENVNHhxSStyMXpHR1QwR09Zc0c4bXRsTi9YTzZYM0pPMUFDeFJiY0NIU0ljZEM5bkdiMzlha1VEUjFGeDg3dWI2NVhLeUhQU0dFcUZTUHc4d3g2YWpXOG42ZW5ReUpXMnRReUtCaGNjbVg0blh1Ni9qaDFtanAyOUplTEgrazdnbDd1YkJoRDNsS0JXcFVhZ25WeHpyU0pnOVFEZjVCeDJrNUpSd1RhdFphTmV5N2Eya1MzWTFIQko3SkF2Y2ovRmtXT3ZjRHcwdC9zZTdNK1ZxR0tBcDZDbmo3b2hORU1obFluZUxHeUFtTEo4eDdqU2FLc0Vid0lPdTdpZXZXM0tLNTZxRlVqM0cxeXdvQzI1Zm5GZlBnblZUSUtwSEJRejNKMlpjWUNKeXhjbXV6eUd1WjZrY1ZJeXI5M0c2cC9BeTBLSjVQODlDZUJpS0pFUkxwa2hFcnJPaDJPTkUrcEdXaU42ZmU0bTRWMW4yU0oyVEJWZFN4NzVpcEVSQmZNOVVldk8rVDRVRTRRUEVDclZrUEltL1JsQVlRZEVFa2xtd01mYzNXbG5xbGJ4bkpzaHRpeVNQWnJxWmp1MC83c3E1eFliQXNLTElaSm5VRzJmTXhVVVZwaENxUTNQam9PakZKQm9zT3lwbjZQWGxJTHRjQWFkQzFpQ3JxUkQ0d1cxT1VWQ24yblE5cU5XcUR6bFZEVlRyb1ZHMTRhOEQ4NWcxU2RBWVVkTytzcGh1YTN4cDlXV0RhbG5qaHJUK29pMFphMlVVeDBEQ2dqcURLTmZWcG5LOVN5c0RpMSs3RHFkZW5Id2pkZ0xUeHNMeitBek93d0FLMzFkNnlJUFJrR2YrWDNmL1NsTDFyWjU3Mms1czJEUkNmRHRTNmVrUXRzL2k3Y2lOQVc0bDZkZk1PbEpVUUlKUXdUQ05HMHNwTzRMeGpHYzJ2bDk5MUR4UEZWK25wdERrQ1RaVG8yTDJGQjIyeHViU0NHZ1lHMmNDU3phcnE3YnFFOTUzWHNwMHYrTEw5djVhQ0FiN1QwUnZ6eDZsL3RDbzlzdHJRamYreHI1amxwZFBsRUNpYlJ5TGRiY1l6Q0h4UWFpeVRZc1VBVnFuRC9CL1pTN2tmUnY3WXREYnFKMG50NElMbGg5NHNadlV6M3pxVW1DdEhBdFZ3b0FUTkp4NTZYQzVid3crc1d3Z3JHWFBXdDNlaGZDUms4ZkhaZnkrV0hoTFVnaHBRR0Rnd0FiZVBYajBweUIzNmxmaUNkNS9ZclNQcmU5WGtFOWZadEdnSWcrYm1WRlRsWm4wVTZyRlVKWlpyNnFVbVk1Tk1MTnVYdG5FZ2ZwQTNzM0J2MVpMYjB0V3RoNDgrNHpDcllrVGFRdlVQNXpkYll4bThBbVdZWmVJaUQ5eW5VbUt0bWprcWtHem1Hem5DenVFNk9aTHhBdW41UHVpbC85U0krcUtjUC9BZXk1d2ZQZXJlRW9IbnVyMzFRRFdXNHd3Vm5Hd0ZpQ200eFRVQ0RMQ2VvbVlSM1NmdWhKcVd3VTZWQlNWZ1JzbC84M3lQcVRDeGU3RnR2M3k0RFErWUxaajQvSDBiZFJZR0Z5eHdwZEVRVTlyWStNWVhwSWtseFdMdlF3bGxJQ3hFZnJhdHp2ZjR0Y25oWGlvVlFZam1pVENxUU96RGU0RzdpY2ZhS29wNlhGUmpDQmRtUENVc2FsdWQ1MUZwaUJqR2pTN2x6U0dmcmE3aUU0a2xweXloOWpJMlowTVlqeHVzcTlmUnNZRkJVU2VDZUZkR2cxZ1BjSzhseUxhdjRxT3VyNDdnY3dxNGtxeFdZRm9BOFdKenhTbDN5dlhjdlpsc0xMazJ5NjhjVmtaT0pXWkcrUTNxOGtWZm1KTGwyaEtUeXJOWm8ya3JTZFVqYzdOUXI4dFlqdU91SWpnTkR5ekpMdFZuMGtMRnhFbE5aWk9UK2Z3MkdTaVhGeCtIWXc0V0RKUzJ3ZHlRb0hBdzVrZXErQzUyQ3lNZGtoUHU2ZkdsQTRVTFRDTTNuMEI3QnJsRW9PeFRORVROTFJIZDNFTjVCekZ2SFZnS3FNZkVwc2dVeFd2UnF6cldjcVRLcCtvbURoK3RlTWZKaDl2dHNqbkJOL3h5Nllod1pGeHVvU3I1bUJlcSt0cVlROTE1dVZxRDNoV1ZURXJIdWtqUVJQRVh1NTZZeVN0TWlnZXo4S1VsQ3o0b2dPVWZVczVPdXl6VEFsV2FqWlVPdWJadUloR0ZQY1QxRHFwMmtNdlNIZlRiS1J4Z0I2bExGVHFEeDlxYzFiQnhPUE5jc3Q4ZUFJdHFSZnhWbGVTQ2R2Zi9IR0I0TVliMGQyUTE2NDVBTkVMR0QxeWtYa1ZCZm8zNHJGa2lPVXZVb0p1eWFTUW9tV3dsbGU5RnpkdHFxVVhCNVlnYzdZRFBPS0Z6OUxQSzlDZUoxaUV5ek9TSndocWtPK3diSTVja0RteExYSlllRThxSlNGTHV1T20xR0dLS2ZIY0xWQWgvRVV1eHcybTJrSU5Kck5VWUZ2eFhuam5KUlR0MmNqemQrOXBlbFNWaHhOUEEydXIyTHVyZzNpN0dzc2xWT0VLRW5LNGpuNkF6cGJxRlk0ZDh2b1VuMVhQQ0g3VHA5YXpSbDRudGVjZ3dBa00rVW1mZ09vd1UrKzRlQ0o3OG5yZGlNTFFzWUkrbitmZ1dzRVpzaDZldXdMbW1zeFVkK2dZVEltK3NiVmtwNTBoS2pDajREcmZYK0RqeTV3N2M3UE9xRGNXbEZFQ2hnN0FSSDRVUTAwSUJzOXFsZFFwMEdxNXVHakhWMkxJUXNsV2lwcU9PeVk5T2xwbjFhWHlZMzd0S0VSck1UKy9EWFFpeUh2THNyMHhYQXBzZVFlTUtEOWlhV2hTazlhWndvT2pKdVpNdzM1S0o3WVUvTDFxeUZDaXBiNVZCbmZHdnU4a3QvMDhXRnhSZjVlZUNScmlkOUFVZUNtR1lrUTlXd3QvQXRvTWlVWkdzMUp0bk9tQndFdzlSdjBDVTRRQ002ZFdRNXZPUG9mRHZoV0tsTkdvOENvTXdBd3VjME4wTUlCMS9Ja2lQMGw1THhCaGR2SzhHN3BsaW9ZN1cweXpKWlJYeXRvU05WNm4xL2RBNDNsZEFTdUdzNm9GOExad3ZWMWwvaEpnL1pKaEpyTmNXdGkzREFISEZrZTllOWVYVTUyYXpHSVI1bHl4STVPMHFqRi9pTzBuZ3Z4aFlhRDVpYzQ4cFNHRUV2VGJmb0FiMlRkUksvQ0dEV01uNWt5dDgxSlIyamdidEVjUUdDTU5qbXNzSEQvaHVxOWhnejdyZDlOZGNUZDk5aFYxRmVEemJQTnRSdUhkSVJnPT0=', 1, '2025-03-21 11:53:04', 'Admon');
 
 -- --------------------------------------------------------
 
@@ -78,16 +79,17 @@ CREATE TABLE `templeado` (
   `FEC_ALTA` datetime DEFAULT NULL,
   `NOM_USUARIO_ALTA` varchar(20) DEFAULT NULL,
   `FEC_BAJA` datetime DEFAULT NULL,
-  `NOM_USUARIO_BAJA` varchar(20) DEFAULT NULL
+  `NOM_USUARIO_BAJA` varchar(20) DEFAULT NULL,
+  `FOTO` varchar(30) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `templeado`
 --
 
-INSERT INTO `templeado` (`COD_EMPLEADO`, `COD_USUARIO`, `NOM_EMPLEADO`, `APE1_EMPLEADO`, `APE2_EMPLEADO`, `CONTACTO_EMPLEADO`, `FEC_ALTA`, `NOM_USUARIO_ALTA`, `FEC_BAJA`, `NOM_USUARIO_BAJA`) VALUES
-(1, 2, 'Juan', 'Perez', 'Gomez', 'juanpg@local.com', '2025-03-20 11:32:41', 'admon', NULL, NULL),
-(3, 1, 'Juan', 'Perez', 'Gomez', 'juanpg@local.com', '2025-03-20 11:34:57', 'admon', NULL, NULL);
+INSERT INTO `templeado` (`COD_EMPLEADO`, `COD_USUARIO`, `NOM_EMPLEADO`, `APE1_EMPLEADO`, `APE2_EMPLEADO`, `CONTACTO_EMPLEADO`, `FEC_ALTA`, `NOM_USUARIO_ALTA`, `FEC_BAJA`, `NOM_USUARIO_BAJA`, `FOTO`) VALUES
+(1, 2, 'David', 'Martín', 'Prados', 'David@david.com', '2025-03-20 11:32:41', 'admon', NULL, NULL, 'emp_0001_da_ma_pr.jpg'),
+(3, 1, 'Juan', 'Perez', 'Gomez', 'juanpg@local.com', '2025-03-20 11:34:57', 'admon', NULL, NULL, 'emp_0002_ju_pe_go.jpg');
 
 -- --------------------------------------------------------
 
@@ -100,7 +102,7 @@ CREATE TABLE `tmarcaje` (
   `COD_TIPO_MARCAJE` int(11) DEFAULT NULL,
   `COD_EMPLEADO` int(11) DEFAULT NULL,
   `COD_BIO` int(11) DEFAULT NULL,
-  `DES_FOTO` varchar(20) DEFAULT NULL,
+  `DES_FOTO` varchar(30) DEFAULT NULL,
   `COD_TIPO_ACCESO` int(11) DEFAULT NULL,
   `FEC_MARCAJE` datetime DEFAULT NULL,
   `HOR_MARCAJE` datetime DEFAULT NULL,
@@ -116,7 +118,30 @@ CREATE TABLE `tmarcaje` (
 --
 
 INSERT INTO `tmarcaje` (`COD_MARCAJE`, `COD_TIPO_MARCAJE`, `COD_EMPLEADO`, `COD_BIO`, `DES_FOTO`, `COD_TIPO_ACCESO`, `FEC_MARCAJE`, `HOR_MARCAJE`, `FEC_GRABACION`, `HOR_GRABACION`, `IND_INCIDENCIA`, `IND_PENDIENTE`, `DES_OBSERVACIONES`) VALUES
-(1, 1, 1, 1, 'foto', 1, '2025-03-20 11:48:24', NULL, '2025-03-20 11:48:24', NULL, 0, 0, 'observaciones');
+(1, 1, 1, 1, 'foto', 1, '2025-03-20 11:48:24', NULL, '2025-03-20 11:48:24', NULL, 0, 0, 'observaciones'),
+(24, 1, 1, 2, 'empleado_1_1742819095.jpg', 1, '2025-03-24 12:24:55', NULL, '2025-03-24 13:24:55', NULL, 0, 0, ''),
+(25, 2, 1, 2, 'empleado_1_1742819161.jpg', 1, '2025-03-24 12:26:01', NULL, '2025-03-24 13:26:01', NULL, 0, 0, ''),
+(26, 1, 1, 2, 'empleado_1_1742829918.jpg', 1, '2025-03-24 15:25:18', NULL, '2025-03-24 16:25:18', NULL, 0, 0, ''),
+(27, 2, 1, 2, 'empleado_1_1742830016.jpg', 1, '2025-03-24 15:26:56', NULL, '2025-03-24 16:26:56', NULL, 0, 0, ''),
+(28, 1, 1, 2, 'empleado_1_1742832595.jpg', 1, '2025-03-24 16:09:55', NULL, '2025-03-24 17:09:55', NULL, 0, 0, ''),
+(29, 2, 1, 2, 'empleado_1_1742837544.jpg', 1, '2025-03-24 17:32:24', NULL, '2025-03-24 18:32:24', NULL, 0, 0, ''),
+(30, 1, 1, 2, 'empleado_1_1742889590.jpg', 1, '2025-03-25 07:59:50', NULL, '2025-03-25 08:59:50', NULL, 0, 0, ''),
+(31, 2, 1, 2, 'empleado_1_1742891899.jpg', 1, '2025-03-25 08:38:19', NULL, '2025-03-25 09:38:19', NULL, 0, 0, ''),
+(32, 1, 1, 2, 'empleado_1_1742900460.jpg', 1, '2025-03-25 11:01:00', NULL, '2025-03-25 12:01:00', NULL, 0, 0, ''),
+(33, 2, 1, 2, 'empleado_1_1742916423.jpg', 1, '2025-03-25 15:27:02', NULL, '2025-03-25 16:27:03', NULL, 0, 0, ''),
+(34, 1, 1, 2, 'empleado_1_1742819095.jpg', 1, '2025-03-21 08:04:05', NULL, '2025-03-21 08:04:05', NULL, 0, 0, ''),
+(35, 2, 1, 2, 'empleado_1_1742819161.jpg', 1, '2025-03-21 14:06:01', NULL, '2025-03-21 14:06:01', NULL, 0, 0, ''),
+(36, 1, 1, 2, 'empleado_1_1742819095.jpg', 1, '2025-03-21 16:06:01', NULL, '2025-03-21 16:06:01', NULL, 0, 0, ''),
+(37, 2, 1, 2, 'empleado_1_1742819161.jpg', 1, '2025-03-21 18:16:22', NULL, '2025-03-21 18:16:22', NULL, 0, 0, ''),
+(38, 1, 1, 2, 'empleado_1_1742819095.jpg', 1, '2025-03-24 08:00:55', NULL, '2025-03-24 08:00:55', NULL, 0, 0, ''),
+(39, 2, 1, 2, 'empleado_1_1742819161.jpg', 1, '2025-03-24 12:05:12', NULL, '2025-03-24 12:05:12', NULL, 0, 0, ''),
+(40, 1, 1, 2, 'empleado_1_1742819095.jpg', 1, '2025-03-20 08:02:00', NULL, '2025-03-20 08:02:00', NULL, 0, 0, ''),
+(41, 2, 1, 2, 'empleado_1_1742819161.jpg', 1, '2025-03-20 14:03:03', NULL, '2025-03-20 14:03:03', NULL, 0, 0, ''),
+(42, 1, 1, 2, 'empleado_1_1742819095.jpg', 1, '2025-03-20 16:10:25', NULL, '2025-03-20 16:10:25', NULL, 0, 0, ''),
+(43, 2, 1, 2, 'empleado_1_1742819161.jpg', 1, '2025-03-20 18:07:35', NULL, '2025-03-20 18:07:35', NULL, 0, 0, ''),
+(44, 1, 1, 2, 'empleado_1_1742819095.jpg', 1, '2025-03-19 08:07:01', NULL, '2025-03-19 08:07:01', NULL, 0, 0, ''),
+(45, 2, 1, 2, 'empleado_1_1742819161.jpg', 1, '2025-03-19 16:12:01', NULL, '2025-03-19 16:12:01', NULL, 0, 0, ''),
+(46, 1, 1, 2, 'empleado_1_1742919496.jpg', 1, '2025-03-25 16:18:16', NULL, '2025-03-25 17:18:16', NULL, 0, 0, '');
 
 -- --------------------------------------------------------
 
@@ -140,8 +165,9 @@ CREATE TABLE `trol` (
 --
 
 INSERT INTO `trol` (`COD_ROL`, `NOM_ROL`, `DES_ROL`, `FEC_ALTA`, `NOM_USUARIO_ALTA`, `FEC_BAJA`, `NOM_USUARIO_BAJA`, `PRIVILEGIOS`) VALUES
-(1, 'MdCrear', 'Crear MD', '2025-03-20 11:40:27', 'Admon', NULL, NULL, 'O:17:\"Clases\\Privilegio\":20:{s:27:\"\0Clases\\Privilegio\0empCrear\";b:0;s:31:\"\0Clases\\Privilegio\0empModificar\";b:0;s:26:\"\0Clases\\Privilegio\0empBaja\";b:0;s:27:\"\0Clases\\Privilegio\0usrCrear\";b:0;s:31:\"\0Clases\\Privilegio\0usrModificar\";b:0;s:26:\"\0Clases\\Privilegio\0usrBaja\";b:0;s:33:\"\0Clases\\Privilegio\0usrGenerarPass\";b:0;s:33:\"\0Clases\\Privilegio\0marCrearPropio\";b:0;s:37:\"\0Clases\\Privilegio\0marConsultarPropio\";b:0;s:27:\"\0Clases\\Privilegio\0marCrear\";b:0;s:31:\"\0Clases\\Privilegio\0marModificar\";b:0;s:30:\"\0Clases\\Privilegio\0marEliminar\";b:0;s:31:\"\0Clases\\Privilegio\0marConsultar\";b:0;s:26:\"\0Clases\\Privilegio\0marAuth\";b:0;s:27:\"\0Clases\\Privilegio\0bioCrear\";b:0;s:30:\"\0Clases\\Privilegio\0bioEliminar\";b:0;s:27:\"\0Clases\\Privilegio\0rolCrear\";b:0;s:31:\"\0Clases\\Privilegio\0rolModificar\";b:0;s:30:\"\0Clases\\Privilegio\0rolEliminar\";b:0;s:35:\"\0Clases\\Privilegio\0ajustesModificar\";b:0;}'),
-(2, 'MdCrear', 'Crear MD', '2025-03-20 11:48:41', 'Admon', NULL, NULL, 'O:17:\"Clases\\Privilegio\":20:{s:27:\"\0Clases\\Privilegio\0empCrear\";b:0;s:31:\"\0Clases\\Privilegio\0empModificar\";b:0;s:26:\"\0Clases\\Privilegio\0empBaja\";b:0;s:27:\"\0Clases\\Privilegio\0usrCrear\";b:0;s:31:\"\0Clases\\Privilegio\0usrModificar\";b:0;s:26:\"\0Clases\\Privilegio\0usrBaja\";b:0;s:33:\"\0Clases\\Privilegio\0usrGenerarPass\";b:0;s:33:\"\0Clases\\Privilegio\0marCrearPropio\";b:0;s:37:\"\0Clases\\Privilegio\0marConsultarPropio\";b:0;s:27:\"\0Clases\\Privilegio\0marCrear\";b:0;s:31:\"\0Clases\\Privilegio\0marModificar\";b:0;s:30:\"\0Clases\\Privilegio\0marEliminar\";b:0;s:31:\"\0Clases\\Privilegio\0marConsultar\";b:0;s:26:\"\0Clases\\Privilegio\0marAuth\";b:0;s:27:\"\0Clases\\Privilegio\0bioCrear\";b:0;s:30:\"\0Clases\\Privilegio\0bioEliminar\";b:0;s:27:\"\0Clases\\Privilegio\0rolCrear\";b:0;s:31:\"\0Clases\\Privilegio\0rolModificar\";b:0;s:30:\"\0Clases\\Privilegio\0rolEliminar\";b:0;s:35:\"\0Clases\\Privilegio\0ajustesModificar\";b:0;}');
+(1, 'Conserje', 'Acceso a la aplicación de reconocimiento', '2025-03-20 11:40:27', 'Admon', NULL, NULL, 'O:17:\"Clases\\Privilegio\":20:{s:27:\"\0Clases\\Privilegio\0empCrear\";b:0;s:31:\"\0Clases\\Privilegio\0empModificar\";b:0;s:26:\"\0Clases\\Privilegio\0empBaja\";b:0;s:27:\"\0Clases\\Privilegio\0usrCrear\";b:0;s:31:\"\0Clases\\Privilegio\0usrModificar\";b:0;s:26:\"\0Clases\\Privilegio\0usrBaja\";b:0;s:33:\"\0Clases\\Privilegio\0usrGenerarPass\";b:0;s:33:\"\0Clases\\Privilegio\0marCrearPropio\";b:0;s:37:\"\0Clases\\Privilegio\0marConsultarPropio\";b:0;s:27:\"\0Clases\\Privilegio\0marCrear\";b:0;s:31:\"\0Clases\\Privilegio\0marModificar\";b:0;s:30:\"\0Clases\\Privilegio\0marEliminar\";b:0;s:31:\"\0Clases\\Privilegio\0marConsultar\";b:0;s:26:\"\0Clases\\Privilegio\0marAuth\";b:0;s:27:\"\0Clases\\Privilegio\0bioCrear\";b:0;s:30:\"\0Clases\\Privilegio\0bioEliminar\";b:0;s:27:\"\0Clases\\Privilegio\0rolCrear\";b:0;s:31:\"\0Clases\\Privilegio\0rolModificar\";b:0;s:30:\"\0Clases\\Privilegio\0rolEliminar\";b:0;s:35:\"\0Clases\\Privilegio\0ajustesModificar\";b:0;}'),
+(2, 'Admin', 'Acceso al portal de administración', '2025-03-20 11:48:41', 'Admon', NULL, NULL, 'O:17:\"Clases\\Privilegio\":20:{s:27:\"\0Clases\\Privilegio\0empCrear\";b:0;s:31:\"\0Clases\\Privilegio\0empModificar\";b:0;s:26:\"\0Clases\\Privilegio\0empBaja\";b:0;s:27:\"\0Clases\\Privilegio\0usrCrear\";b:0;s:31:\"\0Clases\\Privilegio\0usrModificar\";b:0;s:26:\"\0Clases\\Privilegio\0usrBaja\";b:0;s:33:\"\0Clases\\Privilegio\0usrGenerarPass\";b:0;s:33:\"\0Clases\\Privilegio\0marCrearPropio\";b:0;s:37:\"\0Clases\\Privilegio\0marConsultarPropio\";b:0;s:27:\"\0Clases\\Privilegio\0marCrear\";b:0;s:31:\"\0Clases\\Privilegio\0marModificar\";b:0;s:30:\"\0Clases\\Privilegio\0marEliminar\";b:0;s:31:\"\0Clases\\Privilegio\0marConsultar\";b:0;s:26:\"\0Clases\\Privilegio\0marAuth\";b:0;s:27:\"\0Clases\\Privilegio\0bioCrear\";b:0;s:30:\"\0Clases\\Privilegio\0bioEliminar\";b:0;s:27:\"\0Clases\\Privilegio\0rolCrear\";b:0;s:31:\"\0Clases\\Privilegio\0rolModificar\";b:0;s:30:\"\0Clases\\Privilegio\0rolEliminar\";b:0;s:35:\"\0Clases\\Privilegio\0ajustesModificar\";b:0;}'),
+(3, 'Empleado', 'Acceso al portal de empleado', '2025-03-20 11:48:41', 'Admon', NULL, NULL, 'O:17:\"Clases\\Privilegio\":20:{s:27:\"\0Clases\\Privilegio\0empCrear\";b:0;s:31:\"\0Clases\\Privilegio\0empModificar\";b:0;s:26:\"\0Clases\\Privilegio\0empBaja\";b:0;s:27:\"\0Clases\\Privilegio\0usrCrear\";b:0;s:31:\"\0Clases\\Privilegio\0usrModificar\";b:0;s:26:\"\0Clases\\Privilegio\0usrBaja\";b:0;s:33:\"\0Clases\\Privilegio\0usrGenerarPass\";b:0;s:33:\"\0Clases\\Privilegio\0marCrearPropio\";b:0;s:37:\"\0Clases\\Privilegio\0marConsultarPropio\";b:0;s:27:\"\0Clases\\Privilegio\0marCrear\";b:0;s:31:\"\0Clases\\Privilegio\0marModificar\";b:0;s:30:\"\0Clases\\Privilegio\0marEliminar\";b:0;s:31:\"\0Clases\\Privilegio\0marConsultar\";b:0;s:26:\"\0Clases\\Privilegio\0marAuth\";b:0;s:27:\"\0Clases\\Privilegio\0bioCrear\";b:0;s:30:\"\0Clases\\Privilegio\0bioEliminar\";b:0;s:27:\"\0Clases\\Privilegio\0rolCrear\";b:0;s:31:\"\0Clases\\Privilegio\0rolModificar\";b:0;s:30:\"\0Clases\\Privilegio\0rolEliminar\";b:0;s:35:\"\0Clases\\Privilegio\0ajustesModificar\";b:0;}');
 
 -- --------------------------------------------------------
 
@@ -237,7 +263,8 @@ CREATE TABLE `tusuario` (
 --
 
 INSERT INTO `tusuario` (`COD_USUARIO`, `NOM_LOGIN`, `DES_CONTRASENA`, `DES_CORREO`, `FEC_ALTA`, `NOM_USUARIO_ALTA`, `FEC_BAJA`, `NOM_USUARIO_BAJA`) VALUES
-(1, 'Admon', '$2y$10$wmG1sV.DKtBGmElbfJvdNezoKWvene1rOui8jJU48e01USIybXdVO', 'benito@sefue.com', '2025-03-20 12:32:57', 'Admon', NULL, NULL);
+(1, 'Admon', '$2y$10$wmG1sV.DKtBGmElbfJvdNezoKWvene1rOui8jJU48e01USIybXdVO', 'benito@sefue.com', '2025-03-20 12:32:57', 'Admon', NULL, NULL),
+(2, 'David', '$2y$10$wmG1sV.DKtBGmElbfJvdNezoKWvene1rOui8jJU48e01USIybXdVO', 'david@david.com', '2025-03-25 09:39:30', 'Admon', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -255,7 +282,9 @@ CREATE TABLE `tusuariorol` (
 --
 
 INSERT INTO `tusuariorol` (`COD_USUARIO`, `COD_ROL`) VALUES
-(1, 1);
+(1, 1),
+(2, 3),
+(2, 2);
 
 --
 -- Índices para tablas volcadas
@@ -343,7 +372,7 @@ ALTER TABLE `tajuste`
 -- AUTO_INCREMENT de la tabla `tbio`
 --
 ALTER TABLE `tbio`
-  MODIFY `COD_BIO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `COD_BIO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `templeado`
@@ -355,13 +384,13 @@ ALTER TABLE `templeado`
 -- AUTO_INCREMENT de la tabla `tmarcaje`
 --
 ALTER TABLE `tmarcaje`
-  MODIFY `COD_MARCAJE` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `COD_MARCAJE` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT de la tabla `trol`
 --
 ALTER TABLE `trol`
-  MODIFY `COD_ROL` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `COD_ROL` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `ttbio`
@@ -385,7 +414,7 @@ ALTER TABLE `ttransacciones`
 -- AUTO_INCREMENT de la tabla `tusuario`
 --
 ALTER TABLE `tusuario`
-  MODIFY `COD_USUARIO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `COD_USUARIO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas

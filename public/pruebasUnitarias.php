@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('Europe/Madrid');
 
 require '../vendor/autoload.php';
 
@@ -22,7 +23,8 @@ use Clases\Privilegio;
 
 
 
-$fecha = new DateTime();
+$fecha = new DateTime('now', new DateTimeZone('UTC'));
+$fecha->setTimezone(new DateTimeZone('Europe/Madrid'));
 
 function pruebaAjuste(bool $crear, bool $modificar, bool $mostrar, ?int $id){
     $ajuste = new Ajuste();
@@ -109,13 +111,11 @@ function pruebaMarcaje(bool $crear, bool $modificar, bool $mostrar, ?int $id){
     }
     if ($mostrar){
         $fecha2= new DateTime('2025-3-10 00:00');
-        $marcajes = $marcaje->cargarMarcajesEntreFechas($fecha2, $fecha);
-        foreach ($marcajes as $marcaje) {
-            if ($marcaje->getCodMarcaje() == 2) {
-                echo $marcaje->getFoto();
-                break;
-            }
-        }
+        $marcajes = $marcaje->cargarMarcajesEntreFechas(1,1,$fecha2, $fecha);
+        $marcajes2=$marcaje->marcajesHoy(1,$fecha);
+        var_dump($marcajes2);
+        echo($marcaje->calcularHorasTrabajadas(1,$fecha));
+       
     }
 }
 function pruebaRol(bool $crear, bool $modificar, bool $mostrar, ?int $id){
@@ -216,8 +216,8 @@ function pruebaUsuario(bool $crear, bool $modificar, bool $mostrar, ?int $id){
 pruebaAjuste(false,false,false,3);
 pruebaDatosBio(false,false,false,1);
 pruebaEmpleado(false,false,false,5);
-pruebaMarcaje(false,false,false,2);
-pruebaRol(false,false,false,2);
+pruebaMarcaje(false,false,true,2);
+pruebaRol(false,false,false,3);
 pruebaTipoBio(false,false,false,1);
 pruebaTransaccion(false,false,false,6); //Sin pasar
-pruebaUsuario(false,false,true,1);
+pruebaUsuario(false,false,false,1);

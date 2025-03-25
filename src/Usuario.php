@@ -5,6 +5,7 @@ namespace Clases;
 use PDO;
 use PDOEception;
 use DateTime;
+use Empelado;
 
 class Usuario{
     // Atributos
@@ -110,10 +111,14 @@ class Usuario{
                 $this->cod_usuario = $usuario['COD_USUARIO'];
                 //carga roles
                 $this->cargarRol();
+                //Cargamos el empelado asignado
+                $empleado = new Empleado();
+                $empleado->cargarDatosPorUsuario($usuario['COD_USUARIO']);
                 //Define datos de sesión
                 $_SESSION['COD_USUARIO'] = $usuario['COD_USUARIO'];
                 $_SESSION['NOM_USUARIO'] = $usuario['NOM_LOGIN'];
                 $_SESSION['ROLES'] = $this->roles;
+                $_SESSION['COD_EMPLEADO'] = $empleado->getCodEmpleado();
                 //devuelve true
                 return true;
             } else {

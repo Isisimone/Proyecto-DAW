@@ -18,6 +18,7 @@ class Empleado {
     private string $nom_Usuario_Alta;
     private ?DateTime $fec_Baja;//Opcional
     private ?string $nom_Usuario_Baja;//Opcional
+    private string $foto_Empleado;
 
     // Método constructor
     public function __construct() {
@@ -25,8 +26,51 @@ class Empleado {
         $this->cod_Empleado= 0;
         $this->fec_Baja = null;
         $this->nom_Usuario_Baja = null;
+        $this->foto_Empleado="";
     }
 
+    // Método para cargar datos de un determinado empleado de la base de datos por usuario
+    public function cargarDatosPorUsuario(int $cod_Usuario): bool {
+        try {
+            //Crea la conexión
+            $conexion = new Conexion();
+            //Define la consulta
+            $sql = "SELECT * FROM templeado WHERE COD_USUARIO = :cod_Usuario";
+            //La prepara
+            $stmt = $conexion->conexion->prepare($sql);
+            //Parametriza
+            $stmt->bindValue(':cod_Usuario', $cod_Usuario, PDO::PARAM_INT);
+            //Ejecuta la consulta
+            $stmt->execute();
+            //Vuelca los resultados
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$resultado) {
+                //Si no hay resultados devuelve false
+                return false;
+            }
+            //Vuelca los resultados en los parámetros del objeto
+            $this->cod_Empleado = $resultado['COD_EMPLEADO'];
+            $this->cod_Usuario = $resultado['COD_USUARIO'];
+            $this->nombre = $resultado['NOM_EMPLEADO'];
+            $this->apellido1 = $resultado['APE1_EMPLEADO'];
+            $this->apellido2 = $resultado['APE2_EMPLEADO'];
+            $this->contacto = $resultado['CONTACTO_EMPLEADO'];
+            $this->fec_Alta = new DateTime($resultado['FEC_ALTA']);
+            $this->nom_Usuario_Alta = $resultado['NOM_USUARIO_ALTA'];
+            $this->fec_Baja = $resultado['FEC_BAJA'] ? new DateTime($resultado['FEC_BAJA']) : null;
+            $this->nom_Usuario_Baja = $resultado['NOM_USUARIO_BAJA'] ?? null;
+            $this->foto_Empleado = $resultado['FOTO'] ?? "";
+
+            //Devuelve true
+            return true;
+        } catch (PDOException $e) {
+            // Manejo de excepciones
+            error_log("Error al cargar datos del empleado: " . $e->getMessage());
+            return false;
+        }
+    }
+    
     // Método para cargar datos de un determinado empleado de la base de datos
     public function cargarDatosEmpleado(int $cod_Empleado): bool {
         try {
@@ -58,6 +102,10 @@ class Empleado {
             $this->nom_Usuario_Alta = $resultado['NOM_USUARIO_ALTA'];
             $this->fec_Baja = $resultado['FEC_BAJA'] ? new DateTime($resultado['FEC_BAJA']) : null;
             $this->nom_Usuario_Baja = $resultado['NOM_USUARIO_BAJA'] ?? null;
+            if ($resultado['FOTO']){
+                $this->foto_Empleado = $resultado['FOTO'];
+            }
+
             //Devuelve true
             return true;
         } catch (PDOException $e) {
@@ -80,7 +128,7 @@ class Empleado {
             //En caso contrario realiza un UPDATE
             } else{
                 $sql = "UPDATE templeado SET COD_USUARIO = :cod_Usuario, NOM_EMPLEADO = :nombre, APE1_EMPLEADO = :apellido1, APE2_EMPLEADO = :apellido2, CONTACTO_EMPLEADO = :contacto 
-                , FEC_ALTA = :fec_Alta, NOM_USUARIO_ALTA = :nom_Usuario_Alta, FEC_BAJA=:fec_Baja, NOM_USUARIO_BAJA = :nom_Usuario_Baja
+                , FEC_ALTA = :fec_Alta, NOM_USUARIO_ALTA = :nom_Usuario_Alta, FEC_BAJA=:fec_Baja, NOM_USUARIO_BAJA = :nom_Usuario_Baja, FOTO = :foto
                 WHERE COD_EMPLEADO = :cod_Empleado";
                 $stmt = $conexion->conexion->prepare($sql);
                 $stmt->bindValue(':cod_Empleado', $this->cod_Empleado, PDO::PARAM_INT);
@@ -95,6 +143,8 @@ class Empleado {
             $stmt->bindValue(':nom_Usuario_Alta', $this->nom_Usuario_Alta, PDO::PARAM_STR);
             $stmt->bindValue(':fec_Baja', $this->fec_Baja ? $this->fec_Baja->format('Y-m-d H:i:s') : null, PDO::PARAM_STR);
             $stmt->bindValue(':nom_Usuario_Baja', $this->nom_Usuario_Baja, PDO::PARAM_STR);
+            $stmt->bindValue(':foto', $this->foto_Empleado, PDO::PARAM_STR);
+
             //Devuelve directamente el resultado como true o false
             return $stmt->execute();
         } catch (PDOException $e) {
@@ -203,6 +253,10 @@ class Empleado {
         public function getNomUsuarioBaja(): ?string {
             return $this->nom_Usuario_Baja;
         }
+
+        public function getFoto(): string{
+            return $this->foto_Empleado;
+        }
     
         // Setters
         public function setCodEmpleado(int $cod_Empleado): void {
@@ -235,5 +289,9 @@ class Empleado {
     
         public function setNomUsuarioAlta(string $nom_Usuario_Alta): void {
             $this->nom_Usuario_Alta = $nom_Usuario_Alta;
+        }
+
+        public function setFoto(string $foto):void {
+            $this->foto_Empleado = $foto;
         }
 }
