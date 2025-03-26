@@ -56,16 +56,16 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
         }
         .contenedor-grafica-reg{
             display: flex; /* Alinea los elementos en fila */
-            justify-content: space-between; /* Espaciado entre los elementos */
-            align-items: flex-start; /* Alinea los elementos al inicio vertical */
-            width: 90%; /* Ocupa todo el ancho disponible */
-            margin-top: 20px;
-            max-height: 400px;
+        justify-content: space-between; /* Espaciado entre los elementos */
+        align-items: flex-start; /* Alinea los elementos al inicio vertical */
+        width: 90%; /* Ocupa todo el ancho disponible */
+        margin-top: 20px;
+        max-height: 400px;
         }
         .chart-container {
-            flex: 2; /* Ocupa más espacio que los registros */
-            max-width: 70%; /* Establece un ancho máximo */
-            max-height:350px;
+            flex: 1; /* Ocupa la mitad del espacio */
+        max-width: 50%; /* Limita el ancho al 50% */
+        max-height: 350px;
             
         }
         canvas {
@@ -82,14 +82,14 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
         }
 
         .registro {
-            flex: 1;
-            max-height: 300px; /* Altura máxima del contenedor */
-            height:100%;
-            overflow-y: auto; /* Habilita el scroll vertical */
-            border: 1px solid #ccc; /* Borde para separar visualmente */
-            padding: 10px;
-            margin-left: 20px; /* Espaciado a la izquierda del gráfico */
-            background-color: #f9f9f9; /* Fondo claro */
+            flex: 2; /* Ocupa el doble del espacio que la gráfica */
+        max-height: 400px; /* Altura máxima del contenedor */
+        height: 100%;
+        overflow-y: auto; /* Habilita el scroll vertical */
+        border: 1px solid #ccc; /* Borde para separar visualmente */
+        padding: 10px;
+        margin-left: 20px; /* Espaciado a la izquierda del gráfico */
+        background-color: #f9f9f9; /* Fondo claro */
         }
 
     .registro h3 {
@@ -105,11 +105,25 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
 
     .registro li {
         display: grid; /* Usa grid para organizar los elementos */
-        grid-template-columns: 100px 100px 200px; /* Anchos fijos para cada columna */
+        grid-template-columns: 50px 100px 200px 100px 100px; /* Define anchos fijos para cada columna */
         gap: 10px; /* Espaciado entre columnas */
+        align-items: center; /* Alinea verticalmente los elementos */
         margin-bottom: 10px;
         font-size: 14px;
         line-height: 1.5;
+    }
+    .registro li span {
+        text-align: center;
+    }
+
+    .registro li span.incidencia {
+        color: #FF0000; /* Color para la incidencia */
+        font-weight: bold;
+    }
+
+    .registro li span.estado {
+        color: #555; /* Color para el estado */
+        font-style: italic;
     }
 
     span.tipoA {
@@ -128,6 +142,17 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
 
     .registro li span.fecha {
         color: #333; /* Color para la fecha y hora */
+    }
+
+    .registro-header {
+        font-weight: bold;
+        background-color: #f1f1f1;
+        border-bottom: 2px solid #ccc;
+        padding: 5px 0;
+    }
+
+    .registro-header span {
+        text-align: center;
     }
 
     .cabeceraRegistros {
@@ -319,6 +344,13 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
         <div class="registro">
             
         <ul>
+        <li class="registro-header">
+            <span class="col-es">E/S</span>
+            <span class="col-tipo">Tipo</span>
+            <span class="col-fecha">Fecha/Hora</span>
+            <span class="col-incidencia">Incidencia</span>
+            <span class="col-estado">Estado</span>
+        </li>
             <?php foreach ($datosMarcajes as $registro): ?>
                 <li>
                     <?php 
@@ -330,14 +362,17 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                             1 => 'Facial',
                             2 => 'RFID',
                             3 => 'Manual',
+                            99 => 'AUSENCIA',
                             default => 'Desconocido'
                         };
                         // Formatea la fecha y hora
                         $fechaHora = (new DateTime($registro['FEC_MARCAJE']))->format('Y-m-d H:i:s');
                     ?>
-                    <span class="<?php echo $tipoClase;?>"><?php echo $tipoMarcaje; ?></span>
-                    <span class="metodo"><?php echo $metodoEntrada; ?></span>
-                    <span class="fecha"><?php echo $fechaHora; ?></span>
+                    <span class="<?php echo $tipoClase; ?>"><?php echo $tipoMarcaje; ?></span>
+                <span class="metodo"><?php echo $metodoEntrada; ?></span>
+                <span class="fecha"><?php echo $fechaHora; ?></span>
+                <span class="incidencia"><?php //echo $incidencia; ?></span>
+                <span class="estado"><?php //echo $estado; ?></span>
                 </li>
                 <?php endforeach; ?>
                 </ul>

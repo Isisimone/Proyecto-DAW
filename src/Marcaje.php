@@ -82,7 +82,7 @@ class Marcaje{
         try{
             //Crea una conexión y una consulta SELECT
             $conexion = new Conexion();
-            $consulta = $conexion->conexion->prepare("SELECT COD_TIPO_MARCAJE FROM tmarcaje WHERE COD_EMPLEADO = :cod ORDER BY FEC_MARCAJE DESC LIMIT 1");
+            $consulta = $conexion->conexion->prepare("SELECT COD_TIPO_MARCAJE FROM tmarcaje WHERE COD_EMPLEADO = :cod AND COD_TIPO_ACCESO<900 ORDER BY FEC_MARCAJE DESC LIMIT 1");
             //Parametriza y ejecuta
             $consulta->bindValue(':cod', $empleado, PDO::PARAM_INT);
             $consulta->execute();
@@ -115,7 +115,7 @@ class Marcaje{
             $consulta = $conexion->conexion->prepare("
                 SELECT DISTINCT DATE(FEC_MARCAJE) AS dia
                 FROM tmarcaje
-                WHERE COD_EMPLEADO = :codEmpleado
+                WHERE COD_EMPLEADO = :codEmpleado AND COD_TIPO_ACCESO < 90
                 AND FEC_MARCAJE BETWEEN :fechaInicio AND :fechaFin
             ");
             $consulta->bindValue(':codEmpleado', $codEmpleado, PDO::PARAM_INT);
@@ -219,7 +219,7 @@ class Marcaje{
             //Crea una conexión y una consulta SELECT
             $conexion = new Conexion();
             //consulta ascendente de los marcaje de fecha(No tiene en cuenta hora)
-            $consulta = $conexion->conexion->prepare("SELECT COD_TIPO_MARCAJE, FEC_MARCAJE FROM tmarcaje WHERE COD_EMPLEADO = :cod AND DATE(FEC_MARCAJE) = :fec ORDER BY FEC_MARCAJE ASC");
+            $consulta = $conexion->conexion->prepare("SELECT COD_TIPO_MARCAJE, FEC_MARCAJE, COD_TIPO_ACCESO FROM tmarcaje WHERE COD_EMPLEADO = :cod AND DATE(FEC_MARCAJE) = :fec ORDER BY FEC_MARCAJE ASC");
             //Parametriza y ejecuta
             $consulta->bindValue(':cod', $empleado, PDO::PARAM_INT);
             $consulta->bindValue(':fec', $fecha->format('Y-m-d'));
@@ -250,6 +250,10 @@ class Marcaje{
         $this->setObs($obs);
         $this->grabar();
     }
+
+    //Método para obtener Lista de 
+
+
 
     //Método para registrar el marcaje en la bbdd
     public function grabar(): bool {
@@ -314,15 +318,8 @@ class Marcaje{
     
             // Calcula la nueva bolsa
             $nuevaBolsa = $bolsaActual + ($horasTrabajadasHoy - $maxHorasDia);
-    
-            // Actualiza la bolsa en la base de datos
-            /*$conexion = new Conexion();
-            $sql = "UPDATE templeado SET BOLSA = :bolsa WHERE COD_EMPLEADO = :codEmpleado";
-            $stmt = $conexion->conexion->prepare($sql);
-            $stmt->bindValue(':bolsa', $nuevaBolsa);
-            $stmt->bindValue(':codEmpleado', $this->cod_Empleado);
-            $stmt->execute();*/
-
+            
+            //Graba la bolsa de horas actual
             $empleado->setBolsa($nuevaBolsa);
             $empelado->grabar();
     

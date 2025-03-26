@@ -28,7 +28,7 @@ function renderChart(labels, data, average, maxHorasDia) {
     // Divide las horas en normales y extras
     const horasNormales = data.map(horas => Math.min(horas, maxHorasDia)); // Máximo permitido por día
     const horasExtras = data.map(horas => Math.max(0, horas - maxHorasDia)); // Horas que exceden el máximo
-
+    
     
     // Define los colores para las barras
     const backgroundColors = labels.map(label => {
