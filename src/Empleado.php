@@ -31,6 +31,7 @@ class Empleado {
         $this->fec_Baja = null;
         $this->nom_Usuario_Baja = null;
         $this->foto_Empleado="";
+        $this->maxHorasDia=0;
     }
 
     
@@ -69,7 +70,7 @@ class Empleado {
             $this->foto_Empleado = $resultado['FOTO'] ?? "";
             $this->horario = $resultado['HORARIO'] ?? "";
             $this->flex = $resultado['FLEX'] ?? false;
-            $this->maxHorasDia = $resultado['MAX_HORA_DIA'];
+            $this->maxHorasDia = $resultado['MAX_HORA_DIA'] ?? 0;
             $this->bolsa = $resultado['BOLSA_HORAS'] ?? 0;
 
             //Devuelve true
