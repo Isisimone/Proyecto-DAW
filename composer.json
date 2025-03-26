@@ -19,5 +19,8 @@
         "allow-plugins": {
             "kylekatarnls/update-helper": true
         }
+    },
+    "require": {
+        "setasign/fpdf": "^1.8"
     }
 }

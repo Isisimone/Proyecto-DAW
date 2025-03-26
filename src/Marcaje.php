@@ -45,11 +45,36 @@ class Marcaje{
         unset($this->obs);
     }
 
-    //Método para convertir fechas de UTC a Europe/Madrid
-    private function convertirFecha(string $fechaUTC): string {
-        $fecha = new DateTime($fechaUTC, new DateTimeZone('UTC'));
-        $fecha->setTimezone(new DateTimeZone('Europe/Madrid'));
-        return $fecha->format('Y-m-d H:i:s');
+    //Calcular las fechas de la semana (De lunes a domingo)
+    public function calcularFechasSemana(DateTime $fecha): array {
+        // Clona la fecha para no modificar el objeto original
+        $fechaInicio = clone $fecha;
+    
+        // Ajusta al lunes de la semana actual
+        $diaSemana = (int) $fechaInicio->format('N'); // 1 (lunes) a 7 (domingo)
+        $fechaInicio->modify('-' . ($diaSemana - 1) . ' days');
+    
+        // Genera las fechas de lunes a domingo
+        $fechasSemana = [];
+        for ($i = 0; $i < 7; $i++) {
+            $fechasSemana[] = (clone $fechaInicio)->modify("+{$i} days");
+        }
+    
+        return $fechasSemana;
+    }
+
+    //Método para sumar las horas trabajadas en la semana a partir de una fecha.
+    public function calcularHorasSemana(int $codEmpleado, DateTime $fecha): float {
+        // Obtiene las fechas de la semana
+        $fechasSemana = $this->calcularFechasSemana($fecha);
+    
+        // Suma las horas trabajadas de cada día
+        $totalHoras = 0.0;
+        foreach ($fechasSemana as $dia) {
+            $totalHoras += $this->calcularHorasTrabajadas($codEmpleado, $dia);
+        }
+    
+        return $totalHoras;
     }
 
     //Método para obtener el TIPO del último marcaje 
@@ -72,47 +97,121 @@ class Marcaje{
         }
     }
 
-    //Método que devuelve las horas trabajadas en la fecha indicada
-    public function calcularHorasTrabajadas(int $codEmpleado, DateTime $fecha): float {
+    //Método para calcular las horas trabajadas de más
+    public function calcularBolsaMensual(int $codEmpleado, DateTime $fecha): void {
         try {
-            // Obtiene los marcajes del día
-            $marcajesDelDia = $this->marcajesHoy($codEmpleado, $fecha);
+            // Obtiene el empleado y su configuración
+            $empleado = new Empleado();
+            $empleado->cargarDatosEmpleado($codEmpleado);
+            $maxHorasDia = $empleado->getMaxHorasDia();
+            $bolsaActual = $empleado->getBolsa();
     
-            // Inicializa las variables para el cálculo
-            $horasTrabajadas = 0;
-            $ultimoMarcaje = null;
+            // Obtiene el primer y último día del mes de la fecha consultada
+            $fechaInicio = (clone $fecha)->modify('first day of this month');
+            $fechaFin = (clone $fecha)->modify('last day of this month');
     
-            foreach ($marcajesDelDia as $marcaje) {
-                //Obtiene el tipo y fecha del marcaje(para la hora)
-                $tipoMarcaje = $marcaje['COD_TIPO_MARCAJE'];
-                $fechaMarcaje = new DateTime($marcaje['FEC_MARCAJE']);
+            // Obtiene los días del mes con registros
+            $conexion = new Conexion();
+            $consulta = $conexion->conexion->prepare("
+                SELECT DISTINCT DATE(FEC_MARCAJE) AS dia
+                FROM tmarcaje
+                WHERE COD_EMPLEADO = :codEmpleado
+                AND FEC_MARCAJE BETWEEN :fechaInicio AND :fechaFin
+            ");
+            $consulta->bindValue(':codEmpleado', $codEmpleado, PDO::PARAM_INT);
+            $consulta->bindValue(':fechaInicio', $fechaInicio->format('Y-m-d 00:00:00'));
+            $consulta->bindValue(':fechaFin', $fechaFin->format('Y-m-d 23:59:59'));
+            $consulta->execute();
+            $diasConRegistros = $consulta->fetchAll(PDO::FETCH_COLUMN);
     
-                if ($tipoMarcaje == 1) {
-                    // Si es un marcaje de entrada, guarda el marcaje para restarlo luego
-                    $ultimoMarcaje = $fechaMarcaje;
-                } elseif ($tipoMarcaje == 2 && $ultimoMarcaje !== null) {
-                    // Si es un marcaje de salida, calcula la diferencia con el último marcaje de entrada
-                    $intervalo = $ultimoMarcaje->diff($fechaMarcaje);
-                    $horasTrabajadas += $intervalo->h + ($intervalo->i / 60); // Convierte minutos a horas
-                    $ultimoMarcaje = null; // Resetea el último marcaje
-                }
+            // Inicializa el acumulador de horas extras
+            $totalHorasExtras = 0.0;
+    
+            // Calcula las horas trabajadas y las horas extras para cada día con registros
+            foreach ($diasConRegistros as $dia) {
+                $fechaDia = new DateTime($dia, new DateTimeZone('Europe/Madrid'));
+                $horasTrabajadas = $this->calcularHorasTrabajadas($codEmpleado, $fechaDia);
+    
+                // Calcula las horas extras del día
+                $horasExtras = $horasTrabajadas - $maxHorasDia;
+                $totalHorasExtras += $horasExtras;
             }
     
-            // Si el último marcaje es de tipo entrada, ya fuera del bucle, calcula el tiempo hasta ahora
-            //OJO, si se piden las horas de un marcaje incompleto sacará un número enorme de horas.
-            if ($ultimoMarcaje !== null) {
-                $intervalo = $ultimoMarcaje->diff(new DateTime());
-                $horasTrabajadas += $intervalo->h + ($intervalo->i / 60); // Convierte minutos a horas
-            }
-            //Devielve las horas trabajadas(se debería de limitar con parámetro)
-            //<<<<<<<<<<<<<<<<    PARAMETRO >>>>>>>>>>>>>>>>
-            return $horasTrabajadas;
+            // Actualiza la bolsa del empleado
+            $nuevaBolsa = $totalHorasExtras;
+            $empleado->setBolsa($nuevaBolsa);
+            $empleado->grabar();
+    
+            // Log de éxito
+            error_log("Bolsa mensual calculada y actualizada para el empleado $codEmpleado. Nueva bolsa: $nuevaBolsa");
         } catch (Exception $e) {
             // Manejo de errores
-            error_log("Error al calcular las horas trabajadas: " . $e->getMessage());
-            return 0;
+            error_log("Error al calcular la bolsa mensual: " . $e->getMessage());
         }
     }
+
+    //Método que devuelve las horas trabajadas en la fecha indicada
+    public function calcularHorasTrabajadas(int $codEmpleado, DateTime $fecha): float {
+    try {
+        // Obtiene los marcajes del día
+        $marcajesDelDia = $this->marcajesHoy($codEmpleado, $fecha);
+
+        // Inicializa las variables para el cálculo
+        $horasTrabajadas = 0.0;
+        $ultimoMarcaje = null;
+
+        foreach ($marcajesDelDia as $marcaje) {
+            // Obtiene el tipo y fecha del marcaje
+            $tipoMarcaje = $marcaje['COD_TIPO_MARCAJE'];
+            $fechaMarcaje = new DateTime($marcaje['FEC_MARCAJE']);
+
+            if ($tipoMarcaje == 1) {
+                // Si es un marcaje de entrada, guarda el marcaje para restarlo luego
+                $ultimoMarcaje = $fechaMarcaje;
+            } elseif ($tipoMarcaje == 2 && $ultimoMarcaje !== null) {
+                // Si es un marcaje de salida, calcula la diferencia con el último marcaje de entrada
+                $timestampInicio = $ultimoMarcaje->getTimestamp();
+                $timestampFin = $fechaMarcaje->getTimestamp();
+
+                // Calcula la diferencia en segundos
+                $diferenciaSegundos = $timestampFin - $timestampInicio;
+
+                // Convierte la diferencia a horas y minutos
+                $horas = floor($diferenciaSegundos / 3600); // 1 hora = 3600 segundos
+                $minutos = floor(($diferenciaSegundos % 3600) / 60); // Resto en minutos
+
+                // Suma las horas y los minutos como fracción de hora
+                $horasTrabajadas += $horas + ($minutos / 60);
+
+                // Resetea el último marcaje
+                $ultimoMarcaje = null;
+            }
+        }
+
+        // Si el último marcaje es de tipo entrada, calcula el tiempo hasta ahora
+        if ($ultimoMarcaje !== null) {
+            $timestampInicio = $ultimoMarcaje->getTimestamp();
+            $timestampFin = (new DateTime())->getTimestamp();
+
+            // Calcula la diferencia en segundos
+            $diferenciaSegundos = $timestampFin - $timestampInicio;
+
+            // Convierte la diferencia a horas y minutos
+            $horas = floor($diferenciaSegundos / 3600);
+            $minutos = floor(($diferenciaSegundos % 3600) / 60);
+
+            // Suma las horas y los minutos como fracción de hora
+            $horasTrabajadas += $horas + ($minutos / 60);
+        }
+
+        // Devuelve las horas trabajadas con precisión de dos decimales
+        return round($horasTrabajadas, 2);
+    } catch (Exception $e) {
+        // Manejo de errores
+        error_log("Error al calcular las horas trabajadas: " . $e->getMessage());
+        return 0.0;
+    }
+}
 
     //Método para obtener marcajes del día
     public function marcajesHoy($empleado, DateTime $fecha){
@@ -127,10 +226,7 @@ class Marcaje{
             $consulta->execute();
             //Vuelca el resultado
             $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
-            // Convierte las fechas de UTC a Europe/Madrid
-            foreach ($resultado as &$marcaje) {
-                $marcaje['FEC_MARCAJE'] = $this->convertirFecha($marcaje['FEC_MARCAJE']);
-            }
+            
             //Devuelve array con el tipo y la fecha de cada marcaje
             return $resultado;
         }catch(PDOException $e){
@@ -187,6 +283,12 @@ class Marcaje{
             $stmt->bindValue(':DES_OBSERVACIONES', $this->obs);
             //Ejecuta la consulta
             $stmt->execute();
+
+            // Si es un marcaje de salida, actualiza la bolsa de horas
+            if ($this->cod_Tipo_Marcaje == 2) {
+                $this->actualizarBolsaHoras();
+            }
+
             //Elimina el objeto conexión
             $conexion = null;
             //Devuelve true
@@ -198,6 +300,38 @@ class Marcaje{
         }
     }
 
+    //Actualiza la bolsa de horas del empleado
+    private function actualizarBolsaHoras(): void {
+        try {
+            // Obtiene la jornada total del día
+            $horasTrabajadasHoy = $this->calcularHorasTrabajadas($this->cod_Empleado, new DateTime($this->fec_Marcaje->format('Y-m-d')));
+    
+            // Obtiene el empleado y su bolsa actual
+            $empleado = new Empleado();
+            $empleado->cargarDatosEmpleado($this->cod_Empleado);
+            $bolsaActual = $empleado->getBolsa();
+            $maxHorasDia = $empleado->getMaxHorasDia();
+    
+            // Calcula la nueva bolsa
+            $nuevaBolsa = $bolsaActual + ($horasTrabajadasHoy - $maxHorasDia);
+    
+            // Actualiza la bolsa en la base de datos
+            /*$conexion = new Conexion();
+            $sql = "UPDATE templeado SET BOLSA = :bolsa WHERE COD_EMPLEADO = :codEmpleado";
+            $stmt = $conexion->conexion->prepare($sql);
+            $stmt->bindValue(':bolsa', $nuevaBolsa);
+            $stmt->bindValue(':codEmpleado', $this->cod_Empleado);
+            $stmt->execute();*/
+
+            $empleado->setBolsa($nuevaBolsa);
+            $empelado->grabar();
+    
+            // Elimina el objeto conexión
+            $conexion = null;
+        } catch (Exception $e) {
+            error_log("Error al actualizar la bolsa de horas: " . $e->getMessage());
+        }
+    }
     //Método para cargar los datos de un marcaje, devuelve objeto Marcaje
     public function cargar(int $cod_Marcaje): Marcaje {
         try{
@@ -218,8 +352,8 @@ class Marcaje{
             $this->cod_Tipo_Marcaje = $resultado['COD_TIPO_MARCAJE'];
             $this->cod_Empleado = $resultado['COD_EMPLEADO'];
             $this->cod_bio = $resultado['COD_BIO'];
-            $this->fec_Marcaje = new DateTime($this->convertirFecha($resultado['FEC_MARCAJE']));
-            $this->fec_Grabacion = new DateTime($this->convertirFecha($resultado['FEC_GRABACION']));
+            $this->fec_Marcaje = new DateTime($resultado['FEC_MARCAJE']);
+            $this->fec_Grabacion = new DateTime($resultado['FEC_GRABACION']);
             $this->incidencia = $resultado['IND_INCIDENCIA'];
             $this->pendiente = $resultado['IND_PENDIENTE'];
             $this->foto = $resultado['DES_FOTO'];
@@ -242,7 +376,8 @@ class Marcaje{
                 $consulta = $conexion->conexion->prepare("
                     SELECT * FROM tmarcaje 
                     WHERE FEC_MARCAJE BETWEEN :fechaInicio AND :fechaFin 
-                    AND COD_EMPLEADO BETWEEN :empleadoI AND :empleadoF
+                    AND COD_EMPLEADO BETWEEN :empleadoI AND :empleadoF 
+                    ORDER BY FEC_MARCAJE ASC
                 ");
                 //Parametriza y ejecuta
                 $consulta->bindValue(':empleadoI', $empleadoI);
@@ -252,11 +387,7 @@ class Marcaje{
                 $consulta->execute();
                 //Vuelca el resultado
                 $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
-                // Convierte las fechas de UTC a Europe/Madrid
-                foreach ($resultado as &$marcaje) {
-                    $marcaje['FEC_MARCAJE'] = $this->convertirFecha($marcaje['FEC_MARCAJE']);
-                    $marcaje['FEC_GRABACION'] = $this->convertirFecha($marcaje['FEC_GRABACION']);
-                }
+                
                 //Devuelve el resultado
                 return $resultado;
             }catch(PDOException $e){
@@ -287,7 +418,7 @@ class Marcaje{
 
                 // Convierte las fechas de UTC a Europe/Madrid
                 foreach ($resultado as &$marcaje) {
-                    $marcaje['FEC_MARCAJE'] = $this->convertirFecha($marcaje['FEC_MARCAJE']);
+                    $marcaje['FEC_MARCAJE'] = $marcaje['FEC_MARCAJE'];
                 }
                 //Devuelve el resultado
                 return $resultado;

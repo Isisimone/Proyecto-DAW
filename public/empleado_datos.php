@@ -31,16 +31,28 @@ if (isset($_SESSION['COD_USUARIO'])) {
             $nombreCompleto = $empleado->getNombre() . ' ' . $empleado->getApellido1() . ' ' . $empleado->getApellido2();
             $fotoEmpleado = $empleado->getFoto();
 
+            //Obtiene horas máximas del empleado
+            $maxHoras = $empleado->getMaxHorasDia();
+            $horario = $empleado->getHorario();
+            
+
             // Crea una instancia de la clase Marcaje
             $marcaje = new Marcaje();
 
+            
+
             // Obtiene los últimos 5 marcajes
             $ultimosMarcajes = $marcaje->obtenerUltimosMarcajes($codEmpleado, 5);
-
+            
             // Obtiene las horas trabajadas hoy
             $fechaHoy = new DateTime('now', new DateTimeZone('UTC'));
             $fechaHoy->setTimezone(new DateTimeZone('Europe/Madrid'));
             $horasTrabajadas = $marcaje->calcularHorasTrabajadas($codEmpleado, $fechaHoy);
+            $horasSemanales = $marcaje->calcularHorasSemana($codEmpleado,$fechaHoy);
+
+            //Calcula la bolsa de horas del empleado a partir de los marcajes del mes indicado
+            $marcaje->calcularBolsaMensual($codEmpleado,$fechaHoy);
+            $bolsa = $empleado->getBolsa();
 
             // Determina las fechas según el filtro seleccionado
             $filtro = $_POST['filter-mode'] ?? 'week';
@@ -49,24 +61,36 @@ if (isset($_SESSION['COD_USUARIO'])) {
 
             switch ($filtro) {
                 case 'week':
-                    $fechaInicio = (clone $fechaFin)->modify('-7 days');
+                    $fechaInicio = (clone $fechaFin)->modify('this week monday');
+                    break;
+                case 'lastweek':
+                    $fechaInicio = (clone $fechaFin)->modify('last week monday');
+                    $fechaFin = $fechaFin->modify('last week sunday');
                     break;
                 case 'month':
                     $fechaInicio = (clone $fechaFin)->modify('first day of this month');
                     break;
+                case 'lastmonth':
+                        $fechaInicio = (clone $fechaFin)->modify('first day of last month');
+                        $fechaFin = $fechaFin->modify('last day of last month');
+                        break;
                 case 'year':
                     $fechaInicio = (clone $fechaFin)->modify('first day of January');
+                    break;
+                case 'lastyear':
+                    $fechaInicio = (clone $fechaFin)->modify('first day of January last year');
+                    $fechaFin = $fechaFin->modify('last day of December last year');
                     break;
                 case 'range':
                     $fechaInicio = isset($_POST['start-date']) ? new DateTime($_POST['start-date'], new DateTimeZone('Europe/Madrid')) : null;
                     $fechaFin = isset($_POST['end-date']) ? new DateTime($_POST['end-date'], new DateTimeZone('Europe/Madrid')) : null;
-                    break;
+                break;
             }
 
             if (!$fechaInicio || !$fechaFin) {
                 die('Fechas no válidas.');
             }
-
+            
             // Carga los marcajes entre las fechas seleccionadas
             $datosMarcajes = $marcaje->cargarMarcajesEntreFechas($codEmpleado, $codEmpleado, $fechaInicio, $fechaFin);
 

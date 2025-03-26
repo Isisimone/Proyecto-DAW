@@ -19,6 +19,10 @@ class Empleado {
     private ?DateTime $fec_Baja;//Opcional
     private ?string $nom_Usuario_Baja;//Opcional
     private string $foto_Empleado;
+    private string $horario;
+    private bool $flex;
+    private int $maxHorasDia;
+    private float $bolsa;
 
     // Método constructor
     public function __construct() {
@@ -28,6 +32,8 @@ class Empleado {
         $this->nom_Usuario_Baja = null;
         $this->foto_Empleado="";
     }
+
+    
 
     // Método para cargar datos de un determinado empleado de la base de datos por usuario
     public function cargarDatosPorUsuario(int $cod_Usuario): bool {
@@ -61,6 +67,10 @@ class Empleado {
             $this->fec_Baja = $resultado['FEC_BAJA'] ? new DateTime($resultado['FEC_BAJA']) : null;
             $this->nom_Usuario_Baja = $resultado['NOM_USUARIO_BAJA'] ?? null;
             $this->foto_Empleado = $resultado['FOTO'] ?? "";
+            $this->horario = $resultado['HORARIO'] ?? "";
+            $this->flex = $resultado['FLEX'] ?? false;
+            $this->maxHorasDia = $resultado['MAX_HORA_DIA'];
+            $this->bolsa = $resultado['BOLSA_HORAS'] ?? 0;
 
             //Devuelve true
             return true;
@@ -105,6 +115,10 @@ class Empleado {
             if ($resultado['FOTO']){
                 $this->foto_Empleado = $resultado['FOTO'];
             }
+            $this->horario = $resultado['HORARIO'] ?? "";
+            $this->flex = $resultado['FLEX'] ?? false;
+            $this->maxHorasDia = $resultado['MAX_HORA_DIA'];
+            $this->bolsa = $resultado['BOLSA_HORAS'] ?? 0;
 
             //Devuelve true
             return true;
@@ -122,13 +136,14 @@ class Empleado {
             $conexion = new Conexion();
             //Si no hay cod_empleado realiza un INSERT
             if ($this->cod_Empleado==0 || is_null($this->cod_Empleado)){
-                $sql = "INSERT INTO templeado (COD_USUARIO, NOM_EMPLEADO, APE1_EMPLEADO, APE2_EMPLEADO, CONTACTO_EMPLEADO, FEC_ALTA, NOM_USUARIO_ALTA, FEC_BAJA, NOM_USUARIO_BAJA) 
-                    VALUES (:cod_Usuario, :nombre, :apellido1, :apellido2, :contacto, :fec_Alta, :nom_Usuario_Alta, :fec_Baja, :nom_Usuario_Baja)";
+                $sql = "INSERT INTO templeado (COD_USUARIO, NOM_EMPLEADO, APE1_EMPLEADO, APE2_EMPLEADO, CONTACTO_EMPLEADO, FEC_ALTA, NOM_USUARIO_ALTA, FEC_BAJA, NOM_USUARIO_BAJA, FOTO, HORARIO, FLEX, MAX_HORA_DIA, BOLSA_HORAS) 
+                    VALUES (:cod_Usuario, :nombre, :apellido1, :apellido2, :contacto, :fec_Alta, :nom_Usuario_Alta, :fec_Baja, :nom_Usuario_Baja, :horario, :flex, :max_dia, :bolsa)";
                 $stmt = $conexion->conexion->prepare($sql);
             //En caso contrario realiza un UPDATE
             } else{
                 $sql = "UPDATE templeado SET COD_USUARIO = :cod_Usuario, NOM_EMPLEADO = :nombre, APE1_EMPLEADO = :apellido1, APE2_EMPLEADO = :apellido2, CONTACTO_EMPLEADO = :contacto 
-                , FEC_ALTA = :fec_Alta, NOM_USUARIO_ALTA = :nom_Usuario_Alta, FEC_BAJA=:fec_Baja, NOM_USUARIO_BAJA = :nom_Usuario_Baja, FOTO = :foto
+                , FEC_ALTA = :fec_Alta, NOM_USUARIO_ALTA = :nom_Usuario_Alta, FEC_BAJA=:fec_Baja, NOM_USUARIO_BAJA = :nom_Usuario_Baja, FOTO = :foto, HORARIO =:horario, FLEX = :flex
+                , MAX_HORA_DIA = :max_dia, BOLSA_HORAS = :bolsa
                 WHERE COD_EMPLEADO = :cod_Empleado";
                 $stmt = $conexion->conexion->prepare($sql);
                 $stmt->bindValue(':cod_Empleado', $this->cod_Empleado, PDO::PARAM_INT);
@@ -144,6 +159,10 @@ class Empleado {
             $stmt->bindValue(':fec_Baja', $this->fec_Baja ? $this->fec_Baja->format('Y-m-d H:i:s') : null, PDO::PARAM_STR);
             $stmt->bindValue(':nom_Usuario_Baja', $this->nom_Usuario_Baja, PDO::PARAM_STR);
             $stmt->bindValue(':foto', $this->foto_Empleado, PDO::PARAM_STR);
+            $stmt->bindValue(':horario', $this->horario, PDO::PARAM_STR);
+            $stmt->bindValue(':flex', $this->flex, PDO::PARAM_BOOL);
+            $stmt->bindValue(':max_dia', $this->maxHorasDia, PDO::PARAM_INT);
+            $stmt->bindValue(':bolsa', $this->bolsa);
 
             //Devuelve directamente el resultado como true o false
             return $stmt->execute();
@@ -151,6 +170,31 @@ class Empleado {
             //Si hay error devuelve false y su mensaje
             error_log("Error al grabar empleado: " . $e->getMessage());
             return false;
+        }
+    }
+
+    //Método para descontar las horas Extras pagadas a la bolsa del empleado
+    public function procesarHorasExtrasMensuales(int $maxHorasExtras): void {
+        try {
+            // Obtiene la bolsa actual
+            $bolsaActual = $this->getBolsa();
+    
+            // Calcula las horas extras permitidas y el excedente
+            $horasExtrasPermitidas = min($bolsaActual, $maxHorasExtras);
+            $excedente = $bolsaActual - $horasExtrasPermitidas;
+    
+            // Actualiza la bolsa con el excedente
+            $conexion = new Conexion();
+            $sql = "UPDATE templeado SET BOLSA = :bolsa WHERE COD_EMPLEADO = :codEmpleado";
+            $stmt = $conexion->conexion->prepare($sql);
+            $stmt->bindValue(':bolsa', $excedente);
+            $stmt->bindValue(':codEmpleado', $this->cod_Empleado);
+            $stmt->execute();
+    
+            // Elimina el objeto conexión
+            $conexion = null;
+        } catch (PDOException $e) {
+            error_log("Error al procesar horas extras mensuales: " . $e->getMessage());
         }
     }
 
@@ -258,6 +302,21 @@ class Empleado {
             return $this->foto_Empleado;
         }
     
+        public function getHorario(): string {
+            return $this->horario;
+        }
+        
+        public function getFlex(): bool {
+            return $this->flex;
+        }
+        
+        public function getMaxHorasDia(): int {
+            return $this->maxHorasDia;
+        }
+        
+        public function getBolsa(): float {
+            return $this->bolsa;
+        }
         // Setters
         public function setCodEmpleado(int $cod_Empleado): void {
             $this->cod_Empleado = $cod_Empleado;
@@ -293,5 +352,20 @@ class Empleado {
 
         public function setFoto(string $foto):void {
             $this->foto_Empleado = $foto;
+        }
+        public function setHorario(string $horario): void {
+            $this->horario = $horario;
+        }
+        
+        public function setFlex(bool $flex): void {
+            $this->flex = $flex;
+        }
+        
+        public function setMaxHorasDia(int $maxHorasDia): void {
+            $this->maxHorasDia = $maxHorasDia;
+        }
+        
+        public function setBolsa(float $bolsa): void {
+            $this->bolsa = $bolsa;
         }
 }

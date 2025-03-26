@@ -22,19 +22,41 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Configuración de la gráfica
-function renderChart(labels, data, average) {
+function renderChart(labels, data, average, maxHorasDia) {
     const ctx = document.getElementById('hours-chart').getContext('2d');
+    
+    // Divide las horas en normales y extras
+    const horasNormales = data.map(horas => Math.min(horas, maxHorasDia)); // Máximo permitido por día
+    const horasExtras = data.map(horas => Math.max(0, horas - maxHorasDia)); // Horas que exceden el máximo
+
+    
+    // Define los colores para las barras
+    const backgroundColors = labels.map(label => {
+        const date = new Date(label); // Convierte la etiqueta en una fecha
+        return date.getDay() === 0 // 0 corresponde a domingo
+            ? 'rgba(255, 99, 132, 0.5)' // Color para domingos
+            : 'rgba(54, 162, 235, 0.5)'; // Color para otros días
+    });
+    
     new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Horas trabajadas',
-                data: data,
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                label: 'Horas normales',
+                data: horasNormales,
+                backgroundColor: backgroundColors,
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1
-            }]
+            },
+            {
+                label: 'Horas extras',
+                data: horasExtras,
+                backgroundColor: 'rgba(255, 99, 132, 0.5)', // Color para horas extras
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }
+        ]
         },
         options: {
             responsive: true,
@@ -42,6 +64,12 @@ function renderChart(labels, data, average) {
             scales: {
                 y: {
                     beginAtZero: true
+                },
+                x: {
+                    stacked: true // Habilita el apilado en el eje X
+                },
+                y: {
+                    stacked: true // Habilita el apilado en el eje Y
                 }
             },
             plugins: {

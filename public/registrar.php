@@ -38,6 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pendiente = intval($data['pendiente']);
         $obs = $data['obs'];
 
+        // Convertir la fecha de marcaje (fec_marcaje) de UTC a GMT+1
+        $fec_MarcajeUTC = new DateTime($fec_Marcaje, new DateTimeZone('UTC')); // Fecha en UTC
+        $fec_MarcajeLocal = $fec_MarcajeUTC->setTimezone(new DateTimeZone('Europe/Madrid')); // Convertir a GMT+1
+        $fec_Marcaje = $fec_MarcajeLocal->format('Y-m-d H:i:s'); // Formatear para la base de datos
+
+
          // Decodificar la imagen Base64
          $fotoData = explode(',', $foto);
          $fotoBinaria = base64_decode(end($fotoData));
