@@ -105,7 +105,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
 
     .registro li {
         display: grid; /* Usa grid para organizar los elementos */
-        grid-template-columns: 50px 100px 200px 100px 100px; /* Define anchos fijos para cada columna */
+        grid-template-columns: 100px 100px 100px 100px 100px 100px 100px; /* Define anchos fijos para cada columna */
         gap: 10px; /* Espaciado entre columnas */
         align-items: center; /* Alinea verticalmente los elementos */
         margin-bottom: 10px;
@@ -142,6 +142,19 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
 
     .registro li span.fecha {
         color: #333; /* Color para la fecha y hora */
+        font-weight: bold;
+    }
+
+    .registro li span.hora {
+        color: #333; /* Color para la fecha y hora */
+    }
+
+    .registro li:nth-child(even) {
+        background-color: #f9f9f9; /* Color para registros pares */
+    }
+
+    .registro li:nth-child(odd) {
+        background-color: #e9e9e9; /* Color para registros impares */
     }
 
     .registro-header {
@@ -212,6 +225,70 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
         height: 40px;
         border-radius: 5px; /* Opcional: redondea las esquinas de la imagen */
     }
+
+    .context-menu {
+        display: none; /* Oculto por defecto */
+        position: absolute;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        z-index: 1000;
+        padding: 10px;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .context-menu ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .context-menu ul li {
+        display: block;
+        width: 100%;
+        padding: 8px 12px;
+        text-align: left;
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-overflow: ellipsis; /* Añade puntos suspensivos si el texto es muy largo */
+        box-sizing: border-box; /* Incluye padding en el ancho */
+    }
+
+    .context-menu ul li:hover {
+        background-color: #f1f1f1;
+    }
+
+    #bloque-revision, #bloque-mostrardatos {
+    width: 80%;
+    max-width: 500px;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+#bloque-revision form div {
+    margin-bottom: 15px;
+}
+
+#bloque-revision label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#bloque-revision textarea, #bloque-revision select {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+#bloque-revision button, #bloque-mostrardatos button {
+    padding: 8px 15px;
+    margin-right: 10px;
+    cursor: pointer;
+}
     
     </style>
 </head>
@@ -327,10 +404,11 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
         const labels = <?php echo json_encode($labels); ?>; // Fechas
         const data = <?php echo json_encode($valores); ?>; // Horas trabajadas
         const average = <?php echo array_sum($valores) / count($valores); ?>; // a usar en js
-        renderChart(labels, data, average,<?php echo $maxHoras;?>);
+        const ausencias = <?php echo json_encode($ausencias); ?>;
+        var todosMarcajes = <?php echo json_encode($datosMarcajes); ?>;
+        renderChart(labels, data, ausencias, average,<?php echo $maxHoras;?>);
         
     </script>
-    
     </div>
     <div> 
         <div class="cabeceraRegistros">
@@ -345,37 +423,72 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
             
         <ul>
         <li class="registro-header">
-            <span class="col-es">E/S</span>
+            <span class="col-fecha">Fecha</span>
             <span class="col-tipo">Tipo</span>
-            <span class="col-fecha">Fecha/Hora</span>
+            <span class="col-fecha">Entrada</span>
+            <span class="col-tipo">Tipo</span>
+            <span class="col-fecha">Salida</span>
             <span class="col-incidencia">Incidencia</span>
             <span class="col-estado">Estado</span>
         </li>
-            <?php foreach ($datosMarcajes as $registro): ?>
-                <li>
-                    <?php 
-                        // Determina el tipo de marcaje
-                        $tipoMarcaje = $registro['COD_TIPO_MARCAJE'] == 1 ? 'Entrada' : 'Salida';
-                        $tipoClase = $tipoMarcaje == "Entrada" ? "tipoA":"tipoB";
-                        // Determina el método de entrada
-                        $metodoEntrada = match ($registro['COD_TIPO_ACCESO']) {
-                            1 => 'Facial',
-                            2 => 'RFID',
-                            3 => 'Manual',
-                            99 => 'AUSENCIA',
-                            default => 'Desconocido'
-                        };
-                        // Formatea la fecha y hora
-                        $fechaHora = (new DateTime($registro['FEC_MARCAJE']))->format('Y-m-d H:i:s');
-                    ?>
-                    <span class="<?php echo $tipoClase; ?>"><?php echo $tipoMarcaje; ?></span>
-                <span class="metodo"><?php echo $metodoEntrada; ?></span>
-                <span class="fecha"><?php echo $fechaHora; ?></span>
-                <span class="incidencia"><?php //echo $incidencia; ?></span>
-                <span class="estado"><?php //echo $estado; ?></span>
+            <?php foreach ($registrosDetallados as $index=>$registro): ?>
+                <li data-id="<?php echo $index;?>" 
+                data-fecha="<?php echo $registro['fecha'];?>">
+                    <span class="fecha"><?php echo $registro['fecha']; ?></span>
+                    <span class="metodo"><?php echo $registro['tipoAccesoEntrada']; ?></span>
+                    <span class="hora"><?php echo $registro['horaEntrada']; ?></span>
+                    <span class="metodo"><?php echo $registro['tipoAccesoSalida']; ?></span>
+                    <span class="hora"><?php echo $registro['horaSalida']; ?></span>
+                    <span class="incidencia"><?php echo $registro['incidencia']; ?></span>
+                    <span class="estado"><?php echo $registro['estado']; ?></span>
                 </li>
                 <?php endforeach; ?>
                 </ul>
+                
+            </div>
+            <!--             Bloques ocultos             -->
+            <!--Bloque menú contextual -->
+            <div id="context-menu" class="context-menu">
+                    <ul>
+                        <li id="solicitar-revision">Solicitar revisión</li>
+                        <li id="mostrar-datos">Mostrar datos</li>
+                    </ul>
+             </div>
+
+             <!-- Bloque de Revisión -->
+            <div id="bloque-revision" style="display: none;">
+                <h3>Solicitar Revisión</h3>
+                <form id="form-revision">
+                    <input type="hidden" id="registro-id-revision" name="registro_id">
+                    <div>
+                        <label for="comentario-fecha">Fecha:</label>
+                        <input id="comentario-fecha" name="comentario-fecha" disabled>
+                    </div>
+                    <div>
+                        <label for="comentario-revision">Comentario:</label>
+                        <textarea id="comentario-revision" name="comentario" required></textarea>
+                    </div>
+                    <div>
+                        <label for="prioridad">Prioridad:</label>
+                        <select id="prioridad" name="prioridad">
+                            <option value="baja">Baja</option>
+                            <option value="media">Media</option>
+                            <option value="alta">Alta</option>
+                        </select>
+                    </div>
+                    <button type="submit">Enviar Revisión</button>
+                    <button type="button" id="cerrar-revision">Cancelar</button>
+                </form>
+            </div>
+
+            <!-- Bloque de Mostrar Datos -->
+            <div id="bloque-mostrardatos" style="display: none;">
+                <h3>Detalles del Registro</h3>
+                <div id="registro-id-datos"></div>
+                <div class="detalles-registro" id="detalles-registro" data-fecha="<?= $datosMarcajes ?>">
+                    <!-- Los datos se generarán dentro de este DIV-->
+                </div>
+                <button type="button" id="cerrar-mostrardatos">Cerrar</button>
             </div>
         </div>
     </div>

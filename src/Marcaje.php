@@ -64,14 +64,14 @@ class Marcaje{
     }
 
     //Método para sumar las horas trabajadas en la semana a partir de una fecha.
-    public function calcularHorasSemana(int $codEmpleado, DateTime $fecha): float {
+    public function calcularHorasSemana(int $codEmpleado, DateTime $fecha,int $cmin, int $cmax): float {
         // Obtiene las fechas de la semana
         $fechasSemana = $this->calcularFechasSemana($fecha);
     
         // Suma las horas trabajadas de cada día
         $totalHoras = 0.0;
         foreach ($fechasSemana as $dia) {
-            $totalHoras += $this->calcularHorasTrabajadas($codEmpleado, $dia);
+            $totalHoras += $this->calcularHorasTrabajadas($codEmpleado, $dia, $cmin, $cmax);
         }
     
         return $totalHoras;
@@ -130,7 +130,7 @@ class Marcaje{
             // Calcula las horas trabajadas y las horas extras para cada día con registros
             foreach ($diasConRegistros as $dia) {
                 $fechaDia = new DateTime($dia, new DateTimeZone('Europe/Madrid'));
-                $horasTrabajadas = $this->calcularHorasTrabajadas($codEmpleado, $fechaDia);
+                $horasTrabajadas = $this->calcularHorasTrabajadas($codEmpleado, $fechaDia,0,89);
     
                 // Calcula las horas extras del día
                 $horasExtras = $horasTrabajadas - $maxHorasDia;
@@ -150,11 +150,16 @@ class Marcaje{
         }
     }
 
-    //Método que devuelve las horas trabajadas en la fecha indicada
-    public function calcularHorasTrabajadas(int $codEmpleado, DateTime $fecha): float {
+    //Método que devuelve las horas trabajadas en la fecha indicada y entre los tipos de acceso especificados
+    public function calcularHorasTrabajadas(int $codEmpleado, DateTime $fecha, int $cMin, int $cMax): float {
     try {
         // Obtiene los marcajes del día
-        $marcajesDelDia = $this->marcajesHoy($codEmpleado, $fecha);
+        $marcajesDelDia = array_filter(
+            $this->marcajesHoy($codEmpleado, $fecha),
+            function ($registro) use ($cMin, $cMax){
+                return $registro['COD_TIPO_ACCESO'] >= $cMin && $registro['COD_TIPO_ACCESO'] <= $cMax;
+            }
+        );
 
         // Inicializa las variables para el cálculo
         $horasTrabajadas = 0.0;
@@ -219,7 +224,7 @@ class Marcaje{
             //Crea una conexión y una consulta SELECT
             $conexion = new Conexion();
             //consulta ascendente de los marcaje de fecha(No tiene en cuenta hora)
-            $consulta = $conexion->conexion->prepare("SELECT COD_TIPO_MARCAJE, FEC_MARCAJE, COD_TIPO_ACCESO FROM tmarcaje WHERE COD_EMPLEADO = :cod AND DATE(FEC_MARCAJE) = :fec ORDER BY FEC_MARCAJE ASC");
+            $consulta = $conexion->conexion->prepare("SELECT * FROM tmarcaje WHERE COD_EMPLEADO = :cod AND DATE(FEC_MARCAJE) = :fec ORDER BY FEC_MARCAJE ASC");
             //Parametriza y ejecuta
             $consulta->bindValue(':cod', $empleado, PDO::PARAM_INT);
             $consulta->bindValue(':fec', $fecha->format('Y-m-d'));
@@ -251,7 +256,24 @@ class Marcaje{
         $this->grabar();
     }
 
-    //Método para obtener Lista de 
+    //Método para obtener Lista de tipos de marcaje
+    public function listaTiposAcceso(): array{
+        try{
+            $conexion = new Conexion();
+            //Consulta de la tabla ttipoacceso
+            $sql = "SELECT * FROM ttipoacceso";
+            $stmt = $conexion->conexion->prepare($sql);
+            $stmt->execute();
+            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $resultadoAsoc = array_column($resultado, 'DES_TIPO_ACCESO', 'COD_TIPO_ACCESO');
+            //Devuelve resutlados
+            return $resultadoAsoc;
+        }catch(PDOException $e){
+            //Muestra error y devuelve false
+            error_log("Error al cargar tipos de acceso: " . $e->getMessage());
+            return false;
+        }
+    }
 
 
 
@@ -400,7 +422,7 @@ class Marcaje{
             try {
                 // Crea la conexión y prepara la consulta SELECT
                 $conexion = new Conexion();
-                $consulta = $conexion->conexion->prepare("SELECT COD_TIPO_MARCAJE, FEC_MARCAJE, DES_FOTO 
+                $consulta = $conexion->conexion->prepare("SELECT * 
                     FROM tmarcaje 
                     WHERE COD_EMPLEADO = :codEmpleado 
                     ORDER BY FEC_MARCAJE DESC 

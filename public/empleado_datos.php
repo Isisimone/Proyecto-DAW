@@ -27,38 +27,49 @@ if (isset($_SESSION['COD_USUARIO'])) {
         // Crea una instancia de la clase Empleado
         $empleado = new Empleado();
         if ($empleado->cargarDatosEmpleado($codEmpleado)) {
+            // Crea una instancia de la clase Marcaje
+            $marcaje = new Marcaje();
+            
+            //<<<<<<<<<<<<<<<<<<      Datos de empleado    >>>>>>>>>>>>>>>>>>
+
             // Obtiene los datos del empleado
             $nombreCompleto = $empleado->getNombre() . ' ' . $empleado->getApellido1() . ' ' . $empleado->getApellido2();
             $fotoEmpleado = $empleado->getFoto();
+
+            //<<<<<<<<<<<<<<<<<<<         Horas          >>>>>>>>>>>>>>>>>>>>>>>>>
 
             //Obtiene horas máximas del empleado
             $maxHoras = $empleado->getMaxHorasDia();
             $horario = $empleado->getHorario();
             
-
-            // Crea una instancia de la clase Marcaje
-            $marcaje = new Marcaje();
-
-            
-
-            // Obtiene los últimos 5 marcajes
-            $ultimosMarcajes = $marcaje->obtenerUltimosMarcajes($codEmpleado, 5);
-            
             // Obtiene las horas trabajadas hoy
             $fechaHoy = new DateTime('now', new DateTimeZone('UTC'));
             $fechaHoy->setTimezone(new DateTimeZone('Europe/Madrid'));
-            $horasTrabajadas = $marcaje->calcularHorasTrabajadas($codEmpleado, $fechaHoy);
-            $horasSemanales = $marcaje->calcularHorasSemana($codEmpleado,$fechaHoy);
+            $horasTrabajadas = $marcaje->calcularHorasTrabajadas($codEmpleado, $fechaHoy,0,89);
+            $horasSemanales = $marcaje->calcularHorasSemana($codEmpleado,$fechaHoy,0,89);
 
             //Calcula la bolsa de horas del empleado a partir de los marcajes del mes indicado
             $marcaje->calcularBolsaMensual($codEmpleado,$fechaHoy);
             $bolsa = $empleado->getBolsa();
+            
+            //<<<<<<<<<<<<<<<<<<<<<<<       Marcajes        >>>>>>>>>>>>>>>>>>>>>>>>>
+            //Datos descriptivos de los tipos de marcaje
+            $tiposAcceso= $marcaje->listaTiposAcceso();
 
-            // Determina las fechas según el filtro seleccionado
+            // Obtiene los últimos 5 marcajes
+            $ultimosMarcajes = array_filter(
+                $marcaje->obtenerUltimosMarcajes($codEmpleado, 5),
+                function ($registro) {
+                    return $registro['COD_TIPO_ACCESO'] < 90;
+                }
+            );
+            // Determina las fechas según el filtro seleccionado para registros y gráfica
+            //Lee el filtro enviado por POST
             $filtro = $_POST['filter-mode'] ?? 'week';
+            //Inicia datos
             $fechaInicio = null;
             $fechaFin = new DateTime('now', new DateTimeZone('Europe/Madrid'));
-
+            //Switch Case para los posibles valores del combo
             switch ($filtro) {
                 case 'week':
                     $fechaInicio = (clone $fechaFin)->modify('this week monday');
@@ -86,26 +97,70 @@ if (isset($_SESSION['COD_USUARIO'])) {
                     $fechaFin = isset($_POST['end-date']) ? new DateTime($_POST['end-date'], new DateTimeZone('Europe/Madrid')) : null;
                 break;
             }
-
+            //Control de errores
             if (!$fechaInicio || !$fechaFin) {
                 die('Fechas no válidas.');
             }
             
             // Carga los marcajes entre las fechas seleccionadas
-            $datosMarcajes = $marcaje->cargarMarcajesEntreFechas($codEmpleado, $codEmpleado, $fechaInicio, $fechaFin);
+            $datosMarcajes = array_filter(
+                $marcaje->cargarMarcajesEntreFechas($codEmpleado, $codEmpleado, $fechaInicio, $fechaFin),
+                function ($registro){
+                    return $registro['COD_TIPO_ACCESO']<100;
+                }
+            );
 
             // Procesa los datos para la gráfica
             $horasPorDia = [];
+            //Crea un periodo de fechas para recorrerlas
             $periodo = new DatePeriod($fechaInicio, new DateInterval('P1D'), $fechaFin->modify('+1 day'));
+            //Bucle sobre el periodo
             foreach ($periodo as $fecha) {
-                $horasTrabajadasGrafica = $marcaje->calcularHorasTrabajadas($codEmpleado, $fecha);
+                $horasTrabajadasGrafica = $marcaje->calcularHorasTrabajadas($codEmpleado, $fecha,0,89);
+                $horasAusenciasGrafica = $marcaje->calcularHorasTrabajadas($codEmpleado, $fecha,90,99);
                 $fechaFormateada = $fecha->format('Y-m-d');
                 $horasPorDia[$fechaFormateada] = $horasTrabajadasGrafica;
+                $horasPorDiaAusencia[$fechaFormateada] = $horasAusenciasGrafica;
             }
-
+            //Ordena los datos
             ksort($horasPorDia);
+            //Divide los datos en 2 arrays(para etiquetas y para valores)
             $labels = array_keys($horasPorDia);
             $valores = array_values($horasPorDia);
+            $ausencias = array_values($horasPorDiaAusencia);
+
+            //Agrupa los registros detallados
+            $registrosAgrupados = [];
+            foreach ($datosMarcajes as $registro) { 
+                $fecha = (new DateTime($registro['FEC_MARCAJE']))->format('Y-m-d');
+             $registrosAgrupados[$fecha][] = $registro;
+            }
+
+            // Procesa los registros agrupados para emparejar entradas y salidas
+            $registrosDetallados = [];
+            foreach ($registrosAgrupados as $fecha => $registros) {
+                $entradas = array_filter($registros, fn($r) => $r['COD_TIPO_MARCAJE'] == 1); // Entradas
+                $salidas = array_filter($registros, fn($r) => $r['COD_TIPO_MARCAJE'] == 2); // Salidas
+
+                // Empareja entradas y salidas
+                $pares = [];
+                while ($entrada = array_shift($entradas)) {
+                    $salida = array_shift($salidas); // Toma la primera salida disponible
+                    //Formato y parejas
+                    $pares[] = [
+                        'fecha' => $fecha,
+                        'tipoAccesoEntrada' => $tiposAcceso[$entrada['COD_TIPO_ACCESO']] ?? 'Desconocido',
+                        'horaEntrada' => (new DateTime($entrada['FEC_MARCAJE']))->format('H:i:s'),
+                        'tipoAccesoSalida' => $salida ? ($tiposAcceso[$salida['COD_TIPO_ACCESO']] ?? 'Desconocido') : '',
+                        'horaSalida' => $salida ? (new DateTime($salida['FEC_MARCAJE']))->format('H:i:s') : '',
+                        'incidencia' => $entrada['DES_OBSERVACIONES'] ?? '',
+                        'estado' => $entrada['IND_PENDIENTE'] == 1 ? 'Pendiente' : ''
+                    ];
+                }
+
+                // Agrega los pares procesados al resultado final
+                $registrosDetallados = array_merge($registrosDetallados, $pares);
+            }
         }
     } else {
         header('Location: login.php');

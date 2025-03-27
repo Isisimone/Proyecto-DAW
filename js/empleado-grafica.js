@@ -16,20 +16,147 @@ function toggleDateInputs() {
 // Agregar un listener al DOM para el evento change del filtro
 document.addEventListener('DOMContentLoaded', () => {
     const filterModeSelect = document.getElementById('filter-mode');
+    
     if (filterModeSelect) {
         filterModeSelect.addEventListener('change', toggleDateInputs);
     }
+
+    const contextMenu = document.getElementById('context-menu');
+    const registroContainer = document.querySelector('.registro ul'); // Contenedor de los registros
+    const bloqueRevision = document.getElementById('bloque-revision');
+    const bloqueMostrarDatos = document.getElementById('bloque-mostrardatos');
+
+    // Función para centrar elementos en la ventana
+    function centrarElemento(elemento) {
+        elemento.style.position = 'fixed';
+        elemento.style.top = '50%';
+        elemento.style.left = '50%';
+        elemento.style.transform = 'translate(-50%, -50%)';
+        elemento.style.zIndex = '1000';
+    }
+
+    // Configurar bloques flotantes
+    [bloqueRevision, bloqueMostrarDatos].forEach(bloque => {
+        centrarElemento(bloque);
+        bloque.style.display = 'none';
+        bloque.style.backgroundColor = 'white';
+        bloque.style.padding = '20px';
+        bloque.style.border = '1px solid #ccc';
+        bloque.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
+    });
+
+    // Eventos para cerrar los bloques
+    document.getElementById('cerrar-revision').addEventListener('click', () => {
+        bloqueRevision.style.display = 'none';
+    });
+
+    document.getElementById('cerrar-mostrardatos').addEventListener('click', () => {
+        bloqueMostrarDatos.style.display = 'none';
+    });
+
+    
+    // Ocultar menú y bloques al hacer clic fuera
+    document.addEventListener('click', (event) => {
+        const elementosInteractivos = [
+            contextMenu, 
+            bloqueRevision, 
+            bloqueMostrarDatos,
+            ...document.querySelectorAll('#context-menu *, #bloque-revision *, #bloque-mostrardatos *')
+        ];
+        
+        const clickEnElementoInteractivo = elementosInteractivos.some(el => el.contains(event.target));
+        const clickEnListItem = event.target.closest('.registro li') !== null;
+
+        if (!clickEnElementoInteractivo && !clickEnListItem) {
+            if (contextMenu.style.display === 'block') contextMenu.style.display = 'none';
+            if (bloqueRevision.style.display === 'block') bloqueRevision.style.display = 'none';
+            if (bloqueMostrarDatos.style.display === 'block') bloqueMostrarDatos.style.display = 'none';
+        }
+    });
+
+    // Delegación de eventos: Escucha los clics en el contenedor
+    registroContainer.addEventListener('click', (event) => {
+        const target = event.target.closest('li'); // Busca el <li> más cercano al clic
+        if (target) {
+            event.preventDefault(); // Evita el comportamiento predeterminado
+
+            // Obtén las coordenadas del clic
+            const x = event.clientX;
+            const y = event.clientY;
+
+            // Posiciona el menú contextual
+            contextMenu.style.left = `${x}px`;
+            contextMenu.style.top = `${y}px`;
+            contextMenu.style.display = 'block';
+
+            // Guarda el registro seleccionado en un atributo de datos
+            contextMenu.dataset.selectedRegistro = target.dataset.id;
+            contextMenu.dataset.selectedRegistroFecha = target.dataset.fecha;
+            
+        }
+    });
+        
+
+    // Manejar opciones del menú contextual
+    document.getElementById('solicitar-revision').addEventListener('click', () => {
+        const registroFecha = contextMenu.dataset.selectedRegistroFecha;
+        const registroId = contextMenu.dataset.selectedRegistro;
+        contextMenu.style.display = 'none';
+        
+        // Configurar el formulario de revisión con el ID del registro
+        document.getElementById('registro-id-revision').value = registroId;
+        document.getElementById('comentario-fecha').value = registroFecha;
+        bloqueRevision.style.display = 'block';
+    });
+
+    document.getElementById('mostrar-datos').addEventListener('click', () => {
+        const registroFecha = contextMenu.dataset.selectedRegistroFecha;
+        contextMenu.style.display = 'none';
+        
+        // Buscar los marcajes para esta fecha
+        const marcajesFecha = Object.values(todosMarcajes).filter(marcaje => {
+            return marcaje.FEC_MARCAJE.startsWith(registroFecha);
+        });
+        const fechaHoy = new Date().toISOString().split('T')[0];
+        
+        // Generar el HTML
+        let html = `
+            <div class="section" id="recent-accesses">
+                <h3>Marcajes del ${registroFecha}</h3>
+                <ul>`;
+        
+        marcajesFecha.forEach(marcaje => {
+            const fechaMarcaje = marcaje.FEC_MARCAJE.split(' ')[0]; // Obtener solo la fecha
+            const esHoy = (fechaMarcaje === fechaHoy);
+            const tipoClase = marcaje.COD_TIPO_MARCAJE == 1 ? "tipoA" : "tipoB";
+            const tipoTexto = marcaje.COD_TIPO_MARCAJE == 1 ? "Entrada" : "Salida";
+            const color = !esHoy ? 'darkgrey' : 'inherit';
+            
+            html += `
+                <li class="acceso-item" style="color: ${color};">
+                    <span class="${tipoClase}">${tipoTexto}</span>
+                    <span class="fecha">${marcaje.FEC_MARCAJE}</span>
+                    <span class="imagen">
+                        <img class="foto_peque" src="mostrar_imagen.php?archivo=${encodeURIComponent(marcaje.DES_FOTO)}" alt="Foto de fichaje">
+                    </span>
+                </li>`;
+        });
+        
+        html += `</ul></div>`;
+        
+        document.getElementById('registro-id-datos').innerHTML = html;
+        bloqueMostrarDatos.style.display = 'block';
+    });
 });
 
 // Configuración de la gráfica
-function renderChart(labels, data, average, maxHorasDia) {
+function renderChart(labels, data, ausencias, average, maxHorasDia) {
     const ctx = document.getElementById('hours-chart').getContext('2d');
     
     // Divide las horas en normales y extras
     const horasNormales = data.map(horas => Math.min(horas, maxHorasDia)); // Máximo permitido por día
     const horasExtras = data.map(horas => Math.max(0, horas - maxHorasDia)); // Horas que exceden el máximo
-    
-    
+
     // Define los colores para las barras
     const backgroundColors = labels.map(label => {
         const date = new Date(label); // Convierte la etiqueta en una fecha
@@ -37,26 +164,35 @@ function renderChart(labels, data, average, maxHorasDia) {
             ? 'rgba(255, 99, 132, 0.5)' // Color para domingos
             : 'rgba(54, 162, 235, 0.5)'; // Color para otros días
     });
-    
+
+    // Renderiza la gráfica
     new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
-            datasets: [{
-                label: 'Horas normales',
-                data: horasNormales,
-                backgroundColor: backgroundColors,
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            },
-            {
-                label: 'Horas extras',
-                data: horasExtras,
-                backgroundColor: 'rgba(255, 99, 132, 0.5)', // Color para horas extras
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }
-        ]
+            datasets: [
+                {
+                    label: 'Horas normales',
+                    data: horasNormales,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)', // Color para horas normales
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Horas extras',
+                    data: horasExtras,
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)', // Color para horas extras
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Ausencias',
+                    data: ausencias,
+                    backgroundColor: 'rgba(255, 206, 86, 0.5)', // Color para ausencias
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    borderWidth: 1
+                }
+            ]
         },
         options: {
             responsive: true,
