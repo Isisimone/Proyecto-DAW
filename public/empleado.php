@@ -2,6 +2,11 @@
 date_default_timezone_set('Europe/Madrid');
 //Carga la lógica de la página
 require 'empleado_datos.php';
+
+if (isset($_POST['registro_id'])) {
+    solicitarRevision($codEmpleado,$_POST['comentario-fecha'],$_POST['comentario'],intval($_POST['prioridad']));
+}
+
 //Defino la fecha de hoy
 $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format('Y-m-d');
 ?>
@@ -458,11 +463,11 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
              <!-- Bloque de Revisión -->
             <div id="bloque-revision" style="display: none;">
                 <h3>Solicitar Revisión</h3>
-                <form id="form-revision">
+                <form id="form-revision" method="post" action="empleado.php">
                     <input type="hidden" id="registro-id-revision" name="registro_id">
                     <div>
                         <label for="comentario-fecha">Fecha:</label>
-                        <input id="comentario-fecha" name="comentario-fecha" disabled>
+                        <input id="comentario-fecha" name="comentario-fecha" readonly>
                     </div>
                     <div>
                         <label for="comentario-revision">Comentario:</label>
@@ -476,7 +481,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                             <option value="alta">Alta</option>
                         </select>
                     </div>
-                    <button type="submit">Enviar Revisión</button>
+                    <button type="submit" name="SolRevision">Enviar Revisión</button>
                     <button type="button" id="cerrar-revision">Cancelar</button>
                 </form>
             </div>

@@ -1,4 +1,6 @@
 <?php
+
+use Clases\Incidencia;
 session_start();
 date_default_timezone_set('Europe/Madrid');
 
@@ -179,3 +181,13 @@ if (isset($_SESSION['COD_USUARIO'])) {
     header('Location: login.php');
     exit();
 }
+
+function solicitarRevision(int $cempleado, string $fechaSol, string $obs, int $prioridad){
+    $incidencia = new Incidencia();
+    $incidencia->setEmpleado($cempleado);
+    $incidencia->setComentario($obs);
+    $incidencia->setPrioridad($prioridad);
+    $incidencia->setFecha_inc(new DateTime($fechaSol));
+    $incidencia->setFecha_rev(new DateTime());
+    $incidencia->grabar();
+};

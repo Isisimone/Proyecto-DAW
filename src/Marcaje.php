@@ -271,7 +271,7 @@ class Marcaje{
         }catch(PDOException $e){
             //Muestra error y devuelve false
             error_log("Error al cargar tipos de acceso: " . $e->getMessage());
-            return false;
+            return [];
         }
     }
 
@@ -330,7 +330,7 @@ class Marcaje{
     private function actualizarBolsaHoras(): void {
         try {
             // Obtiene la jornada total del día
-            $horasTrabajadasHoy = $this->calcularHorasTrabajadas($this->cod_Empleado, new DateTime($this->fec_Marcaje->format('Y-m-d')));
+            $horasTrabajadasHoy = $this->calcularHorasTrabajadas($this->cod_Empleado, new DateTime($this->fec_Marcaje->format('Y-m-d')),0,90);
     
             // Obtiene el empleado y su bolsa actual
             $empleado = new Empleado();
@@ -343,7 +343,7 @@ class Marcaje{
             
             //Graba la bolsa de horas actual
             $empleado->setBolsa($nuevaBolsa);
-            $empelado->grabar();
+            $empleado->grabar();
     
             // Elimina el objeto conexión
             $conexion = null;
@@ -383,7 +383,7 @@ class Marcaje{
         }catch(PDOException $e){
             //Muestra error y devuelve false
             error_log("Error al cargar marcaje: " . $e->getMessage());
-            return false;
+            return $this;
         }
     }
 
@@ -410,9 +410,9 @@ class Marcaje{
                 //Devuelve el resultado
                 return $resultado;
             }catch(PDOException $e){
-                //Muestra error y devuelve false
+                //Muestra error y devuelve array vacío
                 error_log("Error al cargar marcajes: " . $e->getMessage());
-                return false;
+                return [];
             }
             
         }
@@ -436,9 +436,9 @@ class Marcaje{
                 $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
 
                 // Convierte las fechas de UTC a Europe/Madrid
-                foreach ($resultado as &$marcaje) {
-                    $marcaje['FEC_MARCAJE'] = $marcaje['FEC_MARCAJE'];
-                }
+                //foreach ($resultado as &$marcaje) {
+                //    $marcaje['FEC_MARCAJE'] = $marcaje['FEC_MARCAJE'];
+                //}
                 //Devuelve el resultado
                 return $resultado;
             } catch (PDOException $e) {
@@ -473,11 +473,11 @@ class Marcaje{
         return $this->fec_Grabacion;
     }
 
-    public function getIncidencia(): int {
+    public function getIncidencia(): bool {
         return $this->incidencia;
     }
 
-    public function getPendiente(): int {
+    public function getPendiente(): bool {
         return $this->pendiente;
     }
 
@@ -520,11 +520,11 @@ class Marcaje{
         $this->fec_Grabacion = $fec_Grabacion;
     }
 
-    public function setIncidencia(int $incidencia): void {
+    public function setIncidencia(bool $incidencia): void {
         $this->incidencia = $incidencia;
     }
 
-    public function setPendiente(int $pendiente): void {
+    public function setPendiente(bool $pendiente): void {
         $this->pendiente = $pendiente;
     }
 
