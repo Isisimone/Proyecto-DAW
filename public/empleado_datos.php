@@ -54,6 +54,10 @@ if (isset($_SESSION['COD_USUARIO'])) {
             $marcaje->calcularBolsaMensual($codEmpleado,$fechaHoy);
             $bolsa = $empleado->getBolsa();
             
+            //<<<<<<<<<<<<<<<<<<<<<<<       Incidencias     >>>>>>>>>>>>>>>>>>>>>>>>
+            $incidencias = new Incidencia();
+            $incidenciasPendientes = $incidencias->cargarPendientes($codEmpleado);
+            $incidenciasResueltas = $incidencias->cargarResueltas($codEmpleado);
             //<<<<<<<<<<<<<<<<<<<<<<<       Marcajes        >>>>>>>>>>>>>>>>>>>>>>>>>
             //Datos descriptivos de los tipos de marcaje
             $tiposAcceso= $marcaje->listaTiposAcceso();

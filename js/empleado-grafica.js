@@ -229,3 +229,21 @@ function renderChart(labels, data, ausencias, average, maxHorasDia) {
         }
     });
 }
+
+function openTab(evt, tabName) {
+    // Oculta todos los contenidos de pestañas
+    const tabContents = document.getElementsByClassName("tab-content");
+    for (let i = 0; i < tabContents.length; i++) {
+        tabContents[i].style.display = "none";
+    }
+    
+    // Elimina la clase active de todos los botones
+    const tabButtons = document.getElementsByClassName("tab-button");
+    for (let i = 0; i < tabButtons.length; i++) {
+        tabButtons[i].classList.remove("active");
+    }
+    
+    // Muestra la pestaña actual y marca el botón como activo
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.classList.add("active");
+}

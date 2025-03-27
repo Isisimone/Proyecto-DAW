@@ -56,11 +56,21 @@ class Incidencia{
 
     }
 
-    public function cargarPendientes(): array{
+    public function cargarPendientes(int $empleado=0): array{
         $resultado = array_filter(
             $this->cargarFechas(),
-            function ($registro) {
-                return $registro['RESUELTA'] = 0;
+            function ($registro) use($empleado) {
+                return $registro['RESUELTA'] == 0 && 
+                ($empleado==0 || $registro['EMPLEADO'] == $empleado);
+            });
+        return $resultado;
+    }
+
+    public function cargarResueltas(int $empleado): array{
+        $resultado = array_filter(
+            $this->cargarFechas(),
+            function ($registro) use ($empleado) {
+                return $registro['RESUELTA'] == 1 && $registro['EMPLEADO'] == $empleado;
             });
         return $resultado;
     }

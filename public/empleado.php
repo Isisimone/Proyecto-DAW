@@ -5,6 +5,7 @@ require 'empleado_datos.php';
 
 if (isset($_POST['registro_id'])) {
     solicitarRevision($codEmpleado,$_POST['comentario-fecha'],$_POST['comentario'],intval($_POST['prioridad']));
+    unset($_POST['']);
 }
 
 //Defino la fecha de hoy
@@ -17,285 +18,12 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Empleado</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .container {
-            display: flex;
-            justify-content: space-between;
-            width: 80%;
-            margin-top: 20px;
-        }
-        .section {
-            flex: 1;
-            text-align: center;
-            margin: 0 10px;
-        }
-        .section img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-        }
-        .filter-container {
-            margin-top: 20px;
-            text-align: center;
-            width: 80%;
-            border-top: 1px solid #ccc;
-            padding-top: 20px;
-        }
-        .filter-container select,
-        .filter-container input,
-        .filter-container button {
-            margin: 10px;
-            padding: 5px;
-        }
-        .contenedor-grafica-reg{
-            display: flex; /* Alinea los elementos en fila */
-        justify-content: space-between; /* Espaciado entre los elementos */
-        align-items: flex-start; /* Alinea los elementos al inicio vertical */
-        width: 90%; /* Ocupa todo el ancho disponible */
-        margin-top: 20px;
-        max-height: 400px;
-        }
-        .chart-container {
-            flex: 1; /* Ocupa la mitad del espacio */
-        max-width: 50%; /* Limita el ancho al 50% */
-        max-height: 350px;
-            
-        }
-        canvas {
-            width: 100%;
-            height: 400px;
-        }
-        .foto{
-            width:150px;
-            height: 150px;
-        }
-        .foto_peque{
-            width:50px;
-            height: 50px;
-        }
-
-        .registro {
-            flex: 2; /* Ocupa el doble del espacio que la gráfica */
-        max-height: 400px; /* Altura máxima del contenedor */
-        height: 100%;
-        overflow-y: auto; /* Habilita el scroll vertical */
-        border: 1px solid #ccc; /* Borde para separar visualmente */
-        padding: 10px;
-        margin-left: 20px; /* Espaciado a la izquierda del gráfico */
-        background-color: #f9f9f9; /* Fondo claro */
-        }
-
-    .registro h3 {
-        margin-top: 0;
-        text-align: center;
-    }
-
-    .registro ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .registro li {
-        display: grid; /* Usa grid para organizar los elementos */
-        grid-template-columns: 100px 100px 100px 100px 100px 100px 100px; /* Define anchos fijos para cada columna */
-        gap: 10px; /* Espaciado entre columnas */
-        align-items: center; /* Alinea verticalmente los elementos */
-        margin-bottom: 10px;
-        font-size: 14px;
-        line-height: 1.5;
-    }
-    .registro li span {
-        text-align: center;
-    }
-
-    .registro li span.incidencia {
-        color: #FF0000; /* Color para la incidencia */
-        font-weight: bold;
-    }
-
-    .registro li span.estado {
-        color: #555; /* Color para el estado */
-        font-style: italic;
-    }
-
-    span.tipoA {
-        color: #007BFF; /* Color para el tipo de marcaje */
-        font-weight: bold;
-    }
-    span.tipoB {
-        color:rgb(5, 119, 19); /* Color para el tipo de marcaje */
-        font-weight: bold;
-    }
-
-    .registro li span.metodo {
-        color: #555; /* Color para el método de entrada */
-        font-style: italic;
-    }
-
-    .registro li span.fecha {
-        color: #333; /* Color para la fecha y hora */
-        font-weight: bold;
-    }
-
-    .registro li span.hora {
-        color: #333; /* Color para la fecha y hora */
-    }
-
-    .registro li:nth-child(even) {
-        background-color: #f9f9f9; /* Color para registros pares */
-    }
-
-    .registro li:nth-child(odd) {
-        background-color: #e9e9e9; /* Color para registros impares */
-    }
-
-    .registro-header {
-        font-weight: bold;
-        background-color: #f1f1f1;
-        border-bottom: 2px solid #ccc;
-        padding: 5px 0;
-    }
-
-    .registro-header span {
-        text-align: center;
-    }
-
-    .cabeceraRegistros {
-        justify-content: space-between; /* Espaciado entre el encabezado y el formulario */
-        align-items: center; /* Alinea verticalmente los elementos */
-        margin-bottom: 10px; /* Espaciado inferior */
-    }
-
-    .cabeceraRegistros div{
-        display: flex;
-        width:50%;
-        justify-content: space-between;
-        margin: 10px;
-    }
-
-    .cabeceraRegistros h3 {
-        margin: 0; /* Elimina el margen superior e inferior del encabezado */
-    }
-
-    .export-button {
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 14px;
-        margin-bottom: 10px;
-    }
-
-    .export-button:hover {
-        background-color: #0056b3;
-    }
-
-    .accesos-lista {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .acceso-item {
-        display: grid; /* Usa grid para organizar los elementos */
-        grid-template-columns: 100px 200px 100px; /* Define anchos fijos para las columnas */
-        gap: 10px; /* Espaciado entre columnas */
-        align-items: center; /* Alinea verticalmente los elementos */
-        margin-bottom: 0px;
-        font-size: 14px;
-        line-height: 1.5;
-    }
-
-    .acceso-item .fecha {
-        color: #333; /* Color para la fecha y hora */
-    }
-
-    .acceso-item .imagen img {
-        width: 50px;
-        height: 40px;
-        border-radius: 5px; /* Opcional: redondea las esquinas de la imagen */
-    }
-
-    .context-menu {
-        display: none; /* Oculto por defecto */
-        position: absolute;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-        z-index: 1000;
-        padding: 10px;
-        border-radius: 5px;
-        overflow: hidden;
-    }
-
-    .context-menu ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    .context-menu ul li {
-        display: block;
-        width: 100%;
-        padding: 8px 12px;
-        text-align: left;
-        background: none;
-        border: none;
-        cursor: pointer;
-        text-overflow: ellipsis; /* Añade puntos suspensivos si el texto es muy largo */
-        box-sizing: border-box; /* Incluye padding en el ancho */
-    }
-
-    .context-menu ul li:hover {
-        background-color: #f1f1f1;
-    }
-
-    #bloque-revision, #bloque-mostrardatos {
-    width: 80%;
-    max-width: 500px;
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-}
-
-#bloque-revision form div {
-    margin-bottom: 15px;
-}
-
-#bloque-revision label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-#bloque-revision textarea, #bloque-revision select {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-}
-
-#bloque-revision button, #bloque-mostrardatos button {
-    padding: 8px 15px;
-    margin-right: 10px;
-    cursor: pointer;
-}
-    
-    </style>
+    <link rel="stylesheet" href="../css/empleado.css">
+    <!--Scripts para la gráfica-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+    <!-- Contiene método para la gráfica y para cambiar los filtros-->
+    <script src="../js/empleado-grafica.js"></script> 
 </head>
 <body>
     <!--Muestra el botón de administración si tiene el rol-->
@@ -367,6 +95,44 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                 <?php endforeach; ?>
             </ul>
         </div>
+        <div class="incidencias-container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'pendientes')">Pendientes</button>
+            <button class="tab-button" onclick="openTab(event, 'resueltas')">Resueltas</button>
+        </div>
+        
+        <div id="pendientes" class="tab-content" style="display:block;">
+            <h4>Incidencias Pendientes</h4>
+            <ul class="incidencias-list">
+                <?php foreach ($incidenciasPendientes as $incidencia): ?>
+                    <li class="incidencia-item prioridad-<?= strtolower($incidencia['PRIORIDAD']) ?>">
+                        <span class="fecha"><?= htmlspecialchars($incidencia['FECHA_INC']) ?></span>
+                        <span class="descripcion"><?= htmlspecialchars($incidencia['COMENTARIO']) ?></span>
+                        <span class="prioridad"><?= htmlspecialchars($incidencia['PRIORIDAD']) ?></span>
+                    </li>
+                <?php endforeach; ?>
+                <?php if (empty($incidenciasPendientes)): ?>
+                    <li>No hay incidencias pendientes</li>
+                <?php endif; ?>
+            </ul>
+        </div>
+        
+        <div id="resueltas" class="tab-content">
+            <h4>Incidencias Resueltas</h4>
+            <ul class="incidencias-list">
+                <?php foreach ($incidenciasResueltas as $incidencia): ?>
+                    <li class="incidencia-item resuelta">
+                        <span class="fecha"><?= htmlspecialchars($incidencia['fecha']) ?></span>
+                        <span class="descripcion"><?= htmlspecialchars($incidencia['descripcion']) ?></span>
+                        <span class="resolucion"><?= htmlspecialchars($incidencia['solucion']) ?></span>
+                    </li>
+                <?php endforeach; ?>
+                <?php if (empty($incidenciasResueltas)): ?>
+                    <li>No hay incidencias resueltas</li>
+                <?php endif; ?>
+            </ul>
+        </div>
+    </div>
     </div>
     <div class="contenedor-grafica-reg">
     <div class="chart-container">
@@ -395,13 +161,6 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
     <!-- Contenedor para la gráfica -->
     
         <canvas id="hours-chart"></canvas>
-     <!--Scripts para la gráfica-->
-     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
-    <!-- Contiene método para la gráfica y para cambiar los filtros-->
-    <script src="../js/empleado-grafica.js"></script> 
-    
- 
     <script>
         
         // Datos generados desde PHP
