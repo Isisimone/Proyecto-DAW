@@ -23,7 +23,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
     <!-- Contiene método para la gráfica y para cambiar los filtros-->
-    <script src="../js/empleado-grafica.js"></script> 
+    <script src="../js/empleado.js"></script> 
 </head>
 <body>
     <!--Muestra el botón de administración si tiene el rol-->
