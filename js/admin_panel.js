@@ -1,3 +1,119 @@
+
+/* Listeners */
+document.addEventListener('DOMContentLoaded', () => {
+    //Variables
+        //Bloques
+        const panelDatosAdmin = document.getElementById('panelDatosAdmin');
+        const panelIncidenciasPendientes = document.getElementById('panelIncidenciasPendientes');
+        const panelIncidenciasResueltas = document.getElementById('panelIncidenciasResueltas');
+        const panelFichaIncidencia = document.getElementById('panelFichaIncidencia');
+        const panelFormularioResolucion = document.getElementById('panelFormularioResolucion');
+        const panelEntrasSalidas = document.getElementById('panelEntrasSalidas');
+        const panelDatosEmpleado = document.getElementById('panelDatosEmpleado');
+        const panelEmpleados = document.getElementById('panelEmpleados');
+        const panelConfirmarBaja = document.getElementById('panelConfirmarBaja');
+        const panelExportarEmpleados = document.getElementById('panelExportarEmpleados');
+        const panelUsuarios = document.getElementById('panelUsuarios');
+        const panelDescriptores = document.getElementById('panelDescriptores');
+        const panelEliminarDescriptor = document.getElementById('panelEliminarDescriptor');
+        const panelExportarUsuarios = document.getElementById('panelExportarUsuarios');
+        const panelListadoTransacciones = document.getElementById('panelListadoTransacciones');
+        const panelListadoMarcajes = document.getElementById('panelListadoMarcajes');
+        const panelRoles = document.getElementById('panelRoles');
+        const panelUsuariosAsigandos = document.getElementById('panelUsuariosAsigandos');
+        const panelAsignarRoles = document.getElementById('panelAsignarRoles');
+        const panelAjustes = document.getElementById('panelAjustes');
+
+
+    //Métodos
+    function cerrar_bloques(){
+        panelDatosAdmin.style.display = 'none';
+        panelIncidenciasPendientes.style.display = 'none';
+        panelIncidenciasResueltas.style.display = 'none';
+        panelFichaIncidencia.style.display = 'none';
+        panelFormularioResolucion.style.display = 'none';
+        panelEntrasSalidas.style.display = 'none';
+        panelDatosEmpleado.style.display = 'none';
+        panelEmpleados.style.display = 'none';
+        panelConfirmarBaja.style.display = 'none';
+        panelExportarEmpleados.style.display = 'none';
+        panelUsuarios.style.display = 'none';
+        panelDescriptores.style.display = 'none';
+        panelEliminarDescriptor.style.display = 'none';
+        panelExportarUsuarios.style.display = 'none';
+        panelListadoTransacciones.style.display = 'none';
+        panelListadoMarcajes.style.display = 'none';
+        panelRoles.style.display = 'none';
+        panelUsuariosAsigandos.style.display = 'none';
+        panelAsignarRoles.style.display = 'none';
+        panelAjustes.style.display = 'none';
+    }
+
+    //Listeners
+    //Listeners del menu
+    document.getElementById('menuPrincipal').addEventListener('click', () => {
+        cerrar_bloques();
+        panelDatosAdmin.style.display = 'block';
+        panelIncidenciasPendientes.style.display = 'block';
+        panelEntrasSalidas.style.display = 'block';
+    });
+
+    document.getElementById('menuEmpleados').addEventListener('click', () => {
+        cerrar_bloques();
+        panelEmpleados.style.display = 'block';
+    });
+
+    document.getElementById('menuUsuarios').addEventListener('click', () => {
+        cerrar_bloques();
+        panelUsuarios.style.display = 'block';
+    });
+
+    document.getElementById('menuMarcajes').addEventListener('click', () => {
+        cerrar_bloques();
+        panelListadoMarcajes.style.display = 'block';
+    });  
+
+    document.getElementById('menuTransacciones').addEventListener('click', () => {
+        cerrar_bloques();
+        panelListadoTransacciones.style.display = 'block';
+    });  
+
+    document.getElementById('menuRoles').addEventListener('click', () => {
+        cerrar_bloques();
+        panelRoles.style.display = 'block';
+    });  
+
+    document.getElementById('menuUsuariosRoles').addEventListener('click', () => {
+        cerrar_bloques();
+        panelAsignarRoles.style.display = 'block';
+    });
+
+    document.getElementById('menuAjustes').addEventListener('click', () => {
+        cerrar_bloques();
+        panelAjustes.style.display = 'block';
+    });  
+
+    document.getElementById('menuCerrar').addEventListener('click', () => {
+        cerrar_bloques();
+        logout();
+    }); 
+    // 
+});
+
+
+function seleccionarEmpleado(elemento) {
+    const codEmpleado = elemento.getAttribute('data-cod');
+    document.getElementById('cod_empleado').value = codEmpleado;
+    document.getElementById('dropdownEmpleados').textContent = elemento.textContent.trim();
+}
+
+
+
+
+
+
+/* Métodos previos */
+/*
 // Función para actualizar dinámicamente el contenido
 function updateContent(section) {
     const dynamicContent = document.getElementById('dynamicContent');
@@ -168,7 +284,7 @@ function renderPermisosRolesContent() {
             <button type="submit" name="assign-role">Asignar Rol</button>
         </form>
     `;
-}
+}*/
 
 // Función para actualizar la hora en vivo
 function updateTime() {

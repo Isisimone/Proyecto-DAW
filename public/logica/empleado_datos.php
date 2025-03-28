@@ -1,6 +1,4 @@
 <?php
-
-use Clases\Incidencia;
 session_start();
 date_default_timezone_set('Europe/Madrid');
 
@@ -8,6 +6,7 @@ date_default_timezone_set('Europe/Madrid');
 require '../vendor/autoload.php';
 
 // Clases a usar
+use Clases\Incidencia;
 use Clases\Empleado;
 use Clases\Marcaje;
 
@@ -166,6 +165,15 @@ if (isset($_SESSION['COD_USUARIO'])) {
 
                 // Agrega los pares procesados al resultado final
                 $registrosDetallados = array_merge($registrosDetallados, $pares);
+
+                if (isset($_POST['registro_id'])) {
+                    solicitarRevision($codEmpleado,$_POST['comentario-fecha'],$_POST['comentario'],intval($_POST['prioridad']));
+                    unset($_POST);
+                    $incidenciasPendientes = $incidencias->cargarPendientes($codEmpleado);
+                    $incidenciasResueltas = $incidencias->cargarResueltas($codEmpleado);
+                    header('Location: '.$_SERVER['PHP_SELF']);
+                    exit();
+                }
             }
         }
     } else {

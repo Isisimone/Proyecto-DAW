@@ -274,6 +274,16 @@ canvas {
     text-align: center;
 }
 
+.contenido {
+    width: 100%-40px;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: rgb(253, 253, 253);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+}
+
 /* Estilo para las secciones */
 section {
     margin-bottom: 40px;

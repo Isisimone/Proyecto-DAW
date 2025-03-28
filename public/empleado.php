@@ -3,10 +3,7 @@ date_default_timezone_set('Europe/Madrid');
 //Carga la lógica de la página
 require './logica/empleado_datos.php';
 
-if (isset($_POST['registro_id'])) {
-    solicitarRevision($codEmpleado,$_POST['comentario-fecha'],$_POST['comentario'],intval($_POST['prioridad']));
-    unset($_POST['']);
-}
+
 
 //Defino la fecha de hoy
 $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format('Y-m-d');
@@ -235,9 +232,9 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                     <div>
                         <label for="prioridad">Prioridad:</label>
                         <select id="prioridad" name="prioridad">
-                            <option value="baja">Baja</option>
-                            <option value="media">Media</option>
-                            <option value="alta">Alta</option>
+                            <option value="1">Baja</option>
+                            <option value="2">Media</option>
+                            <option value="3">Alta</option>
                         </select>
                     </div>
                     <button type="submit" name="SolRevision">Enviar Revisión</button>
