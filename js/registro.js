@@ -81,7 +81,7 @@ async function guardarDescriptorEnServidor(nombre, descriptor,empleado,usuario) 
     const data = {nombre, descriptor: Array.from(descriptor),empleado,usuario };//Aquí se deben introducir el cod_Empleado y el usuario_Alta
     try {
         //Se manda por POST los datos al servidor definiendo en response el envío y los datos.
-        const response = await fetch('guardar_descriptor.php', {
+        const response = await fetch('./logica/guardar_descriptor.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

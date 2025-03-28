@@ -33,7 +33,7 @@ async function registrar(empleado, cod_bio,cod_tipo,foto,fec,incidencia,pendient
         obs: obs // Observaciones
     };
     // Enviar los datos con axios
-        axios.post('http://localhost/Proyecto-DAW/public/registrar.php', datos)
+        axios.post('http://localhost/Proyecto-DAW/public/logica/registrar.php', datos)
         .then(response => {
             //Loggeamos la respuesta
             console.log('Respuesta del servidor:', response.data);
@@ -51,7 +51,7 @@ async function cargarDescriptores() {
         descriptoresConocidos.length = 0;
 
         // Hacer una solicitud HTTP a listar_descriptores.PHP
-        const response = await axios.get('http://localhost/Proyecto-DAW/public/listar_descriptores.php');
+        const response = await axios.get('http://localhost/Proyecto-DAW/public/logica/listar_descriptores.php');
         //Guardamos los datos
         const data = response.data;
 

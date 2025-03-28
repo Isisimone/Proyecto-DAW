@@ -1,7 +1,7 @@
 <?php
 date_default_timezone_set('Europe/Madrid');
 //Carga la lógica de la página
-require 'empleado_datos.php';
+require './logica/empleado_datos.php';
 
 if (isset($_POST['registro_id'])) {
     solicitarRevision($codEmpleado,$_POST['comentario-fecha'],$_POST['comentario'],intval($_POST['prioridad']));
@@ -68,7 +68,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
 
         <!-- Sección central: Foto del empleado -->
         <div class="section" id="foto-empleado">
-            <img class="foto" src="mostrar_imagen.php?perfil=perfil&archivo=<?php echo htmlspecialchars($fotoEmpleado); ?>" alt="Foto del empleado">
+            <img class="foto" src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?php echo htmlspecialchars($fotoEmpleado); ?>" alt="Foto del empleado">
             <h3>Horario</h3>
             <p><?php echo $horario;?></p>
         </div>
@@ -89,7 +89,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                         <span class="<?php echo $tipoClase;?>"><?php echo $marcaje['COD_TIPO_MARCAJE'] == 1 ? 'Entrada' : 'Salida'; ?></span>
                         <span class="fecha"><?php echo (new DateTime($marcaje['FEC_MARCAJE']))->format('Y-m-d H:i:s'); ?></span>
                         <span class="imagen">
-                            <img class="foto_peque" src="mostrar_imagen.php?archivo=<?php echo htmlspecialchars($marcaje['DES_FOTO']); ?>" alt="Foto de fichaje">
+                            <img class="foto_peque" src="./logica/mostrar_imagen.php?archivo=<?php echo htmlspecialchars($marcaje['DES_FOTO']); ?>" alt="Foto de fichaje">
                         </span>
                     </li>
                 <?php endforeach; ?>

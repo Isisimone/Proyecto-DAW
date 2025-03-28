@@ -4,7 +4,7 @@
 header('Content-Type: application/json');
 
 // Incluir las clases necesarias
-require '../vendor/autoload.php';
+require '../../vendor/autoload.php';
 
 //use Clases\Conexion;
 use Clases\DatosBiometricos;

@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="${tipoClase}">${tipoTexto}</span>
                     <span class="fecha">${marcaje.FEC_MARCAJE}</span>
                     <span class="imagen">
-                        <img class="foto_peque" src="mostrar_imagen.php?archivo=${encodeURIComponent(marcaje.DES_FOTO)}" alt="Foto de fichaje">
+                        <img class="foto_peque" src="./logica/mostrar_imagen.php?archivo=${encodeURIComponent(marcaje.DES_FOTO)}" alt="Foto de fichaje">
                     </span>
                 </li>`;
         });

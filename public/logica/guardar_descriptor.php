@@ -6,7 +6,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 //Incluir las clases de Composer
-require '../vendor/autoload.php';
+require '../../vendor/autoload.php';
 //Clase DatosBiometricos
 use Clases\DatosBiometricos;
 

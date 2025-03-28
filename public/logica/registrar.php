@@ -1,6 +1,6 @@
 <?php
 // Incluir librerías de Composer
-require '../vendor/autoload.php';
+require '../../vendor/autoload.php';
 //Uso de la clase Marcaje
 use Clases\Marcaje;
 

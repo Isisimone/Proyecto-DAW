@@ -1,6 +1,6 @@
 <?php
 // filepath: c:\xampp\htdocs\Proyecto-DAW\public\exportar_registros.php
-require '../vendor/autoload.php';
+require '../../vendor/autoload.php';
 require 'empleado_datos.php'; // Asegúrate de que `$datosMarcajes` esté disponible
 
 // Verifica el tipo de exportación solicitado
