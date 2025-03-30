@@ -15,60 +15,6 @@ use Clases\Marcaje;
 use Clases\DatosBiometricos;
 use Clases\Privilegio;
 use Clases\Rol;
-//datos falsos
-$empleados = [
-    [
-        "id" => 1,
-        "foto" => "../recursos/foto1.jpg",
-        "nombre" => "Julián Celamor",
-        "apellido" => "Celamor",
-        "usuario" => "JulianC",
-        "contacto" => "Julian@celo.com",
-        "fec_alta" => "12/02/2025",
-        "fec_baja" => "",
-        "user_alta" => "Admon",
-        "user_baja" => "",
-        "horario" => "De 8 a 16h",
-        "flex" => true,
-        "max_horas" => 6,
-        "bolsa" => 4
-
-    ],
-    [
-        "id" => 2,
-        "foto" => "../recursos/foto2.jpg",
-        "nombre" => "María García",
-        "apellido" => "García",
-        "usuario" => "MariaG",
-        "contacto" => "maria@celo.com",
-        "fec_alta" => "12/02/2025",
-        "fec_baja" => "",
-        "user_alta" => "Admon",
-        "user_baja" => "",
-        "horario" => "De 8 a 16h",
-        "flex" => true,
-        "max_horas" => 6,
-        "bolsa" => 4
-    ],
-    [
-        "id" => 3,
-        "foto" => "../recursos/foto3.jpg",
-        "nombre" => "Carlos Ruiz",
-        "apellido" => "Ruiz",
-        "usuario" => "CalorsR",
-        "contacto" => "carlos@celo.com",
-        "fec_alta" => "12/02/2025",
-        "fec_baja" => "",
-        "user_alta" => "Admon",
-        "user_baja" => "",
-        "horario" => "De 8 a 16h",
-        "flex" => true,
-        "max_horas" => 6,
-        "bolsa" => 4
-    ]
-];
-
-
 
 // Verifica si hay una sesión activa
 if (isset($_SESSION['COD_USUARIO'])) {
@@ -78,8 +24,9 @@ if (isset($_SESSION['COD_USUARIO'])) {
         $fechaHoy = new DateTime('now', new DateTimeZone('UTC'));
         $fechaHoy->setTimezone(new DateTimeZone('Europe/Madrid'));
 
-        // Obtiene el código del empleado desde la sesión y sus datos propios
+        // Obtiene el código del empleado y usuario desde la sesión y sus datos propios
         $codEmpleado = $_SESSION['COD_EMPLEADO'];
+        $codUsuarioSesion = $_SESSION['COD_USUARIO'];
         $empleado= new Empleado();
         $marcaje = new Marcaje();
         $empleado->cargarDatosEmpleado($codEmpleado);
@@ -93,6 +40,26 @@ if (isset($_SESSION['COD_USUARIO'])) {
         $incidencia = new Incidencia;
         $incidenciasPendientes = $incidencia->cargarPendientes();
         $incidenciasResueltas = $incidencia->cargarResueltas();
+
+        //Obtener empleados de la BBDD
+        $empleados=$empleado->listarEmpleados();
+        $empleadosDentro=[];
+        $empleadosFuera=[];
+        $empleadosAusentes=[];
+        //Obtener asistencias
+        foreach ($empleados as $asiste){
+            switch($marcaje->asistencia($asiste['COD_EMPLEADO'],$fechaHoy)){
+                case 1:
+                    $empleadosDentro[]=$asiste;
+                    break;
+                case 2:
+                    $empleadosFuera[]=$asiste;
+                    break;
+                default:
+                    $empleadosAusentes[]=$asiste;
+                    break;
+            }
+        }
         
     }
 }

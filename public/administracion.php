@@ -155,11 +155,16 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
     }
 
     .ventana {
+        position: fixed;
+        top:50%;
+        left:50%;
         width: 80%;
+        transform: translate(-50%, -50%);
         max-width: 500px;
         background: white;
         border-radius: 8px;
         padding: 20px;
+        z-index:1000;
         box-shadow: 0 0 15px rgba(0,0,0,0.2);
     }
 
@@ -401,6 +406,107 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
 .cabecera-empleado {
     position: relative; /* Contenedor para el botón de cerrar */
 }
+
+
+
+.dashboard-columnas {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 15px;
+        }
+        
+        .columna-estado {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cabecera-columna {
+            padding: 12px;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+            color: white;
+        }
+        
+        .sin-acceso .cabecera-columna {
+            background-color: #d32f2f; /* Rojo */
+        }
+        
+        .trabajando .cabecera-columna {
+            background-color: #388e3c; /* Verde */
+        }
+        
+        .fuera .cabecera-columna {
+            background-color: #1976D2; /* Azul */
+        }
+        
+        .lista-empleados {
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        /* Aprovechando tus estilos existentes */
+        .fila_foto {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .fila_foto:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .foto_peque {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #eee;
+        }
+        
+        .info-empleado {
+            flex: 1;
+        }
+        
+        .nombre-empleado {
+            font-weight: bold;
+            margin: 0;
+            color: #333;
+        }
+        
+        .apellido-empleado {
+            color: #666;
+            font-size: 0.9em;
+            margin: 2px 0 0 0;
+        }
+        
+        /* Scrollbar personalizada */
+        .lista-empleados::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .lista-empleados::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .lista-empleados::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+        
+        .lista-empleados::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
     </style>
     
 </head>
@@ -515,12 +621,14 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                                     $marcajes=$marcaje->marcajesHoy($incidenciaP['COD_EMPLEADO'],new DateTime($incidenciaP['FECHA_INC']));
                                     $marcajesPorIncidencia[$incidenciaP['ID']] = $marcajes;
                                 ?>
-                                <div class="fila-tarea incidenciaP" data-id="<?php echo $incidenciaP['ID'];?>" data-foto="<?php echo htmlspecialchars($fotoIncidencia); ?>" data-nombre="<?php echo htmlspecialchars($empleadoIncidencia);?>">
+                                <div class="fila-tarea incidenciaP" data-id="<?php echo $incidenciaP['ID'];?>" data-foto="<?php echo htmlspecialchars($fotoIncidencia); ?>" 
+                                data-nombre="<?php echo htmlspecialchars($empleadoIncidencia);?>" data-empleado="<?php echo $incidenciaP['COD_EMPLEADO'] ?>" 
+                                data-fecha="<?php echo $incidenciaP['FECHA_INC']?>">
                                 
                                 <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?php echo htmlspecialchars($fotoIncidencia); ?>" class="foto-empleado-peque">
                                 <div><?php echo htmlspecialchars($empleadoIncidencia);?></div>
                                 <div><?php echo htmlspecialchars($incidenciaP['FECHA_INC']);?></div>
-                                <div class="prioridad prioridad-1">1</div>
+                                <div class="prioridad prioridad-1"><?php echo htmlspecialchars($incidenciaP['PRIORIDAD']);?></div>
                             </div>
                             <?php endforeach; ?>
                             <script>
@@ -555,9 +663,99 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                 
             </div>
                 <!--Subpanel Formulario de resolución-->
-            <div id="panelFormularioResolucion" style="display: none;"></div>        
+            <div id="panelFormularioResolucion" class = "ventana" style="display: none;">     
+            <button class="cerrar" aria-label="Cerrar ventana">&times;</button>
+            <form>
+                    <div class="campo-formulario">
+                        <label for="cod_marcaje">COD_MARCAJE:</label>
+                        <input type="text" id="resolucionCod" name="cod_marcaje" readonly>
+                    </div>
+                    <div class="campo-formulario">
+                    <select name="empleado" id="resolucionEmpleado" class="form-select" required>
+                        <?php if (!empty($empleados)): ?>
+                        <?php foreach ($empleados as $empleado): ?>
+                        <?php 
+                            $codigo = htmlspecialchars($empleado['COD_EMPLEADO'] ?? '');
+                            $nombreCompleto = htmlspecialchars(
+                                trim(($empleado['NOM_EMPLEADO'] ?? '') . ' ' . 
+                            ($empleado['APE1_EMPLEADO'] ?? ''))
+                            );
+                        ?>
+                        <option value="<?php echo $codigo; ?>">
+                            <?php echo $nombreCompleto; ?>
+                        </option>
+                    <?php endforeach; ?>
+                    <?php else: ?>
+                        <option value="" disabled>No hay empleados disponibles</option>
+                    <?php endif; ?>
+                    </select>
+                    </div>
+                    <div class="campo-formulario">
+                        <label for="fec_marcaje">FEC_MARCAJE:</label>
+                        <input id="resolucionFecha" name="fec_marcaje">
+                    </div>
+    
+                    <button id="resolucionG" aria-label="Guardar modificación">Guardar</button>
+                </form>
+            </div>
             <!--Panel de Entradas y salidas-->
-            <div id="panelEntrasSalidas" style="display: none;"></div>    
+            <div id="panelEntrasSalidas" style="display: none;">
+                <div class="dashboard-columnas">
+                    <!-- Columna 1: Sin acceso -->
+                    <div class="columna-estado sin-acceso marcoListados">
+                        <div class="cabecera-columna">Sin acceso</div>
+                        <div class="lista-empleados">
+                            <?php foreach($empleadosAusentes as $asistente):?>
+                            <div class="fila_foto">
+                                <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?php echo htmlspecialchars($asistente['FOTO']); ?>" alt="Foto empleado" class="foto-empleado-peque">
+                                <div class="info-empleado">
+                                    <p class="nombre-empleado"><?php echo $asistente['NOM_EMPLEADO'];?></p>
+                                    <p class="apellido-empleado"><?php echo $asistente['APE1_EMPLEADO']." ".$asistente['APE2_EMPLEADO'];?></p>
+                                </div>
+                            </div>
+                            <?php endforeach;?>
+                
+                <!-- Repetir estructura para más empleados -->
+                        </div>
+                    </div>
+        
+        <!-- Columna 2: Trabajando -->
+                    <div class="columna-estado trabajando marcoListados">
+                        <div class="cabecera-columna">Trabajando</div>
+                        <div class="lista-empleados">
+                        <?php foreach($empleadosDentro as $asistente):?>
+                            <div class="fila_foto">
+                                <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?php echo htmlspecialchars($asistente['FOTO']); ?>" alt="Foto empleado" class="foto-empleado-peque">
+                                <div class="info-empleado">
+                                    <p class="nombre-empleado"><?php echo $asistente['NOM_EMPLEADO'];?></p>
+                                    <p class="apellido-empleado"><?php echo $asistente['APE1_EMPLEADO']." ".$asistente['APE2_EMPLEADO'];?></p>
+                                </div>
+                            </div>
+                            <?php endforeach;?>
+                
+                <!-- Más empleados -->
+                        </div>
+                    </div>
+        
+        <!-- Columna 3: Fuera -->
+                    <div class="columna-estado fuera marcoListados">
+                        <div class="cabecera-columna">Fuera</div>
+                        <div class="lista-empleados">
+                        <?php foreach($empleadosFuera as $asistente):?>
+                            <div class="fila_foto">
+                                <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?php echo htmlspecialchars($asistente['FOTO']); ?>" alt="Foto empleado" class="foto-empleado-peque">
+                                <div class="info-empleado">
+                                    <p class="nombre-empleado"><?php echo $asistente['NOM_EMPLEADO'];?></p>
+                                    <p class="apellido-empleado"><?php echo $asistente['APE1_EMPLEADO']." ".$asistente['APE2_EMPLEADO'];?></p>
+                                </div>
+                            </div>
+                            <?php endforeach;?>
+                
+                            <!-- Más empleados -->
+                        </div>
+                    </div>
+                </div>
+            </div>    
                 <!--Subpanel con datos del empleado-->
             <div id="panelDatosEmpleado" style="display: none;"></div>    
             <!--Paneles de la página Admin-->
@@ -567,15 +765,15 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                 <div class="d-flex align-items-center gap-2">
                         <!-- Dropdown Bootstrap -->
                         <div class="dropdown me-2">
-                            <button class="btn btn-secondary combo dropdown-toggle" type="button" id="dropdownEmpleados" data-bs-toggle="dropdown">
+                            <button class="btn btn-secondary combo dropdown-toggle" type="button" id="dropdownEmpleados2" data-bs-toggle="dropdown">
                                 Selecciona un empleado
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownEmpleados">
                                 <?php foreach ($empleados as $empleado): ?>
                                 <li>
-                                    <a class="dropdown-item" href="#" data-cod="<?= $empleado['id'] ?>" onclick="seleccionarEmpleado(this)">
-                                    <img src="<?= $empleado['foto'] ?>" width="30" height="30" class="rounded-circle me-2">
-                                    <?= $empleado['nombre'] ?>
+                                    <a class="dropdown-item" data-cod="<?= $empleado['COD_EMPLEADO'] ?>" onclick="seleccionarEmpleado(this)">
+                                    <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?= $empleado['FOTO'] ?>" width="30" height="30" class="rounded-circle me-2">
+                                    <?= $empleado['NOM_EMPLEADO']." ".$empleado['APE1_EMPLEADO'] ?>
                                     </a>
                                 </li>
                             <?php endforeach; ?>
@@ -588,7 +786,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                     <form class="marcoListados">
                         <div class="fila">
                         <div class="columna" style="flex:1;">
-                            <img src="<?= $empleados[0]['foto'] ?>" width="100" id= "fotoEmpleados" height="100" class="rounded-circle me-2">
+                            <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?= $empleados['FOTO'] ?>" width="100" id= "fotoEmpleados" height="100" class="rounded-circle me-2">
                         </div>
                         <div class="columna" style="flex:2;">
                             <label for="apellido1Empleados">1er apellido</label>
@@ -663,7 +861,9 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                 <!--Subpanel Confirmar Baja-->
             <div id="panelConfirmarBaja" style="display: none;"></div>
                 <!--Subpanel Exportar Empleados-->
-            <div id="panelExportarEmpleados" style="display: none;"></div>
+            <div id="panelExportarEmpleados" style="display: none;">
+
+            </div>
             <!--Panel de Mantenimiento de usuarios-->
             <div id="panelUsuarios" style="display: none;">
                 <h2>Gestión de Usuarios</h2>
@@ -754,5 +954,8 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
     </div>
     <!--Bootstrap para el dropdown con fotos de empleados-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const usuarioSesion = <?php echo $codUsuarioSesion;?>;
+    </script>
 </body>
 </html>

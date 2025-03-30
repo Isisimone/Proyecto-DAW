@@ -217,9 +217,20 @@ class Marcaje{
         return 0.0;
     }
 }
+    //Método para comprobar asistencia del día
+    public function asistencia($empleado, DateTime $fecha){
+        // 0 = Sin registros, 1 = Entrada registrada, 2 = Salida registrada
+        // Primero verificamos si hay algún marcaje del empleado en la fecha
+        $marcajesHoy = $this->marcajesHoy($empleado, $fecha);
+        if (empty($marcajesHoy)) {
+            return 0; // No hay registros para esta fecha
+        }
+        $ultimo = $this->ultimoMarcaje($empleado);
+        return $ultimo; // Devuelve 1 o 2 según el último registro
+    }
 
     //Método para obtener marcajes del día
-    public function marcajesHoy($empleado, DateTime $fecha){
+    public function marcajesHoy($empleado, DateTime $fecha):array{
         try{
             //Crea una conexión y una consulta SELECT
             $conexion = new Conexion();
@@ -237,7 +248,7 @@ class Marcaje{
         }catch(PDOException $e){
             //Muestra error y devuelve false
             error_log("Error al obtener marcaje: " . $e->getMessage());
-            return false;
+            return [];
         }
     }
 

@@ -108,6 +108,7 @@ document.addEventListener('click', function(e) {
 });
 
     //Listeners de incidencias
+    //CLICK en una incidencia pendiente
     document.querySelectorAll('.incidenciaP').forEach(incidenciaPendiente => {
         incidenciaPendiente.addEventListener('click', function() {
             const id = this.getAttribute('data-id');
@@ -137,6 +138,7 @@ document.addEventListener('click', function(e) {
                         <div class="info-empleado">
                             <p class="nombre-empleado" id="nombreEmpleadoIncidencia">${nombre}</p>
                             <p class="fecha-empleado" id="fechaIncidencia">Sobre la fecha: ${fecha}</p>
+                            <p id="incidenciaActiva" data-incidencia="${id}">${id}</p>
                         </div>
                     </div>
 
@@ -151,7 +153,7 @@ document.addEventListener('click', function(e) {
                     marcajesFecha.forEach(marcaje=>{
                         const tipoTexto = marcaje.COD_TIPO_MARCAJE == 1 ? "Entrada" : "Salida";
                         
-                    html+=`<div class="fila-evento">
+                    html+=`<div class="fila-evento marcajeIncidenciaP" data-id="${marcaje.COD_MARCAJE}">
                             <span class="tipo-evento">${tipoTexto}</span>
                             <span class="fecha-evento">${marcaje.FEC_MARCAJE}</span>
                             <img class="foto_peque" src="./logica/mostrar_imagen.php?archivo=${encodeURIComponent(marcaje.DES_FOTO)}">
@@ -160,13 +162,66 @@ document.addEventListener('click', function(e) {
                     html+=`</div>
                 </div>`;  
                 document.getElementById('panelFichaIncidencia').innerHTML = html;
-                //bloqueMostrarDatos.style.display = 'block';
             // Mostrar la ventana
             document.getElementById('panelFichaIncidencia').style.display = 'block';
         });
     });
-    
+    //CLICK en un marcaje de la incidencia pendiente
+    document.getElementById('panelFichaIncidencia').addEventListener('click', function(e) {
+        // Verifica si el click fue en un elemento con clase marcajeIncidenciaP o en sus hijos
+        const elementoMarcaje = e.target.closest('.marcajeIncidenciaP');
+        
+        if (elementoMarcaje) {
+            var codMarcaje = elementoMarcaje.getAttribute('data-id');
+            const marcajePorID = Object.values(marcajesPorIncidencia)
+                .flat()
+                .find(marcaje => marcaje.COD_MARCAJE == codMarcaje);
+            
+            if (marcajePorID) {
+                document.getElementById('panelFormularioResolucion').style.display = 'block';
+                document.getElementById('resolucionCod').value=marcajePorID.COD_MARCAJE;
+                document.getElementById('resolucionEmpleado').value=marcajePorID.COD_EMPLEADO;
+                document.getElementById('resolucionFecha').value=marcajePorID.FEC_MARCAJE;
+            }
+        }
+    });
+
+    //CLICK para Actualizar marcaje de incidencia
+    document.getElementById('resolucionG').addEventListener('click', async () => {
+        // Envío de datos para actualizar marcaje
+        await crud({
+            cod_marcaje: document.getElementById('resolucionCod').value,
+            cod_empleado: document.getElementById('resolucionEmpleado').value,
+            fec_marcaje: document.getElementById('resolucionFecha').value,
+            cod_incidencia: Number(document.getElementById('incidenciaActiva').getAttribute("data-incidencia")),
+            cod_usuario: usuarioSesion,
+            accion: 'actualizar_marcaje_incidencia'
+        });
+        location.reload();
+    });
 });
+
+async function crud(datos){
+    try {
+        const respuesta = await fetch('./logica/administracion_crud.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(datos)
+        });
+        const resultado = await respuesta.json();
+        
+        if (resultado.success) {
+            alert('¡Datos actualizados correctamente!');            
+        } else {
+            throw new Error(resultado.error || 'Error desconocido');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert(`Error al guardar: ${error.message}`);
+    }
+}
 
 function openTab(tabId) {
     // Oculta todos los contenidos
@@ -186,187 +241,9 @@ function openTab(tabId) {
 function seleccionarEmpleado(elemento) {
     const codEmpleado = elemento.getAttribute('data-cod');
     document.getElementById('cod_empleado').value = codEmpleado;
-    document.getElementById('dropdownEmpleados').textContent = elemento.textContent.trim();
+    document.getElementById('dropdownEmpleados2').textContent = elemento.textContent.trim();
 }
 
-
-
-
-
-
-/* Métodos previos */
-/*
-// Función para actualizar dinámicamente el contenido
-function updateContent(section) {
-    const dynamicContent = document.getElementById('dynamicContent');
-    const welcomeMessage = document.getElementById('welcome-message');
-
-  
-
-    // Selección de contenido según la sección
-    switch (section) {
-        case 'principal':
-            renderPrincipalContent();
-            break;
-        case 'empleados':
-            renderEmpleadosContent();
-            break;
-        case 'usuarios':
-            renderUsuariosContent();
-            break;
-        case 'registro':
-            renderRegistroContent();
-            break;
-        case 'roles':
-            renderRolesContent();
-            break;
-        case 'permisos_roles':
-            renderPermisosRolesContent();
-            break;
-        default:
-            dynamicContent.innerHTML = `<h2>Sección no encontrada</h2>`;
-    }
-}
-
-// Función para renderizar contenido de la sección "Principal"
-function renderPrincipalContent() {
-    const dynamicContent = document.getElementById('dynamicContent');
-    dynamicContent.innerHTML = `
-        <h2>Hora Actual</h2>
-        <p id="current-time">Cargando...</p>
-
-        <h2>Última Entrada/Salida</h2>
-        <p>Empleado: Juan Pérez</p>
-        <p>Hora: 08:45 AM</p>
-
-        <h2>Foto del Empleado</h2>
-        <img src="empleado.jpg" alt="Foto del Empleado" class="employee-photo">
-
-        <h2>Tiempo Trabajado</h2>
-        <p>Horas trabajadas hoy: 6h 30m</p>
-
-        <h2>Gráfico de Asistencia</h2>
-        <canvas id="attendanceChart"></canvas>
-    `;
-    updateTime();  // Actualizamos la hora
-    loadChart();  // Cargamos el gráfico
-}
-
-// Función para renderizar contenido de la sección "Empleados"
-function renderEmpleadosContent() {
-    const dynamicContent = document.getElementById('dynamicContent');
-    dynamicContent.innerHTML = `
-        <h2>Gestión de Empleados</h2>
-        <p>Aquí podrás ver y gestionar los empleados registrados en el sistema.</p>
-        <ul>
-            <li>Empleado 1: Juan Pérez</li>
-            <li>Empleado 2: María López</li>
-            <li>Empleado 3: Carlos García</li>
-        </ul>
-    `;
-}
-
-// Función para renderizar contenido de la sección "Usuarios"
-function renderUsuariosContent() {
-    const dynamicContent = document.getElementById('dynamicContent');
-    dynamicContent.innerHTML = `
-        <h2>Gestión de Usuarios</h2>
-        <p>Aquí podrás agregar o eliminar usuarios del sistema.</p>
-        ${renderAddUserForm()}
-        ${renderDeleteUserForm()}
-    `;
-}
-
-// Función para renderizar el formulario de agregar usuario
-function renderAddUserForm() {
-    return `
-        <h3>Agregar Usuario</h3>
-        <form id="add-user-form" method="POST" enctype="multipart/form-data">
-            <label for="user-name">Nombre:</label>
-            <input type="text" id="user-name" name="user-name" required>
-            <label for="user-photo">Foto (Escaneo Facial):</label>
-            <input type="file" id="user-photo" name="user-photo" accept="image/*" required>
-            <button type="submit" name="add-user">Agregar Usuario</button>
-        </form>
-    `;
-}
-
-// Función para renderizar el formulario de eliminar usuario
-function renderDeleteUserForm() {
-    return `
-        <h3>Eliminar Usuario</h3>
-        <form id="delete-user-form" method="POST">
-            <label for="user-id">Seleccionar Usuario:</label>
-            <select id="user-id" name="user-id" required>
-                <option value="1">Juan Pérez</option>
-                <option value="2">María López</option>
-                <option value="3">Carlos García</option>
-            </select>
-            <button type="submit" name="delete-user">Eliminar Usuario</button>
-        </form>
-    `;
-}
-
-// Función para renderizar contenido de la sección "Registro"
-function renderRegistroContent() {
-    const dynamicContent = document.getElementById('dynamicContent');
-    dynamicContent.innerHTML = `
-        <h2>Registro de Actividades</h2>
-        <p>Aquí podrás ver un historial de las actividades registradas en el sistema.</p>
-        <ul>
-            <li>Actividad 1: Registro de entrada de Juan Pérez - 08:00 AM</li>
-            <li>Actividad 2: Registro de salida de María López - 05:30 PM</li>
-            <li>Actividad 3: Registro de entrada de Carlos García - 09:00 AM</li>
-        </ul>
-    `;
-}
-
-// Función para renderizar contenido de la sección "Roles"
-function renderRolesContent() {
-    const dynamicContent = document.getElementById('dynamicContent');
-    dynamicContent.innerHTML = `
-        <h2>Gestión de Roles</h2>
-        <p>Aquí podrás ver y gestionar los roles de los usuarios.</p>
-        <ul>
-            <li><strong>Administrador</strong> - Acceso total al sistema.</li>
-            <li><strong>Empleado</strong> - Acceso limitado a tareas y registros.</li>
-            <li><strong>Supervisor</strong> - Acceso para supervisar a los empleados.</li>
-        </ul>
-    `;
-}
-
-// Función para renderizar contenido de la sección "Permisos y Roles"
-function renderPermisosRolesContent() {
-    const dynamicContent = document.getElementById('dynamicContent');
-    dynamicContent.innerHTML = `
-        <h2>Asignación de Roles a Usuarios</h2>
-        <p>Aquí podrás buscar usuarios y asignarles roles.</p>
-
-        <div>
-            <label for="search-user">Buscar Usuario:</label>
-            <input type="text" id="search-user" placeholder="Buscar por nombre..." oninput="searchUser()">
-        </div>
-
-        <div id="search-results">
-            <p>No hay resultados.</p>
-        </div>
-
-        <h3>Asignar Rol</h3>
-        <form id="assign-role-form" method="POST">
-            <label for="user-select">Seleccionar Usuario:</label>
-            <select id="user-select" name="user-select" required></select>
-
-            <label for="role-select"> Seleccionar Rol:</label>
-            <select id="role-select" name="role-select" required>
-                <option value="admin">Administrador</option>
-                <option value="empleado">Empleado</option>
-                <option value="supervisor">Supervisor</option>
-            </select>
-
-            <button type="submit" name="assign-role">Asignar Rol</button>
-        </form>
-    `;
-}*/
 
 // Función para actualizar la hora en vivo
 function updateTime() {
