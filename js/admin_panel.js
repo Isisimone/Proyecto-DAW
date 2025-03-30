@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const panelAsignarRoles = document.getElementById('panelAsignarRoles');
         const panelAjustes = document.getElementById('panelAjustes');
 
-
     //Métodos
     function cerrar_bloques(){
         panelDatosAdmin.style.display = 'none';
@@ -48,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         panelAsignarRoles.style.display = 'none';
         panelAjustes.style.display = 'none';
     }
-
     //Listeners
     //Listeners del menu
     document.getElementById('menuPrincipal').addEventListener('click', () => {
@@ -97,8 +95,92 @@ document.addEventListener('DOMContentLoaded', () => {
         cerrar_bloques();
         logout();
     }); 
-    // 
+    
+    // Evento delegado para todos los elementos .cerrar
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('cerrar') || e.target.closest('.cerrar')) {
+        document.querySelectorAll('.ventana').forEach(ventana => {
+            ventana.style.display = 'none';
+        });
+        // También ocultamos el contenedor principal por si acaso
+        document.getElementById('panelFichaIncidencia').style.display = 'none';
+    }
 });
+
+    //Listeners de incidencias
+    document.querySelectorAll('.incidenciaP').forEach(incidenciaPendiente => {
+        incidenciaPendiente.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            const nombre = this.getAttribute('data-nombre');
+            const foto = this.getAttribute('data-foto');
+            //Devuelvo del array incidenciasP la clickeada 
+            const incidenciaSeleccionada = Object.values(incidenciasP).filter(incidencia => {
+                return incidencia.ID.startsWith(id);
+            })[0];
+            const fecha=incidenciaSeleccionada.FECHA_INC;
+            const empleado = incidenciaSeleccionada.COD_EMPLEADO;
+
+
+            const marcajesFecha = Object.values(marcajesPorIncidencia)
+                .flat() // Aplanamos el array de arrays
+                .filter(marcaje => {
+                    return marcaje.FEC_MARCAJE.startsWith(fecha) && 
+                     marcaje.COD_EMPLEADO == empleado;
+                });
+            
+            let html=`
+            <div class="contenedor-empleado">
+                    <!-- Cabecera con foto, nombre y fecha -->
+                    <button class="cerrar" aria-label="Cerrar ventana">&times;</button>
+                    <div class="cabecera-empleado">
+                        <img id="fotoIncidenciaEmpleado" src="./logica/mostrar_imagen.php?perfil=perfil&archivo=${foto}" class="foto-empleado">
+                        <div class="info-empleado">
+                            <p class="nombre-empleado" id="nombreEmpleadoIncidencia">${nombre}</p>
+                            <p class="fecha-empleado" id="fechaIncidencia">Sobre la fecha: ${fecha}</p>
+                        </div>
+                    </div>
+
+                    <!-- Queja del empleado -->
+                    <div class="queja-empleado">
+                        <p id="quejaEmpleado"> ${incidenciaSeleccionada.COMENTARIO}</p>
+                    </div>
+                    <!-- Lista de eventos -->
+                    <h3>Registro de accesos:</h3>
+                    <div class="lista-eventos">
+                    `;
+                    marcajesFecha.forEach(marcaje=>{
+                        const tipoTexto = marcaje.COD_TIPO_MARCAJE == 1 ? "Entrada" : "Salida";
+                        
+                    html+=`<div class="fila-evento">
+                            <span class="tipo-evento">${tipoTexto}</span>
+                            <span class="fecha-evento">${marcaje.FEC_MARCAJE}</span>
+                            <img class="foto_peque" src="./logica/mostrar_imagen.php?archivo=${encodeURIComponent(marcaje.DES_FOTO)}">
+                        </div>`;
+                    });
+                    html+=`</div>
+                </div>`;  
+                document.getElementById('panelFichaIncidencia').innerHTML = html;
+                //bloqueMostrarDatos.style.display = 'block';
+            // Mostrar la ventana
+            document.getElementById('panelFichaIncidencia').style.display = 'block';
+        });
+    });
+    
+});
+
+function openTab(tabId) {
+    // Oculta todos los contenidos
+    document.querySelectorAll('.tab-content').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    // Desactiva todos los tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    // Activa el tab seleccionado
+    document.getElementById(tabId).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
 
 
 function seleccionarEmpleado(elemento) {

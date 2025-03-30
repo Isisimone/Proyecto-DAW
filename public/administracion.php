@@ -93,6 +93,314 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
             border-radius: 4px;
             cursor: pointer;
         }
+
+        .bloque-mostrardatos {
+            width: 80%;
+            max-width: 500px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr; /* 3 columnas iguales */
+      gap: 20px; /* Espacio entre columnas */
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Columna 1: Progreso y horas */
+    .columna-progreso {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .barra-progreso {
+      height: 20px;
+      background: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progreso {
+      height: 100%;
+      background: #4CAF50;
+      border-radius: 10px;
+      animation: animacion-progreso 2s ease-in-out;
+    }
+    
+    .foto_peque{
+        width:50px;
+        height: 50px;
+    }
+    @keyframes animacion-progreso {
+      from { width: 0%; }
+      to { width: 70%; }
+    }
+
+    .horas {
+      text-align: center;
+    }
+
+    .horas h3, .bolsa h3 {
+      margin: 0;
+      color: #333;
+    }
+
+    .ventana {
+        width: 80%;
+        max-width: 500px;
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+
+    .horas p, .bolsa p {
+      margin: 5px 0;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #4CAF50;
+    }
+
+    /* Columna 2: Foto */
+    .columna-foto {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .foto-empleado {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #4CAF50;
+    }
+
+    .foto-empleado-peque {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid #4CAF50;
+    }
+
+    /* Columna 3: Nombre y horario */
+    .columna-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .nombre-empleado {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .horario {
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 5px;
+      border-left: 4px solid #4CAF50;
+    }
+
+    .horario p {
+      margin: 5px 0;
+    }
+
+    .tabs {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .tabs-header {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tab {
+      padding: 12px 20px;
+      cursor: pointer;
+      background: #f9f9f9;
+      border-right: 1px solid #ddd;
+      font-weight: bold;
+    }
+
+    .tab.active {
+      background: white;
+      color: #d32f2f; /* Rojo para Pendientes */
+      border-top: 3px solid #d32f2f;
+    }
+
+    .tab:nth-child(2).active {
+      color: #1976D2; /* Azul para Completados */
+      border-top: 3px solid #1976D2;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 15px;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Lista con scroll */
+    .lista-tareas {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+
+    .fila-tarea {
+      display: grid;
+      grid-template-columns: 50px 1fr 100px 50px;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    /* Estilos diferenciales por pestaña */
+    #pendientes .fila-tarea:nth-child(odd) {
+      background: #ffebee; /* Fondo rojo claro */
+    }
+
+    #completados .fila-tarea:nth-child(odd) {
+      background: #e3f2fd; /* Fondo azul claro */
+    }
+
+    .prioridad {
+      text-align: center;
+      font-weight: bold;
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      border-radius: 50%;
+    }
+
+    .prioridad-1 { background: #ffcdd2; color: #d32f2f; } /* Rojo */
+    .prioridad-2 { background: #ffecb3; color: #ffa000; } /* Amarillo */
+    .prioridad-3 { background: #c8e6c9; color: #388e3c; } /* Verde */
+
+    .contenedor-empleado {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Cabecera (foto + nombre + fecha) */
+    .cabecera-empleado {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .info-empleado {
+      flex: 1;
+    }
+
+    .nombre-empleado {
+      font-size: 1.3em;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .fecha-empleado {
+      color: #666;
+      margin: 5px 0 0 0;
+    }
+
+    /* Queja */
+    .queja-empleado {
+      background: #ffebee;
+      padding: 12px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      border-left: 4px solid #d32f2f;
+    }
+
+    /* Lista de eventos */
+    .lista-eventos {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #eee;
+      border-radius: 5px;
+    }
+
+    .fila-evento {
+      display: grid;
+      grid-template-columns: 100px 1fr 60px;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .fila-evento:nth-child(odd) {
+      background: #f9f9f9;
+    }
+
+    .tipo-evento {
+      font-weight: bold;
+      color: #1976D2;
+    }
+
+    .tipo-evento.salida {
+      color: #d32f2f;
+    }
+
+    .fecha-evento {
+      color: #555;
+    }
+
+    @media (max-width: 600px) {
+  .dashboard {
+    grid-template-columns: 1fr; /* 1 columna en móviles */
+  }
+}
+
+.cerrar {
+    position: absolute;
+    top: 0px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+    padding: 0px 0px;
+    transition: color 0.3s;
+}
+
+.cerrar:hover {
+    color: #333;
+}
+
+.contenedor-empleado {
+    position: relative; /* Necesario para posicionar el botón correctamente */
+}
+
+.cabecera-empleado {
+    position: relative; /* Contenedor para el botón de cerrar */
+}
     </style>
     
 </head>
@@ -131,40 +439,121 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
             <div id="welcome-message">
                 <div class="logo-container">
                     <img src="../recursos/logo.png" alt="Logo" class="logo">
+                        <div id="current-time"></div>
                 </div>
             </div>
 
             <div id="dynamicContent">
                 <h1>Bienvenido al Panel de Administración</h1>
-            
+                <div id="current-time"></div>
             <!--Paneles de la página principal-->
             <!--Panel de datos del empleado administrador-->
             <div id="panelDatosAdmin" class="contenido" style="display: none;">
                 
-                <div class="contenido">
-                <h2>Hora Actual</h2>
-                <p id="current-time">Cargando...</p>
+            <div class="dashboard">
+                <!-- Columna 1: Progreso y horas -->
+                <div class="columna-progreso">
+                    <div class="barra-progreso">
+                        <div class="progreso" style="width:<?php echo htmlspecialchars($progresoHorario); ?>%;"></div>
+                    </div>
+                    <div class="horas">
+                        <h3>Horas trabajadas hoy</h3>
+                        <?php 
+                            $horas = floor($horasTrabajadas); // Parte entera de las horas
+                            $minutos = round(($horasTrabajadas - $horas) * 60); // Calcula los minutos
+                        ?>
+                        <p><?php echo $horas . ' horas y ' . $minutos . ' minutos'; ?></p>
+                    </div>
+                    <div class="bolsa">
+                        <h3>Bolsa acumulada</h3>
+                        <?php 
+                            $horas = intval($bolsa); // Parte entera de las horas
+                            $minutos = abs(round(($bolsa - $horas) * 60)); // Calcula los minutos
+                            //ajustamos si son negativos
+                            if ($bolsa < 0 && $minutos > 0) {
+                                $horas = $horas === 0 ? -1 : $horas; // Asegura que las horas sean negativas si es necesario
+                                $minutos = -$minutos;
+                            }
+                        ?>
+                        <p><?php echo $horas . ' horas y ' . $minutos . ' minutos '; ?></p>
+                    </div>
+                </div>
 
-                <h2>Última Entrada/Salida</h2>
-                <p>Empleado: Juan Pérez</p>
-                <p>Hora: 08:45 AM</p>
+                <!-- Columna 2: Foto -->
+                <div class="columna-foto">
+                    <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?php echo htmlspecialchars($empleado->getFoto()); ?>" alt="Foto empleado" class="foto-empleado">
+                </div>
 
-                <h2>Foto del Empleado</h2>
-                <img src="empleado.jpg" alt="Foto del Empleado" class="employee-photo">
-
-                <h2>Tiempo Trabajado</h2>
-                <p>Horas trabajadas hoy: 6h 30m</p>
-
-                <h2>Gráfico de Asistencia</h2>
-                <canvas id="attendanceChart"></canvas>
+                <!-- Columna 3: Nombre y horario -->
+                <div class="columna-info">
+                    <div class="nombre-empleado"><?php echo htmlspecialchars($empleado->getNombre()." ".$empleado->getApellido1()); ?></div>
+                        <div class="horario">
+                            <p><strong>Horario:</strong></p>
+                            <p><?php echo htmlspecialchars($empleado->getHorario()); ?></p>
+                        </div>
+                    </div>
                 </div>
                 
             </div>
+            <div></br></div>
             <!--Paneles de incidencias-->
-            <div id="panelIncidenciasPendientes" style="display: none;"></div>    
+            <div id="panelIncidenciasPendientes" style="display: none;">
+                <div class="tabs">
+                    <!-- Header de pestañas -->
+                    <div class="tabs-header">
+                        <div class="tab active" onclick="openTab('pendientes')">Pendientes</div>
+                        <div class="tab" onclick="openTab('completados')">Completados</div>
+                    </div>
+
+                    <!-- Contenido de pestañas -->
+                    <div id="pendientes" class="tab-content active">
+                        <div class="lista-tareas">
+                            <!-- Bucle incidencias pendientes -->
+                            <?php foreach ($incidenciasPendientes as $incidenciaP): ?>
+                                <?php $fotoIncidencia=pideFoto($incidenciaP['COD_EMPLEADO']);
+                                    $empleadoIncidencia = pideNombre($incidenciaP['COD_EMPLEADO']);
+                                    $marcajes=$marcaje->marcajesHoy($incidenciaP['COD_EMPLEADO'],new DateTime($incidenciaP['FECHA_INC']));
+                                    $marcajesPorIncidencia[$incidenciaP['ID']] = $marcajes;
+                                ?>
+                                <div class="fila-tarea incidenciaP" data-id="<?php echo $incidenciaP['ID'];?>" data-foto="<?php echo htmlspecialchars($fotoIncidencia); ?>" data-nombre="<?php echo htmlspecialchars($empleadoIncidencia);?>">
+                                
+                                <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?php echo htmlspecialchars($fotoIncidencia); ?>" class="foto-empleado-peque">
+                                <div><?php echo htmlspecialchars($empleadoIncidencia);?></div>
+                                <div><?php echo htmlspecialchars($incidenciaP['FECHA_INC']);?></div>
+                                <div class="prioridad prioridad-1">1</div>
+                            </div>
+                            <?php endforeach; ?>
+                            <script>
+                                const incidenciasP = <?php echo json_encode($incidenciasPendientes); ?>;
+                                var marcajesPorIncidencia = <?php echo json_encode($marcajesPorIncidencia); ?>;
+                            </script>
+                            
+                        </div>
+                    </div>
+
+                    <div id="completados" class="tab-content">
+                        <div class="lista-tareas">
+                            <!-- Bucle incidencias Resueltas -->
+                            <?php foreach ($incidenciasResueltas as $incidenciaR): ?>
+                            <div class="fila-tarea" data-id="<?php echo $incidenciaR['ID'];?>">
+                            <?php $fotoIncidencia=pideFoto($incidenciaR['COD_EMPLEADO']);
+                                    $empleadoIncidencia = pideNombre($incidenciaR['COD_EMPLEADO']);
+                                ?>
+                                <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?php echo htmlspecialchars($fotoIncidencia); ?>" class="foto-empleado-peque">
+                                <div><?php echo htmlspecialchars($empleadoIncidencia);?></div>
+                                <div><?php echo htmlspecialchars($incidenciaR['FECHA_INC']);?></div>
+                                <div class="prioridad prioridad-3">3</div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>    
             <div id="panelIncidenciasResueltas" style="display: none;"></div>    
                 <!--Subpanel ficha incidencia-->
-            <div id="panelFichaIncidencia" style="display: none;"></div>
+            <div id="panelFichaIncidencia" class="ventana" style="display: none;">
+                
+            </div>
                 <!--Subpanel Formulario de resolución-->
             <div id="panelFormularioResolucion" style="display: none;"></div>        
             <!--Panel de Entradas y salidas-->
@@ -209,14 +598,14 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                             <label for="apellido2Empleados">2º apellido</label>
                             <input type="text" id="apellido2Empleados">
                         </div>
-                        <div class="columna" style="flex:1;">
+                        <div class="columna" style="flex:2;">
                             <label for="usuarioEmpleados">Usuario</label>
                             <input type="text" id="usuarioEmpleados">
                         </div>
                     </div>
         
                     <div class="fila">
-                        <div class="columna" style="flex:3;">
+                        <div class="columna" style="flex:2;">
                             <label for="nombreEmpleados">Nombre</label>
                             <input type="text" id="nombreEmpleados">
                         </div>
@@ -224,7 +613,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                             <label for="usuarioAltaEmpleados">Usuario alta</label>
                             <input type="text" id="usuarioAltaEmpleados">
                         </div>
-                        <div class="columna" style="flex:1;">
+                        <div class="columna" style="flex:2;">
                             <label for="fechaAltaEmpleados">Fec_alta</label>
                             <input type="date" id="fechaAltaEmpleados">
                         </div>
@@ -250,11 +639,11 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                             <label for="horarioEmpleados">Horario</label>
                             <input type="text" id="horarioEmpleados">
                         </div>
-                        <div class="columna" style="flex:1;">
+                        <div class="columna" style="flex:2;">
                             <label for="horasEmpleados">Máx.horas</label>
                             <input type="number" id="horasEmpleados">
                         </div>
-                        <div class="columna" style="flex:1;">
+                        <div class="columna" style="flex:2;">
                             <label for="bolsaEmpleados">Bolsa de horas</label>
                             <input type="text" id="bolsaEmpleados">
                         </div>
@@ -266,7 +655,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                 </form>
                 <div class="enLinea">
                     <input type="checkbox" id="incluirBajaEmpelados" name="incluirBajaEmpelados" value="1">
-                    <label for="incluirBajaEmpelados">Incluir empelados de baja.</label>
+                    <label for="incluirBajaEmpelados" style="text-align:left">Incluir empelados de baja.</label>
                     <button id="exportarEmpleados">Exportar</button>    
                 </div>
                 </div>    

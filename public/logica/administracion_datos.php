@@ -73,9 +73,38 @@ $empleados = [
 // Verifica si hay una sesión activa
 if (isset($_SESSION['COD_USUARIO'])) {
     if (in_array('Admin', $_SESSION['ROLES'])) {
-        // Obtiene el código del empleado desde la sesión
-        $codEmpleado = $_SESSION['COD_EMPLEADO'];
 
+        //Fecha de hoy
+        $fechaHoy = new DateTime('now', new DateTimeZone('UTC'));
+        $fechaHoy->setTimezone(new DateTimeZone('Europe/Madrid'));
+
+        // Obtiene el código del empleado desde la sesión y sus datos propios
+        $codEmpleado = $_SESSION['COD_EMPLEADO'];
+        $empleado= new Empleado();
+        $marcaje = new Marcaje();
+        $empleado->cargarDatosEmpleado($codEmpleado);
+        $horasTrabajadas = $marcaje->calcularHorasTrabajadas($codEmpleado, $fechaHoy,0,89);
+        $horasSemanales = $marcaje->calcularHorasSemana($codEmpleado,$fechaHoy,0,89);
+        $marcaje->calcularBolsaMensual($codEmpleado,$fechaHoy);
+        $bolsa = $empleado->getBolsa();
+        $progresoHorario=($horasTrabajadas*100)/$empleado->getMaxHorasDia();
+
+        //Obtiene solicitudes pendientes
+        $incidencia = new Incidencia;
+        $incidenciasPendientes = $incidencia->cargarPendientes();
+        $incidenciasResueltas = $incidencia->cargarResueltas();
         
     }
+}
+
+function pideFoto($codEmpleado){
+    $empleado= new Empleado();
+    $empleado->cargarDatosEmpleado($codEmpleado);
+    return $empleado->getFoto();
+}
+
+function pideNombre($codEmpleado){
+    $empleado= new Empleado();
+    $empleado->cargarDatosEmpleado($codEmpleado);
+    return $empleado->getNombre()." ".$empleado->getApellido1();
 }

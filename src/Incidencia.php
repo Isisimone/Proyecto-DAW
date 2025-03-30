@@ -32,11 +32,11 @@ class Incidencia{
         $conexion = new Conexion();
         try{
             if ($this->getId() == 0){
-                $sql="INSERT INTO trevisiones (FECHA_REV, FECHA_INC, COMENTARIO, PRIORIDAD, EMPLEADO, RESUELTA) 
+                $sql="INSERT INTO tincidencia (FECHA_REV, FECHA_INC, COMENTARIO, PRIORIDAD, COD_EMPLEADO, RESUELTA) 
                 VALUES (:fec_rev, :fec_inc, :coment, :prio, :empleado, :result)";
                 $stmt = $conexion->conexion->prepare($sql);
             } else{
-                $sql="UPDATE trevisiones SET FECHA_REV=:fec_rev, FECHA_INC=:fec_inc, COMENTARIO=:coment, PRIORIDAD=:prio, EMPLEADO=:empleado, RESUELTA=:result WHERE ID = :id";
+                $sql="UPDATE tincidencia SET FECHA_REV=:fec_rev, FECHA_INC=:fec_inc, COMENTARIO=:coment, PRIORIDAD=:prio, COD_EMPLEADO=:empleado, RESUELTA=:result WHERE ID = :id";
                 $stmt = $conexion->conexion->prepare($sql);
                 $stmt->bindValue("id", $this->getId(), PDO::PARAM_INT);
             }
@@ -61,25 +61,26 @@ class Incidencia{
             $this->cargarFechas(),
             function ($registro) use($empleado) {
                 return $registro['RESUELTA'] == 0 && 
-                ($empleado==0 || $registro['EMPLEADO'] == $empleado);
+                ($empleado==0 || $registro['COD_EMPLEADO'] == $empleado);
             });
         return $resultado;
     }
 
-    public function cargarResueltas(int $empleado): array{
+    public function cargarResueltas(int $empleado=0): array{
         $resultado = array_filter(
             $this->cargarFechas(),
             function ($registro) use ($empleado) {
-                return $registro['RESUELTA'] == 1 && $registro['EMPLEADO'] == $empleado;
+                return $registro['RESUELTA'] == 1 && ($empledo==0 || $registro['COD_EMPLEADO'] == $empleado);
             });
         return $resultado;
     }
-
-
-    public function cargarFechas(DateTime $fechaInim = new DateTime("2025-1-1 0:0:0"), DateTime $fechaFin = new DateTime("2999-12-31 0:0:0")): array{
+    
+    public function cargarFechas(DateTime $fechaInim = null, DateTime $fechaFin = null): array{
         $conexion= new Conexion();
+        $fechaInim = $fechaInim ?? new DateTime("2025-1-1 0:0:0");
+        $fechaFin = $fechaFin ?? new DateTime("2999-12-31 0:0:0");
         try {
-            $sql="SELECT * FROM trevisiones WHERE FECHA_REV BETWEEN :fecI AND :fecF ORDER BY FECHA_REV";
+            $sql="SELECT * FROM tincidencia WHERE FECHA_REV BETWEEN :fecI AND :fecF ORDER BY FECHA_REV";
             $stmt = $conexion->conexion->prepare($sql);
             $stmt->bindValue("fecI",$fechaInim->format("Y-m-d H:i:s"),PDO::PARAM_STR);
             $stmt->bindValue("fecF",$fechaFin->format("Y-m-d H:i:s"),PDO::PARAM_STR);

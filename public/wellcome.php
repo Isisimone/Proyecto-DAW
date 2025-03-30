@@ -34,9 +34,6 @@ if (isset($_SESSION['COD_USUARIO'])) {
     <script defer src="../js/registro.js"></script>
 </head>
 <body>
-    <div class="top-right">
-        <a href="user_panel.html" class="portal-button">PORTAL</a>
-    </div>
     <div class="container">
         <!--Logo de la aplicación-->
         <div id="logo-container">
