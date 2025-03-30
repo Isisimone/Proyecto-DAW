@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 27-03-2025 a las 18:31:10
+-- Tiempo de generación: 30-03-2025 a las 01:37:35
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Versión de PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -92,8 +92,32 @@ CREATE TABLE `templeado` (
 --
 
 INSERT INTO `templeado` (`COD_EMPLEADO`, `COD_USUARIO`, `NOM_EMPLEADO`, `APE1_EMPLEADO`, `APE2_EMPLEADO`, `CONTACTO_EMPLEADO`, `FEC_ALTA`, `NOM_USUARIO_ALTA`, `FEC_BAJA`, `NOM_USUARIO_BAJA`, `FOTO`, `HORARIO`, `FLEX`, `MAX_HORA_DIA`, `BOLSA_HORAS`) VALUES
-(1, 2, 'David', 'Martín', 'Prados', 'David@david.com', '2025-03-20 11:32:41', 'admon', NULL, NULL, 'emp_0001_da_ma_pr.jpg', '8h a 19h', 1, 6, 4.42),
+(1, 2, 'David', 'Martín', 'Prados', 'David@david.com', '2025-03-20 11:32:41', 'admon', NULL, NULL, 'emp_0001_da_ma_pr.jpg', '8h a 19h', 1, 6, 4.09),
 (3, 1, 'Juan', 'Perez', 'Gomez', 'juanpg@local.com', '2025-03-20 11:34:57', 'admon', NULL, NULL, 'emp_0002_ju_pe_go.jpg', '8h a 16h', 0, 8, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tincidencia`
+--
+
+CREATE TABLE `tincidencia` (
+  `ID` int(10) NOT NULL COMMENT 'ID de la incidencia',
+  `FECHA_REV` date DEFAULT NULL COMMENT 'Fecha de la solicitud',
+  `FECHA_INC` date DEFAULT NULL COMMENT 'Fecha sobre la que trata la incidencia',
+  `COMENTARIO` text DEFAULT NULL COMMENT 'Comentario del empleado',
+  `PRIORIDAD` int(1) DEFAULT NULL COMMENT 'Prioridad dada por el empelado',
+  `COD_EMPLEADO` int(2) DEFAULT NULL COMMENT 'Código del empleado',
+  `RESUELTA` tinyint(1) DEFAULT NULL COMMENT 'Estado de la incidencia'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tincidencia`
+--
+
+INSERT INTO `tincidencia` (`ID`, `FECHA_REV`, `FECHA_INC`, `COMENTARIO`, `PRIORIDAD`, `COD_EMPLEADO`, `RESUELTA`) VALUES
+(1, '2025-03-27', '2025-03-24', 'ddd', 0, 1, 0),
+(2, '2025-03-27', '2025-03-27', 'Horas Extras', 0, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -154,31 +178,8 @@ INSERT INTO `tmarcaje` (`COD_MARCAJE`, `COD_TIPO_MARCAJE`, `COD_EMPLEADO`, `COD_
 (52, 2, 1, 2, 'empleado_1_1742819095.jpg', 99, '2025-03-17 14:00:00', NULL, '2025-03-17 14:00:00', NULL, 0, 0, ''),
 (53, 2, 1, 2, 'empleado_1_1743011885.jpg', 1, '2025-03-26 18:58:05', NULL, '2025-03-26 18:58:05', NULL, 0, 0, ''),
 (54, 1, 1, 2, 'empleado_1_1743060817.jpg', 1, '2025-03-27 08:33:37', NULL, '2025-03-27 08:33:37', NULL, 0, 0, ''),
-(55, 2, 1, 2, 'empleado_1_1743080252.jpg', 1, '2025-03-27 13:57:32', NULL, '2025-03-27 13:57:32', NULL, 0, 0, '');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `trevisiones`
---
-
-CREATE TABLE `trevisiones` (
-  `ID` int(10) NOT NULL COMMENT 'ID de la incidencia',
-  `FECHA_REV` date DEFAULT NULL COMMENT 'Fecha de la solicitud',
-  `FECHA_INC` date DEFAULT NULL COMMENT 'Fecha sobre la que trata la incidencia',
-  `COMENTARIO` text DEFAULT NULL COMMENT 'Comentario del empleado',
-  `PRIORIDAD` int(1) DEFAULT NULL COMMENT 'Prioridad dada por el empelado',
-  `EMPLEADO` int(2) DEFAULT NULL COMMENT 'Código del empleado',
-  `RESUELTA` tinyint(1) DEFAULT NULL COMMENT 'Estado de la incidencia'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `trevisiones`
---
-
-INSERT INTO `trevisiones` (`ID`, `FECHA_REV`, `FECHA_INC`, `COMENTARIO`, `PRIORIDAD`, `EMPLEADO`, `RESUELTA`) VALUES
-(1, '2025-03-27', '2025-03-24', 'ddd', 0, 1, 0),
-(2, '2025-03-27', '2025-03-27', 'Horas Extras', 0, 1, 0);
+(55, 2, 1, 2, 'empleado_1_1743080252.jpg', 1, '2025-03-27 13:57:32', NULL, '2025-03-27 13:57:32', NULL, 0, 0, ''),
+(56, 1, 1, 2, 'empleado_1_1743274535.jpg', 1, '2025-03-29 19:55:35', NULL, '2025-03-29 19:55:35', NULL, 0, 0, '');
 
 -- --------------------------------------------------------
 
@@ -350,6 +351,12 @@ ALTER TABLE `templeado`
   ADD UNIQUE KEY `COD_USUARIO` (`COD_USUARIO`);
 
 --
+-- Indices de la tabla `tincidencia`
+--
+ALTER TABLE `tincidencia`
+  ADD PRIMARY KEY (`ID`);
+
+--
 -- Indices de la tabla `tmarcaje`
 --
 ALTER TABLE `tmarcaje`
@@ -357,12 +364,6 @@ ALTER TABLE `tmarcaje`
   ADD KEY `COD_EMPLEADO` (`COD_EMPLEADO`),
   ADD KEY `COD_BIO` (`COD_BIO`),
   ADD KEY `COD_TIPO_ACCESO` (`COD_TIPO_ACCESO`);
-
---
--- Indices de la tabla `trevisiones`
---
-ALTER TABLE `trevisiones`
-  ADD PRIMARY KEY (`ID`);
 
 --
 -- Indices de la tabla `trol`
@@ -425,16 +426,16 @@ ALTER TABLE `templeado`
   MODIFY `COD_EMPLEADO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT de la tabla `tincidencia`
+--
+ALTER TABLE `tincidencia`
+  MODIFY `ID` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID de la incidencia', AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `tmarcaje`
 --
 ALTER TABLE `tmarcaje`
-  MODIFY `COD_MARCAJE` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
-
---
--- AUTO_INCREMENT de la tabla `trevisiones`
---
-ALTER TABLE `trevisiones`
-  MODIFY `ID` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID de la incidencia', AUTO_INCREMENT=3;
+  MODIFY `COD_MARCAJE` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT de la tabla `trol`
