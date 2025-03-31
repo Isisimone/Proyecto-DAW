@@ -183,7 +183,7 @@ class Rol {
         return $this->privilegios;
     }
 
-    public function getRol(): string {
+    public function getNombreRol(): string {
         return $this->nom_Rol;
     }
 

@@ -36,46 +36,490 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
     /* Estilos base y tipografía */
-    body {
-        font-family: Arial, sans-serif;
-        color: #333;
+    .combo {
+        background-color:rgb(250, 250, 250); /* Morado */
+        color: black;
     }
 
-    /* Estructuras de grid y flex */
-    .enLinea, .cabecera-empleado, .fila_foto, .fila-tarea, .fila-evento, 
-    .cabecera_trans, .linea_trans, .dashboard, .dashboard-columnas, 
-    .columna-progreso, .columna-info, .tabs-header {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-    }
-
-    .enLinea, .fila-tarea, .fila-evento, .cabecera_trans, .linea_trans {
-        display: grid;
-    }
-
-    .dashboard, .dashboard-columnas {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 20px;
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 20px;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Contenedores y paneles */
-    .marcoListados, .bloque-mostrardatos, .ventana, .contenedor-empleado,
-    .columna-estado, .tabs, .tab-content {
+    .marcoListados{
         background-color: #fff;
         border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        padding: 15px;
+        box-shadow: inset 0 0 4px 1px rgba(0, 0, 0, 0.15);
+        padding: 5px;
+        border: 1px solid #f0f0f0; 
     }
 
-    .marcoListados {
+    .enLinea{
+        display: grid; 
+        grid-template-columns: auto 1fr auto; 
+        align-items: center; 
+        gap: 10px;
+    }
+    .fila {
+            display: flex;
+            margin-bottom: 5px;
+        }
+
+    .fila_foto {
+            display: flex;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+        
+        .columna {
+            padding-left: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 2px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .bloque-mostrardatos {
+            width: 80%;
+            max-width: 500px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr; /* 3 columnas iguales */
+      gap: 20px; /* Espacio entre columnas */
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Columna 1: Progreso y horas */
+    .columna-progreso {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .barra-progreso {
+      height: 20px;
+      background: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progreso {
+      height: 100%;
+      background: #4CAF50;
+      border-radius: 10px;
+      animation: animacion-progreso 2s ease-in-out;
+    }
+    /**FOTOS*/
+    .foto_peque{
+        width:50px;
+        height: 50px;
+    }
+
+    .foto-empleado {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #4CAF50;
+    }
+
+    .foto-empleado-peque {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid #4CAF50;
+    }
+
+    .foto_peque {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #eee;
+    }
+
+    .foto-acceso{
+        width: 50px;
+        height: 40px;
+        border-radius: 5px;
+    }
+    /**Animaciones */
+    @keyframes animacion-progreso {
+      from { width: 0%; }
+      to { width: 70%; }
+    }
+    /**Textos */
+    .horas {
+      text-align: center;
+    }
+
+    .horas p, .bolsa p {
+      margin: 5px 0;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #4CAF50;
+    }
+
+    .nombre-empleado {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .horario p {
+      margin: 5px 0;
+    }
+
+    /**Títulos */
+    .horas h3, .bolsa h3 {
+      margin: 0;
+      color: #333;
+    }
+
+    /**Ventanas y marcos */
+    .ventana {
+        position: fixed;
+        top:50%;
+        left:50%;
+        width: 80%;
+        transform: translate(-50%, -50%);
+        max-width: 500px;
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        z-index:1000;
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+
+    .horario {
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 5px;
+      border-left: 4px solid #4CAF50;
+    }
+
+    /**Columnas*/
+    .columna-foto {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .columna-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    /**Pestañas*/
+    .tabs {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .tabs-header {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tab {
+      padding: 12px 20px;
+      cursor: pointer;
+      background: #f9f9f9;
+      border-right: 1px solid #ddd;
+      font-weight: bold;
+    }
+
+    .tab.active {
+      background: white;
+      color: #d32f2f; /* Rojo para Pendientes */
+      border-top: 3px solid #d32f2f;
+    }
+
+    .tab:nth-child(2).active {
+      color: #1976D2; /* Azul para Completados */
+      border-top: 3px solid #1976D2;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 15px;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Lista con scroll */
+    .lista-tareas {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+
+    .fila-tarea {
+      display: grid;
+      grid-template-columns: 50px 1fr 100px 50px;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    /* Estilos diferenciales por pestaña */
+    #pendientes .fila-tarea:nth-child(odd) {
+      background: #ffebee; /* Fondo rojo claro */
+    }
+
+    #completados .fila-tarea:nth-child(odd) {
+      background: #e3f2fd; /* Fondo azul claro */
+    }
+
+    .prioridad {
+      text-align: center;
+      font-weight: bold;
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      border-radius: 50%;
+    }
+
+    .prioridad-1 { background: #ffcdd2; color: #d32f2f; } /* Rojo */
+    .prioridad-2 { background: #ffecb3; color: #ffa000; } /* Amarillo */
+    .prioridad-3 { background: #c8e6c9; color: #388e3c; } /* Verde */
+
+    .contenedor-empleado {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Cabecera (foto + nombre + fecha) */
+    .cabecera-empleado {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .info-empleado {
+      flex: 1;
+    }
+
+    .nombre-empleado {
+      font-size: 1.3em;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .fecha-empleado {
+      color: #666;
+      margin: 5px 0 0 0;
+    }
+
+    /* Queja */
+    .queja-empleado {
+      background: #ffebee;
+      padding: 12px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      border-left: 4px solid #d32f2f;
+    }
+
+    /* Lista de eventos */
+    .lista-eventos {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #eee;
+      border-radius: 5px;
+    }
+
+    .fila-evento {
+      display: grid;
+      grid-template-columns: 100px 1fr 60px;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .fila-evento:nth-child(odd) {
+      background: #f9f9f9;
+    }
+
+    .tipo-evento {
+      font-weight: bold;
+      color: #1976D2;
+    }
+
+    .tipo-evento.salida {
+      color: #d32f2f;
+    }
+
+    .fecha-evento {
+      color: #555;
+    }
+
+    @media (max-width: 600px) {
+  .dashboard {
+    grid-template-columns: 1fr; /* 1 columna en móviles */
+  }
+}
+
+.cerrar {
+    position: absolute;
+    top: 0px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+    padding: 0px 0px;
+    transition: color 0.3s;
+}
+
+.cerrar:hover {
+    color: #333;
+}
+
+.contenedor-empleado {
+    position: relative; /* Necesario para posicionar el botón correctamente */
+}
+
+.cabecera-empleado {
+    position: relative; /* Contenedor para el botón de cerrar */
+}
+
+
+
+.dashboard-columnas {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 15px;
+        }
+        
+        .columna-estado {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cabecera-columna {
+            padding: 12px;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+            color: white;
+        }
+        
+        .sin-acceso .cabecera-columna {
+            background-color: #d32f2f; /* Rojo */
+        }
+        
+        .trabajando .cabecera-columna {
+            background-color: #388e3c; /* Verde */
+        }
+        
+        .fuera .cabecera-columna {
+            background-color: #1976D2; /* Azul */
+        }
+        
+        .lista-empleados {
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        /* Aprovechando tus estilos existentes */
+        .fila_foto {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .fila_foto:hover {
+            background-color: #f5f5f5;
+        }
+        
+        
+        .info-empleado {
+            flex: 1;
+        }
+        
+        .nombre-empleado {
+            font-weight: bold;
+            margin: 0;
+            color: #333;
+        }
+        
+        .apellido-empleado {
+            color: #666;
+            font-size: 0.9em;
+            margin: 2px 0 0 0;
+        }
+        
+        /* Scrollbar personalizada */
+        .lista-empleados::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .lista-empleados::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .lista-empleados::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+        
+        .lista-empleados::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+
+        .marcoListados {
         box-shadow: inset 0 0 4px 1px rgba(0, 0, 0, 0.15);
         border: 1px solid #f0f0f0;
         max-height: 300px;       /* Altura máxima */
@@ -84,175 +528,45 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
         background-color: #fff;  /* Manteniendo el fondo blanco */
         border-radius: 10px;     /* Manteniendo el borde redondeado */
     }
-
-    .ventana {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        width: 80%;
-        max-width: 500px;
-        transform: translate(-50%, -50%);
-        z-index: 1000;
-    }
-
-    /* Elementos de formulario */
-    input, select, button, .form-control, .form-select {
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
-
-    button {
-        padding: 10px 20px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        cursor: pointer;
-    }
-
-    /* Tipografía y textos */
-    label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-    }
-
-    .nombre-empleado {
-        font-size: 1.3em;
-        font-weight: bold;
-        margin: 0;
-        color: #333;
-    }
-
-    /* Imágenes y avatares */
-    .foto-empleado, .foto-empleado-peque, .foto_peque {
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid #4CAF50;
-    }
-
-    .foto-empleado {
-        width: 120px;
-        height: 120px;
-    }
-
-    .foto-empleado-peque, .foto_peque {
-        width: 50px;
-        height: 50px;
-        border-width: 2px;
-    }
-    .foto-acceso {
-        width: 50px;
-        height: 40px;
-        border-radius: 5px;
-    }
-
-    /* Barras de progreso */
-    .barra-progreso {
-        height: 20px;
-        background: #e0e0e0;
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-    .progreso {
-        height: 100%;
-        background: #4CAF50;
-        border-radius: 10px;
-        animation: animacion-progreso 2s ease-in-out;
-    }
-
-    /* Colores y estados */
-    .prioridad-1 { background: #ffcdd2; color: #d32f2f; }
-    .prioridad-2 { background: #ffecb3; color: #ffa000; }
-    .prioridad-3 { background: #c8e6c9; color: #388e3c; }
-
-    .sin-acceso .cabecera-columna { background-color: #d32f2f; }
-    .trabajando .cabecera-columna { background-color: #388e3c; }
-    .fuera .cabecera-columna { background-color: #1976D2; }
-
-    /* Pestañas */
-    .tab {
-        padding: 12px 20px;
-        cursor: pointer;
-        background: #f9f9f9;
-        border-right: 1px solid #ddd;
-        font-weight: bold;
-    }
-
-    .tab.active {
-        background: white;
-        border-top: 3px solid;
-    }
-
-    /* Listas y scroll */
-    .lista-tareas, .lista-empleados, .lista-eventos {
-        max-height: 300px;
-        overflow-y: auto;
-        margin-top: 10px;
-    }
-
-    /* Efectos y animaciones */
-    @keyframes animacion-progreso {
-        from { width: 0%; }
-        to { width: 70%; }
-    }
-
-    /* Responsive */
-    @media (max-width: 600px) {
-        .dashboard, .dashboard-columnas {
-            grid-template-columns: 1fr;
-        }
-        
-        .fila_foto, .fila-tarea, .fila-evento {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    /* Elementos específicos */
-    .combo {
-        background-color: rgb(250, 250, 250);
-        color: black;
-    }
-
-    .cerrar {
-        position: absolute;
-        top: 0;
-        right: 10px;
-        background: none;
-        border: none;
-        font-size: 24px;
-        color: #999;
-        cursor: pointer;
-        padding: 0;
-    }
-
-    .cerrar:hover {
-        color: #333;
-    }
-
-    /* Estructuras de columnas específicas */
-    .cabecera_trans, .linea_trans {
+    .linea_trans {
+        display: grid;
+        gap: 10px;
+        align-items: center;
         grid-template-columns: 20% 12% 12% 10% 23% 23%;
         padding: 10px;
         border-bottom: 1px solid #ddd;
     }
-
-    .cabecera_trans {
+    .cabecera_trans{
+        display: grid;
+        gap: 10px;
+        align-items: center;
+        grid-template-columns: 20% 12% 12% 10% 23% 23%;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
         background-color: #333;
         color: white;
         font-weight: bold;
     }
-
     .linea_trans:nth-child(even) {
         background-color: #f2f2f2;
     }
     </style>
+    </style>
     
 </head>
 <body>
-    
+<script>
+        //Variables generadas por administracion_datos
+        const usuarioSesion = <?php echo $codUsuarioSesion;?>;
+        const incidenciasP = <?php echo json_encode($incidenciasPendientes); ?>;
+        
+        const empleados = <?php echo json_encode($empleados); ?>; 
+        //const usuario = <?php //echo json_encode($usuarios); ?>; 
+        //const bios = <?php //echo json_encode($listaBios); ?>;
+        //const transacciones = <?php //echo json_encode($transacciones); ?>; 
+        //const marcajes = <?php //echo json_encode($marcajes); ?>; 
+        console.log(incidenciasP);
+    </script>
 
     <div class="admin-panel-container">
         <!-- Barra de navegación -->
@@ -373,7 +687,8 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                                 <div><?php echo htmlspecialchars($incidenciaP['FECHA_INC']);?></div>
                                 <div class="prioridad prioridad-1"><?php echo htmlspecialchars($incidenciaP['PRIORIDAD']);?></div>
                             </div>
-                            <?php endforeach; ?>                            
+                            <?php endforeach; ?>  
+                            <script>const marcajesPorIncidencia = <?php echo json_encode($marcajesPorIncidencia); ?>;</script>                          
                         </div>
                     </div>
 
@@ -675,12 +990,13 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
             <div class="contenido">
                     <div>
                         <div style="display: flex; gap:10px;height:50px;">
-                        <select name="seleccionRol" id="seleccionRol" style="width:250px;" class="form-select" required>
+                            <select name="seleccionRol" id="seleccionRol" style="width:250px;" class="form-select" required>
+                            <?php var_dump($roles);?>
                             <?php if (!empty($roles)): ?>
                                 <?php foreach ($roles as $rol): ?>
                                     <?php 
-                                        $codigo = htmlspecialchars($rol['COD_ROL'] ?? '');
-                                        $nombreRol = $rol['NOM_ROL'];
+                                        $codigo = htmlspecialchars($rol->getCodigoRol() ?? '');
+                                        $nombreRol = $rol->getNombreRol();
                                     ?>
                                         <option value="<?php echo $codigo; ?>">
                                             <?php echo $nombreRol; ?>
@@ -696,13 +1012,10 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                     <div id="datosRol">
                          
                     </div>
-                    <div id="usuariosRol">
-                         
-                    </div>
                 </div> 
             </div>
             <!--Panel listado usuarios asignados por Rol-->
-            <div id="panelUsuariosAsigandos" style="display: none;"></div>
+            <div id="panelUsuariosAsignados" style="display: none;"></div>
             <!--Panel de Mantenimiento de usuarios por rol-->
             <div id="panelAsignarRoles" style="display: none;">
                 <h2>Asignación de Roles a Usuarios</h2>
@@ -739,17 +1052,6 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
     </div>
     <!--Bootstrap para el dropdown con fotos de empleados-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        //Variables generadas por administracion_datos
-        const usuarioSesion = <?php echo $codUsuarioSesion;?>;
-        const incidenciasP = <?php echo json_encode($incidenciasPendientes); ?>;
-        const marcajesPorIncidencia = <?php echo json_encode($marcajesPorIncidencia); ?>;
-        const empleados = <?php echo json_encode($empleados); ?>; 
-        //const usuario = <?php //echo json_encode($usuarios); ?>; 
-        //const bios = <?php //echo json_encode($listaBios); ?>;
-        //const transacciones = <?php //echo json_encode($transacciones); ?>; 
-        //const marcajes = <?php //echo json_encode($marcajes); ?>; 
-        
-    </script>
+    
 </body>
 </html>

@@ -223,6 +223,48 @@ use Clases\Rol;
                 echo $html;
                 exit;
             }
+
+            if ($datos['accion']=='mostrar_rol'){
+                $rol=new Rol();
+                $rol->cargarRol($datos['cod_rol']);
+                $html='<div class="contenido">
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Código</label>
+                                        <input type="text" class="form-control" value="'.$rol->getCodigoRol().'" readonly>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" value="'.$rol->getNombreRol().'">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Descripción</label>
+                                        <textarea class="form-control">'.$rol->getDescripcion().'</textarea>
+                                    </div>
+                                </div>
+                                <div class="marcoListados">
+                                ';
+                                $permiso = new Privilegio;
+                                $permiso = $rol->getPermisos();
+                                $privilegios = $permiso->getPrivilegios();
+                                foreach($privilegios as $clave=>$privi){
+                                    $html=$html.'
+                                    <div class="linea_trans">
+                                        <label class="form-label">'.$clave.'</label>
+                                        <input type="checkbox" id="'.$clave.'" value="'.$privi.'">
+                                    </div>';
+                                }
+                                $html=$html.'
+                                </div>
+                                <button class="btn btn-primary" id="guardarRol">Guardar cambios</button>
+                                <button class="btn btn-danger" id="eliminarRol">Eliminar</button>
+                            </div>
+                        </div>';
+                header('Content-Type: text/html');
+                echo $html;
+                exit;
+            }
         }
     } catch (Exception $e) {
         http_response_code(500);

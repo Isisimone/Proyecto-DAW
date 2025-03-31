@@ -19,31 +19,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const panelListadoTransacciones = document.getElementById('panelListadoTransacciones');
         const panelListadoMarcajes = document.getElementById('panelListadoMarcajes');
         const panelRoles = document.getElementById('panelRoles');
-        const panelUsuariosAsigandos = document.getElementById('panelUsuariosAsigandos');
+        const panelUsuariosAsignados = document.getElementById('panelUsuariosAsignados');
         const panelAsignarRoles = document.getElementById('panelAsignarRoles');
         const panelAjustes = document.getElementById('panelAjustes');
 
     //Métodos
-    function cerrar_bloques(){
-        panelDatosAdmin.style.display = 'none';
-        panelIncidencias.style.display = 'none';
-        panelFichaIncidencia.style.display = 'none';
-        panelFormularioResolucion.style.display = 'none';
-        panelEntrasSalidas.style.display = 'none';
-        panelDatosEmpleado.style.display = 'none';
-        panelEmpleados.style.display = 'none';
-        panelConfirmarBaja.style.display = 'none';
-        panelExportarEmpleados.style.display = 'none';
-        panelUsuarios.style.display = 'none';
-        panelDescriptores.style.display = 'none';
-        panelEliminarDescriptor.style.display = 'none';
-        panelExportarUsuarios.style.display = 'none';
-        panelListadoTransacciones.style.display = 'none';
-        panelListadoMarcajes.style.display = 'none';
-        panelRoles.style.display = 'none';
-        panelUsuariosAsigandos.style.display = 'none';
-        panelAsignarRoles.style.display = 'none';
-        panelAjustes.style.display = 'none';
+    function cerrar_bloques() {
+        const paneles = [
+            'panelDatosAdmin', 'panelIncidencias', 'panelFichaIncidencia',
+            'panelFormularioResolucion', 'panelEntrasSalidas', 'panelDatosEmpleado',
+            'panelEmpleados', 'panelConfirmarBaja', 'panelExportarEmpleados',
+            'panelUsuarios', 'panelDescriptores', 'panelEliminarDescriptor',
+            'panelExportarUsuarios', 'panelListadoTransacciones', 'panelListadoMarcajes',
+            'panelRoles', 'panelUsuariosAsignados', 'panelAsignarRoles', 'panelAjustes'
+        ];
+    
+        paneles.forEach(id => {
+            const panel = document.getElementById(id);
+            if (panel) { // Solo si el elemento existe
+                panel.style.display = 'none';
+            }
+        });
     }
     //Listeners
     //Listeners del menu
