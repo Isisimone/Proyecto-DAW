@@ -139,6 +139,28 @@ class Transaccion{
         }
     }
 
+    public function obtenerTransaccionesFiltradas(DateTime $fec_Ini, DateTime $fec_Fin, int $user_Ini, int $user_Fin, string $tipo_Ini, string $tipo_Fin ): array {
+        try {
+            $conexion = new Conexion();
+            // Preparo la consulta
+            $consulta = "SELECT * FROM ttransacciones WHERE FEC_SIS BETWEEN :fec1 AND :fec2 AND COD_USUARIO BETWEEN :user1 AND :user2 AND TIP_TRANS BETWEEN :tipo1 AND :tipo2";
+            // Ejecuto la consulta
+            $stmt = $conexion->conexion->prepare($consulta);
+            $stmt->bindValue('fec1', $fec_Ini->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+            $stmt->bindValue('fec2', $fec_Fin->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+            $stmt->bindValue('user1', $user_Ini, PDO::PARAM_INT);
+            $stmt->bindValue('user2', $user_Fin, PDO::PARAM_INT);
+            $stmt->bindValue('tipo1', $tipo_Ini, PDO::PARAM_STR);
+            $stmt->bindValue('tipo2', $tipo_Fin, PDO::PARAM_STR);
+            $stmt->execute();
+            // Devuelvo el resultado de la consulta
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error al listar transacciones: " . $e->getMessage());
+            return [];
+        }
+    }
+
     //<<<<<<<<<<<<<<<<<<<<<<<<<< GETTER Y SETTER >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // set y get
 public function setCodTransaccion(int $cod_Transaccion): void {
@@ -186,11 +208,11 @@ public function setCodUsuario(int $cod_Usuario): void {
 }
 
 public function getCodUsuario(): int {
-    return $this->cod_Usuario;
+    return $this->cod_usuario;
 }
 
-public function setFecSis(): void {
-    $this->fec_sis = new \DateTime();
+public function setFecSis($fecha): void {
+    $this->fec_sis = new DateTime($fecha);
 }
 
 public function getFecSis(): DateTime {

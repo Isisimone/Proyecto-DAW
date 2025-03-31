@@ -35,482 +35,225 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
     <!--Librerías de bootstrap-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-    .combo {
-        background-color:rgb(250, 250, 250); /* Morado */
-        color: black;
+    /* Estilos base y tipografía */
+    body {
+        font-family: Arial, sans-serif;
+        color: #333;
     }
 
-    .marcoListados{
+    /* Estructuras de grid y flex */
+    .enLinea, .cabecera-empleado, .fila_foto, .fila-tarea, .fila-evento, 
+    .cabecera_trans, .linea_trans, .dashboard, .dashboard-columnas, 
+    .columna-progreso, .columna-info, .tabs-header {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .enLinea, .fila-tarea, .fila-evento, .cabecera_trans, .linea_trans {
+        display: grid;
+    }
+
+    .dashboard, .dashboard-columnas {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 20px;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Contenedores y paneles */
+    .marcoListados, .bloque-mostrardatos, .ventana, .contenedor-empleado,
+    .columna-estado, .tabs, .tab-content {
         background-color: #fff;
         border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+    }
+
+    .marcoListados {
         box-shadow: inset 0 0 4px 1px rgba(0, 0, 0, 0.15);
-        padding: 5px;
-        border: 1px solid #f0f0f0; 
-    }
-
-    .enLinea{
-        display: grid; 
-        grid-template-columns: auto 1fr auto; 
-        align-items: center; 
-        gap: 10px;
-    }
-    .fila {
-            display: flex;
-            margin-bottom: 5px;
-        }
-
-    .fila_foto {
-            display: flex;
-            margin-bottom: 15px;
-            gap: 10px;
-        }
-        
-        .columna {
-            padding-left: 10px;
-            background-color: #fff;
-            border-radius: 5px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 2px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .bloque-mostrardatos {
-            width: 80%;
-            max-width: 500px;
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-        }
-
-        .dashboard {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr; /* 3 columnas iguales */
-      gap: 20px; /* Espacio entre columnas */
-      max-width: 900px;
-      margin: 0 auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Columna 1: Progreso y horas */
-    .columna-progreso {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .barra-progreso {
-      height: 20px;
-      background: #e0e0e0;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .progreso {
-      height: 100%;
-      background: #4CAF50;
-      border-radius: 10px;
-      animation: animacion-progreso 2s ease-in-out;
-    }
-    
-    .foto_peque{
-        width:50px;
-        height: 50px;
-    }
-    @keyframes animacion-progreso {
-      from { width: 0%; }
-      to { width: 70%; }
-    }
-
-    .horas {
-      text-align: center;
-    }
-
-    .horas h3, .bolsa h3 {
-      margin: 0;
-      color: #333;
+        border: 1px solid #f0f0f0;
+        max-height: 300px;       /* Altura máxima */
+        overflow-y: auto;        /* Scroll vertical cuando sea necesario */
+        padding: 5px;           /* Manteniendo el padding original */
+        background-color: #fff;  /* Manteniendo el fondo blanco */
+        border-radius: 10px;     /* Manteniendo el borde redondeado */
     }
 
     .ventana {
         position: fixed;
-        top:50%;
-        left:50%;
+        top: 50%;
+        left: 50%;
         width: 80%;
-        transform: translate(-50%, -50%);
         max-width: 500px;
-        background: white;
-        border-radius: 8px;
-        padding: 20px;
-        z-index:1000;
-        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        transform: translate(-50%, -50%);
+        z-index: 1000;
     }
 
-    .horas p, .bolsa p {
-      margin: 5px 0;
-      font-size: 1.2em;
-      font-weight: bold;
-      color: #4CAF50;
+    /* Elementos de formulario */
+    input, select, button, .form-control, .form-select {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
     }
 
-    /* Columna 2: Foto */
-    .columna-foto {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    /* Tipografía y textos */
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .nombre-empleado {
+        font-size: 1.3em;
+        font-weight: bold;
+        margin: 0;
+        color: #333;
+    }
+
+    /* Imágenes y avatares */
+    .foto-empleado, .foto-empleado-peque, .foto_peque {
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #4CAF50;
     }
 
     .foto-empleado {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #4CAF50;
+        width: 120px;
+        height: 120px;
     }
 
-    .foto-empleado-peque {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1px solid #4CAF50;
+    .foto-empleado-peque, .foto_peque {
+        width: 50px;
+        height: 50px;
+        border-width: 2px;
+    }
+    .foto-acceso {
+        width: 50px;
+        height: 40px;
+        border-radius: 5px;
     }
 
-    /* Columna 3: Nombre y horario */
-    .columna-info {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+    /* Barras de progreso */
+    .barra-progreso {
+        height: 20px;
+        background: #e0e0e0;
+        border-radius: 10px;
+        overflow: hidden;
     }
 
-    .nombre-empleado {
-      font-size: 1.5em;
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #333;
+    .progreso {
+        height: 100%;
+        background: #4CAF50;
+        border-radius: 10px;
+        animation: animacion-progreso 2s ease-in-out;
     }
 
-    .horario {
-      background: #f9f9f9;
-      padding: 10px;
-      border-radius: 5px;
-      border-left: 4px solid #4CAF50;
-    }
+    /* Colores y estados */
+    .prioridad-1 { background: #ffcdd2; color: #d32f2f; }
+    .prioridad-2 { background: #ffecb3; color: #ffa000; }
+    .prioridad-3 { background: #c8e6c9; color: #388e3c; }
 
-    .horario p {
-      margin: 5px 0;
-    }
+    .sin-acceso .cabecera-columna { background-color: #d32f2f; }
+    .trabajando .cabecera-columna { background-color: #388e3c; }
+    .fuera .cabecera-columna { background-color: #1976D2; }
 
-    .tabs {
-      max-width: 900px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
-
-    .tabs-header {
-      display: flex;
-      border-bottom: 1px solid #ddd;
-    }
-
+    /* Pestañas */
     .tab {
-      padding: 12px 20px;
-      cursor: pointer;
-      background: #f9f9f9;
-      border-right: 1px solid #ddd;
-      font-weight: bold;
+        padding: 12px 20px;
+        cursor: pointer;
+        background: #f9f9f9;
+        border-right: 1px solid #ddd;
+        font-weight: bold;
     }
 
     .tab.active {
-      background: white;
-      color: #d32f2f; /* Rojo para Pendientes */
-      border-top: 3px solid #d32f2f;
+        background: white;
+        border-top: 3px solid;
     }
 
-    .tab:nth-child(2).active {
-      color: #1976D2; /* Azul para Completados */
-      border-top: 3px solid #1976D2;
+    /* Listas y scroll */
+    .lista-tareas, .lista-empleados, .lista-eventos {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-top: 10px;
     }
 
-    .tab-content {
-      display: none;
-      padding: 15px;
+    /* Efectos y animaciones */
+    @keyframes animacion-progreso {
+        from { width: 0%; }
+        to { width: 70%; }
     }
 
-    .tab-content.active {
-      display: block;
-    }
-
-    /* Lista con scroll */
-    .lista-tareas {
-      max-height: 300px;
-      overflow-y: auto;
-      margin-top: 10px;
-    }
-
-    .fila-tarea {
-      display: grid;
-      grid-template-columns: 50px 1fr 100px 50px;
-      align-items: center;
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-    }
-
-    /* Estilos diferenciales por pestaña */
-    #pendientes .fila-tarea:nth-child(odd) {
-      background: #ffebee; /* Fondo rojo claro */
-    }
-
-    #completados .fila-tarea:nth-child(odd) {
-      background: #e3f2fd; /* Fondo azul claro */
-    }
-
-    .prioridad {
-      text-align: center;
-      font-weight: bold;
-      width: 24px;
-      height: 24px;
-      line-height: 24px;
-      border-radius: 50%;
-    }
-
-    .prioridad-1 { background: #ffcdd2; color: #d32f2f; } /* Rojo */
-    .prioridad-2 { background: #ffecb3; color: #ffa000; } /* Amarillo */
-    .prioridad-3 { background: #c8e6c9; color: #388e3c; } /* Verde */
-
-    .contenedor-empleado {
-      max-width: 900px;
-      margin: 0 auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Cabecera (foto + nombre + fecha) */
-    .cabecera-empleado {
-      display: flex;
-      gap: 15px;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .info-empleado {
-      flex: 1;
-    }
-
-    .nombre-empleado {
-      font-size: 1.3em;
-      font-weight: bold;
-      margin: 0;
-    }
-
-    .fecha-empleado {
-      color: #666;
-      margin: 5px 0 0 0;
-    }
-
-    /* Queja */
-    .queja-empleado {
-      background: #ffebee;
-      padding: 12px;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      border-left: 4px solid #d32f2f;
-    }
-
-    /* Lista de eventos */
-    .lista-eventos {
-      max-height: 300px;
-      overflow-y: auto;
-      border: 1px solid #eee;
-      border-radius: 5px;
-    }
-
-    .fila-evento {
-      display: grid;
-      grid-template-columns: 100px 1fr 60px;
-      align-items: center;
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .fila-evento:nth-child(odd) {
-      background: #f9f9f9;
-    }
-
-    .tipo-evento {
-      font-weight: bold;
-      color: #1976D2;
-    }
-
-    .tipo-evento.salida {
-      color: #d32f2f;
-    }
-
-    .fecha-evento {
-      color: #555;
-    }
-
+    /* Responsive */
     @media (max-width: 600px) {
-  .dashboard {
-    grid-template-columns: 1fr; /* 1 columna en móviles */
-  }
-}
+        .dashboard, .dashboard-columnas {
+            grid-template-columns: 1fr;
+        }
+        
+        .fila_foto, .fila-tarea, .fila-evento {
+            grid-template-columns: 1fr;
+        }
+    }
 
-.cerrar {
-    position: absolute;
-    top: 0px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: #999;
-    cursor: pointer;
-    padding: 0px 0px;
-    transition: color 0.3s;
-}
+    /* Elementos específicos */
+    .combo {
+        background-color: rgb(250, 250, 250);
+        color: black;
+    }
 
-.cerrar:hover {
-    color: #333;
-}
+    .cerrar {
+        position: absolute;
+        top: 0;
+        right: 10px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: #999;
+        cursor: pointer;
+        padding: 0;
+    }
 
-.contenedor-empleado {
-    position: relative; /* Necesario para posicionar el botón correctamente */
-}
+    .cerrar:hover {
+        color: #333;
+    }
 
-.cabecera-empleado {
-    position: relative; /* Contenedor para el botón de cerrar */
-}
+    /* Estructuras de columnas específicas */
+    .cabecera_trans, .linea_trans {
+        grid-template-columns: 20% 12% 12% 10% 23% 23%;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
 
+    .cabecera_trans {
+        background-color: #333;
+        color: white;
+        font-weight: bold;
+    }
 
-
-.dashboard-columnas {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 15px;
-        }
-        
-        .columna-estado {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .cabecera-columna {
-            padding: 12px;
-            font-weight: bold;
-            text-align: center;
-            border-radius: 10px 10px 0 0;
-            color: white;
-        }
-        
-        .sin-acceso .cabecera-columna {
-            background-color: #d32f2f; /* Rojo */
-        }
-        
-        .trabajando .cabecera-columna {
-            background-color: #388e3c; /* Verde */
-        }
-        
-        .fuera .cabecera-columna {
-            background-color: #1976D2; /* Azul */
-        }
-        
-        .lista-empleados {
-            max-height: 500px;
-            overflow-y: auto;
-            padding: 10px;
-        }
-        
-        /* Aprovechando tus estilos existentes */
-        .fila_foto {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            gap: 10px;
-            padding: 8px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        
-        .fila_foto:hover {
-            background-color: #f5f5f5;
-        }
-        
-        .foto_peque {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #eee;
-        }
-        
-        .info-empleado {
-            flex: 1;
-        }
-        
-        .nombre-empleado {
-            font-weight: bold;
-            margin: 0;
-            color: #333;
-        }
-        
-        .apellido-empleado {
-            color: #666;
-            font-size: 0.9em;
-            margin: 2px 0 0 0;
-        }
-        
-        /* Scrollbar personalizada */
-        .lista-empleados::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .lista-empleados::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 3px;
-        }
-        
-        .lista-empleados::-webkit-scrollbar-thumb {
-            background: #ccc;
-            border-radius: 3px;
-        }
-        
-        .lista-empleados::-webkit-scrollbar-thumb:hover {
-            background: #aaa;
-        }
+    .linea_trans:nth-child(even) {
+        background-color: #f2f2f2;
+    }
     </style>
     
 </head>
 <body>
+    
+
     <div class="admin-panel-container">
         <!-- Barra de navegación -->
         <div class="navbar">
@@ -603,7 +346,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
             </div>
             <div></br></div>
             <!--Paneles de incidencias-->
-            <div id="panelIncidenciasPendientes" style="display: none;">
+            <div id="panelIncidencias" style="display: none;">
                 <div class="tabs">
                     <!-- Header de pestañas -->
                     <div class="tabs-header">
@@ -630,12 +373,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                                 <div><?php echo htmlspecialchars($incidenciaP['FECHA_INC']);?></div>
                                 <div class="prioridad prioridad-1"><?php echo htmlspecialchars($incidenciaP['PRIORIDAD']);?></div>
                             </div>
-                            <?php endforeach; ?>
-                            <script>
-                                const incidenciasP = <?php echo json_encode($incidenciasPendientes); ?>;
-                                var marcajesPorIncidencia = <?php echo json_encode($marcajesPorIncidencia); ?>;
-                            </script>
-                            
+                            <?php endforeach; ?>                            
                         </div>
                     </div>
 
@@ -657,7 +395,6 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                     </div>
                 </div>
             </div>    
-            <div id="panelIncidenciasResueltas" style="display: none;"></div>    
                 <!--Subpanel ficha incidencia-->
             <div id="panelFichaIncidencia" class="ventana" style="display: none;">
                 
@@ -762,95 +499,33 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
             <!--Panel de Mantenimiento de empleados-->
             <div id="panelEmpleados" style="display: none;">
                 <div class="contenido">
-                <div class="d-flex align-items-center gap-2">
-                        <!-- Dropdown Bootstrap -->
-                        <div class="dropdown me-2">
-                            <button class="btn btn-secondary combo dropdown-toggle" type="button" id="dropdownEmpleados2" data-bs-toggle="dropdown">
-                                Selecciona un empleado
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownEmpleados">
+                    <div>
+                        <div style="display: flex; gap:10px;height:50px;">
+                        <select name="empleado" id="seleccionPanelEmpleado" style="width:250px;" class="form-select" required>
+                            <?php if (!empty($empleados)): ?>
                                 <?php foreach ($empleados as $empleado): ?>
-                                <li>
-                                    <a class="dropdown-item" data-cod="<?= $empleado['COD_EMPLEADO'] ?>" onclick="seleccionarEmpleado(this)">
-                                    <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?= $empleado['FOTO'] ?>" width="30" height="30" class="rounded-circle me-2">
-                                    <?= $empleado['NOM_EMPLEADO']." ".$empleado['APE1_EMPLEADO'] ?>
-                                    </a>
-                                </li>
-                            <?php endforeach; ?>
-                            </ul>
-                            <button id="modificarEmpleado" name="modificarEmpleado">Modificar</button>
+                                    <?php 
+                                        $codigo = htmlspecialchars($empleado['COD_EMPLEADO'] ?? '');
+                                        $nombreCompleto = htmlspecialchars(
+                                trim(($empleado['NOM_EMPLEADO'] ?? '') . ' ' . 
+                                        ($empleado['APE1_EMPLEADO'] ?? '').' '.
+                                        ($empleado['APE2_EMPLEADO'] ?? ''))
+                                        );
+                                    ?>
+                                        <option value="<?php echo $codigo; ?>">
+                                            <?php echo $nombreCompleto; ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <option value="" disabled>No hay empleados disponibles</option>
+                                <?php endif; ?>
+                            </select>
                             <button id="nuevoEmpleado" name="nuevoEmpleado">Nuevo</button>
-                            <button id="bajaEmpleado" name="bajaEmpleado">Dar de baja</button>
                         </div>
                     </div>
-                    <form class="marcoListados">
-                        <div class="fila">
-                        <div class="columna" style="flex:1;">
-                            <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?= $empleados['FOTO'] ?>" width="100" id= "fotoEmpleados" height="100" class="rounded-circle me-2">
-                        </div>
-                        <div class="columna" style="flex:2;">
-                            <label for="apellido1Empleados">1er apellido</label>
-                            <input type="text" id="apellido1Empleados">
-                        </div>
-                        <div class="columna" style="flex:2;">
-                            <label for="apellido2Empleados">2º apellido</label>
-                            <input type="text" id="apellido2Empleados">
-                        </div>
-                        <div class="columna" style="flex:2;">
-                            <label for="usuarioEmpleados">Usuario</label>
-                            <input type="text" id="usuarioEmpleados">
-                        </div>
-                    </div>
-        
-                    <div class="fila">
-                        <div class="columna" style="flex:2;">
-                            <label for="nombreEmpleados">Nombre</label>
-                            <input type="text" id="nombreEmpleados">
-                        </div>
-                        <div class="columna" style="flex:2;">
-                            <label for="usuarioAltaEmpleados">Usuario alta</label>
-                            <input type="text" id="usuarioAltaEmpleados">
-                        </div>
-                        <div class="columna" style="flex:2;">
-                            <label for="fechaAltaEmpleados">Fec_alta</label>
-                            <input type="date" id="fechaAltaEmpleados">
-                        </div>
-                    </div>
-        
-                    <div class="fila">
-                        <div class="columna" style="flex:4;">
-                            <label for="contactoEmpleados">Contacto</label>
-                            <input type="text" id="contactoEmpleados">
-                        </div>
-                        <div class="columna" style="flex:2;">
-                            <label for="usuarioBajaEmpleados">Usuario Baja</label>
-                            <input type="text" id="usuarioBajaEmpleados">
-                        </div>
-                        <div class="columna" style="flex:1;">
-                            <label for="fechaBajaEmpleados">Fecha Baja</label>
-                            <input type="date" id="fechaBajaEmpleados">
-                        </div>
-                        
-                    </div>
-                    <div class="fila">
-                        <div class="columna" style="flex:2;">
-                            <label for="horarioEmpleados">Horario</label>
-                            <input type="text" id="horarioEmpleados">
-                        </div>
-                        <div class="columna" style="flex:2;">
-                            <label for="horasEmpleados">Máx.horas</label>
-                            <input type="number" id="horasEmpleados">
-                        </div>
-                        <div class="columna" style="flex:2;">
-                            <label for="bolsaEmpleados">Bolsa de horas</label>
-                            <input type="text" id="bolsaEmpleados">
-                        </div>
-                        <div class="columna" style="flex:1;">
-                            <label for="botonRecalcularEmpleados"></label>
-                            <button id="botonRecalcularEmpleados">Recalcular</button>
-                        </div>
-                    </div> 
-                </form>
+                    <form id="formularioEmpleado">
+                         
+                    </form>
                 <div class="enLinea">
                     <input type="checkbox" id="incluirBajaEmpelados" name="incluirBajaEmpelados" value="1">
                     <label for="incluirBajaEmpelados" style="text-align:left">Incluir empelados de baja.</label>
@@ -866,26 +541,37 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
             </div>
             <!--Panel de Mantenimiento de usuarios-->
             <div id="panelUsuarios" style="display: none;">
-                <h2>Gestión de Usuarios</h2>
-                <p>Aquí podrás agregar o eliminar usuarios del sistema.</p>
-                <h3>Agregar Usuario</h3>
-                <form id="add-user-form" method="POST" enctype="multipart/form-data">
-                    <label for="user-name">Nombre:</label>
-                    <input type="text" id="user-name" name="user-name" required>
-                    <label for="user-photo">Foto (Escaneo Facial):</label>
-                    <input type="file" id="user-photo" name="user-photo" accept="image/*" required>
-                    <button type="submit" name="add-user">Agregar Usuario</button>
-                </form>
-                <h3>Eliminar Usuario</h3>
-                <form id="delete-user-form" method="POST">
-                    <label for="user-id">Seleccionar Usuario:</label>
-                    <select id="user-id" name="user-id" required>
-                        <option value="1">Juan Pérez</option>
-                        <option value="2">María López</option>
-                        <option value="3">Carlos García</option>
-                    </select>
-                    <button type="submit" name="delete-user">Eliminar Usuario</button>
-                </form>
+            <div class="contenido">
+                    <div>
+                        <div style="display: flex; gap:10px;height:50px;">
+                        <select name="usuario" id="seleccionPanelUsuario" style="width:250px;" class="form-select" required>
+                            <?php if (!empty($usuarios)): ?>
+                                <?php foreach ($usuarios as $usuario): ?>
+                                    <?php 
+                                        $codigo = htmlspecialchars($usuario['COD_USUARIO'] ?? '');
+                                        $nombreUsuario = $usuario['NOM_LOGIN'];
+                                    ?>
+                                        <option value="<?php echo $codigo; ?>">
+                                            <?php echo $nombreUsuario; ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <option value="" disabled>No hay usuarios disponibles</option>
+                                <?php endif; ?>
+                            </select>
+                            <button id="nuevoUsuario" name="nuevoUsuario">Nuevo</button>
+                        </div>
+                    </div>
+                    <form id="formularioUsuario">
+                         
+                    </form>
+                <div class="enLinea">
+                    <input type="checkbox" id="incluirBajaUsuarios" name="incluirBajaUsuarios" value="1">
+                    <label for="incluirBajaUsuarios" style="text-align:left">Incluir usuarios de baja.</label>
+                    <button id="exportarUsuarios">Exportar</button>    
+                </div>
+                </div> 
+            
             </div>
                 <!--Subpanel Mantenimiento Descriptores-->
             <div id="panelDescriptores" style="display: none;"></div>
@@ -895,26 +581,125 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
             <div id="panelExportarUsuarios" style="display: none;"></div>
             <!--Panel Listado Transacciones-->
             <div id="panelListadoTransacciones" style="display: none;">
-                <h2>Registro de Actividades</h2>
-                <p>Aquí podrás ver un historial de las actividades registradas en el sistema.</p>
-                <ul>
-                    <li>Actividad 1: Registro de entrada de Juan Pérez - 08:00 AM</li>
-                    <li>Actividad 2: Registro de salida de María López - 05:30 PM</li>
-                    <li>Actividad 3: Registro de entrada de Carlos García - 09:00 AM</li>
-                </ul>
+                <div class="contenedor container py-5">
+                    <h1 class="mb-4">Transacciones</h1>
+                        <div class="row g-4">
+                        <!-- Filtros de Fecha -->
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="fechaInicioTrans" class="form-label">Desde Fecha</label>
+                                <input type="date" id="fechaInicioTrans" name="fechaInicioTrans" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="usuarioInicioTrans" class="form-label">Desde Usuario</label>
+                                <input type="numeric" id="usuarioInicioTrans" name="usuarioInicioTrans" class="form-control" value="0">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="actividadInicioTrans" class="form-label">Desde Actividad</label>
+                                <input type="text" id="actividadInicioTrans" name="actividadInicioTrans" class="form-control" value="">
+                            </div>
+                            <div class="col-md-1">
+                                
+                            </div>
+                        </div>    
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="fechaFinTrans" class="form-label">Hasta Fecha</label>
+                                <input type="date" id="fechaFinTrans" name="fechaFinTrans" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="usuarioFinTrans" class="form-label">Hasta Usuario</label>
+                                <input type="numeric" id="usuarioFinTrans" name="usuarioFinTrans" class="form-control" value="9999">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="actividadFinTrans" class="form-label">Hasta Actividad</label>
+                                <input type="text" id="actividadFinTrans" name="actividadFinTrans" class="form-control" value="ZZZZZZZZZZZZZ">
+                            </div>
+                            <div class="col-md-1">
+                                <button id="filtrarTransacciones" class="btn btn-primary">Filtrar</button>
+                            </div>
+                        </div>
+                            
+                        </div>
+                </div>
+                <div class="contenedor" id="listaTransacciones"></div>                   
             </div>
             <!--Panel Listado Marcajes-->
-            <div id="panelListadoMarcajes" style="display: none;"></div>
+            <div id="panelListadoMarcajes" style="display: none;">
+            <div class="contenedor container py-5">
+                    <h1 class="mb-4">Marcajes</h1>
+                        <div class="row g-4">
+                        <!-- Filtros de Fecha -->
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="fechaInicioMarcaje" class="form-label">Desde Fecha</label>
+                                <input type="date" id="fechaInicioMarcaje" name="fechaInicioMarcaje" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="empleadoInicioMarcaje" class="form-label">Desde Empleado</label>
+                                <input type="numeric" id="empleadoInicioMarcaje" name="empleadoInicioMarcaje" class="form-control" value="0">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="tipoInicioMarcaje" class="form-label">Desde Tipo</label>
+                                <input type="text" id="tipoInicioMarcaje" name="tipoInicioMarcaje" class="form-control" value="0">
+                            </div>
+                            <div class="col-md-1">
+                                
+                            </div>
+                        </div>    
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="fechaFinMarcaje" class="form-label">Hasta Fecha</label>
+                                <input type="date" id="fechaFinMarcaje" name="fechaFinMarcaje" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="empleadoFinMarcaje" class="form-label">Hasta Empleado</label>
+                                <input type="numeric" id="empleadoFinMarcaje" name="empleadoFinMarcaje" class="form-control" value="999">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="tipoFinMarcaje" class="form-label">Hasta Tipo</label>
+                                <input type="numeric" id="tipoFinMarcaje" name="tipoFinMarcaje" class="form-control" value="99">
+                            </div>
+                            <div class="col-md-1">
+                                <button id="filtrarMarcajes" class="btn btn-primary">Filtrar</button>
+                            </div>
+                        </div>
+                            
+                        </div>
+                </div>
+                <div class="contenedor" id="listaMarcajes"></div>                   
+            </div>
             <!--Paneles de la página Configuración-->
             <!--Panel Mantenimiento de permisos por Rol-->
             <div id="panelRoles" style="display: none;">
-                <h2>Gestión de Roles</h2>
-                <p>Aquí podrás ver y gestionar los roles de los usuarios.</p>
-                <ul>
-                    <li><strong>Administrador</strong> - Acceso total al sistema.</li>
-                    <li><strong>Empleado</strong> - Acceso limitado a tareas y registros.</li>
-                    <li><strong>Supervisor</strong> - Acceso para supervisar a los empleados.</li>
-                </ul>
+            <div class="contenido">
+                    <div>
+                        <div style="display: flex; gap:10px;height:50px;">
+                        <select name="seleccionRol" id="seleccionRol" style="width:250px;" class="form-select" required>
+                            <?php if (!empty($roles)): ?>
+                                <?php foreach ($roles as $rol): ?>
+                                    <?php 
+                                        $codigo = htmlspecialchars($rol['COD_ROL'] ?? '');
+                                        $nombreRol = $rol['NOM_ROL'];
+                                    ?>
+                                        <option value="<?php echo $codigo; ?>">
+                                            <?php echo $nombreRol; ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <option value="" disabled>No hay roles disponibles</option>
+                                <?php endif; ?>
+                            </select>
+                            <button id="nuevoRol" name="nuevoRol">Nuevo</button>
+                        </div>
+                    </div>
+                    <div id="datosRol">
+                         
+                    </div>
+                    <div id="usuariosRol">
+                         
+                    </div>
+                </div> 
             </div>
             <!--Panel listado usuarios asignados por Rol-->
             <div id="panelUsuariosAsigandos" style="display: none;"></div>
@@ -955,7 +740,16 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
     <!--Bootstrap para el dropdown con fotos de empleados-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        //Variables generadas por administracion_datos
         const usuarioSesion = <?php echo $codUsuarioSesion;?>;
+        const incidenciasP = <?php echo json_encode($incidenciasPendientes); ?>;
+        const marcajesPorIncidencia = <?php echo json_encode($marcajesPorIncidencia); ?>;
+        const empleados = <?php echo json_encode($empleados); ?>; 
+        //const usuario = <?php //echo json_encode($usuarios); ?>; 
+        //const bios = <?php //echo json_encode($listaBios); ?>;
+        //const transacciones = <?php //echo json_encode($transacciones); ?>; 
+        //const marcajes = <?php //echo json_encode($marcajes); ?>; 
+        
     </script>
 </body>
 </html>

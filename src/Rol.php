@@ -169,7 +169,7 @@ class Rol {
         }catch(PDOException $e){
             //Muestra error y devuelve false
             error_log("Error al cargar roles: " . $e->getMessage());
-            return false;
+            return [];
         }
     }
 

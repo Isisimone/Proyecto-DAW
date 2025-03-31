@@ -427,6 +427,40 @@ class Marcaje{
             }
             
         }
+
+        //Lista de marcajes entre fechas, usuarios y tipo de marcaje
+        //Método para cargar conjunto de marcajes entre fechas, devuelve array de registros
+        public function cargarMarcajesFiltro(int $empleadoI, int $empleadoF, DateTime $fechaInicio, DateTime $fechaFin,int $tipoInicio, int $tipoFin): array {
+            try{
+                //Crea conexión de tipo SELECT
+                $conexion = new Conexion();
+                $consulta = $conexion->conexion->prepare("
+                    SELECT * FROM tmarcaje 
+                    WHERE FEC_MARCAJE BETWEEN :fechaInicio AND :fechaFin 
+                    AND COD_EMPLEADO BETWEEN :empleadoI AND :empleadoF AND COD_TIPO_MARCAJE BETWEEN :tipoI AND :tipoF 
+                    ORDER BY FEC_MARCAJE ASC
+                ");
+                //Parametriza y ejecuta
+                $consulta->bindValue(':empleadoI', $empleadoI);
+                $consulta->bindValue(':empleadoF', $empleadoF);
+                $consulta->bindValue(':fechaInicio', $fechaInicio->format('Y-m-d H:i:s'));
+                $consulta->bindValue(':fechaFin', $fechaFin->format('Y-m-d H:i:s'));
+                $consulta->bindValue(':tipoI', $tipoInicio);
+                $consulta->bindValue(':tipoF', $tipoFin);
+                
+                $consulta->execute();
+                //Vuelca el resultado
+                $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
+                
+                //Devuelve el resultado
+                return $resultado;
+            }catch(PDOException $e){
+                //Muestra error y devuelve array vacío
+                error_log("Error al cargar marcajes: " . $e->getMessage());
+                return [];
+            }
+            
+        }
     
         //Obtener los últimos marcajes en un array descendente
         public function obtenerUltimosMarcajes(int $codEmpleado, int $limite = 5): array {

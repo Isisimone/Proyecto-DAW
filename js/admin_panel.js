@@ -4,8 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //Variables
         //Bloques
         const panelDatosAdmin = document.getElementById('panelDatosAdmin');
-        const panelIncidenciasPendientes = document.getElementById('panelIncidenciasPendientes');
-        const panelIncidenciasResueltas = document.getElementById('panelIncidenciasResueltas');
+        const panelIncidencias = document.getElementById('panelIncidencias');
         const panelFichaIncidencia = document.getElementById('panelFichaIncidencia');
         const panelFormularioResolucion = document.getElementById('panelFormularioResolucion');
         const panelEntrasSalidas = document.getElementById('panelEntrasSalidas');
@@ -27,8 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //Métodos
     function cerrar_bloques(){
         panelDatosAdmin.style.display = 'none';
-        panelIncidenciasPendientes.style.display = 'none';
-        panelIncidenciasResueltas.style.display = 'none';
+        panelIncidencias.style.display = 'none';
         panelFichaIncidencia.style.display = 'none';
         panelFormularioResolucion.style.display = 'none';
         panelEntrasSalidas.style.display = 'none';
@@ -52,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('menuPrincipal').addEventListener('click', () => {
         cerrar_bloques();
         panelDatosAdmin.style.display = 'block';
-        panelIncidenciasPendientes.style.display = 'block';
+        panelIncidencias.style.display = 'block';
         panelEntrasSalidas.style.display = 'block';
     });
 
@@ -116,7 +114,7 @@ document.addEventListener('click', function(e) {
             const foto = this.getAttribute('data-foto');
             //Devuelvo del array incidenciasP la clickeada 
             const incidenciaSeleccionada = Object.values(incidenciasP).filter(incidencia => {
-                return incidencia.ID.startsWith(id);
+                return String(incidencia.ID).startsWith(id);
             })[0];
             const fecha=incidenciaSeleccionada.FECHA_INC;
             const empleado = incidenciaSeleccionada.COD_EMPLEADO;
@@ -125,7 +123,7 @@ document.addEventListener('click', function(e) {
             const marcajesFecha = Object.values(marcajesPorIncidencia)
                 .flat() // Aplanamos el array de arrays
                 .filter(marcaje => {
-                    return marcaje.FEC_MARCAJE.startsWith(fecha) && 
+                    return String(marcaje.FEC_MARCAJE).startsWith(fecha) && 
                      marcaje.COD_EMPLEADO == empleado;
                 });
             
@@ -199,7 +197,139 @@ document.addEventListener('click', function(e) {
         });
         location.reload();
     });
+
+    //CHANGE en el select del formularioEmpleados
+    document.getElementById("seleccionPanelEmpleado").addEventListener("change", function() {
+        const formulario = document.getElementById("formularioEmpleado");
+        const valorSeleccionado = this.value; // Obtiene el valor del select
+        const data = {
+            accion: 'mostrar_empleado',
+            cod_empleado: valorSeleccionado  // Parámetro adicional opcional
+        };
+    
+        // Limpiar formulario
+        formulario.innerHTML = "";
+        // Cargar el HTML
+        cargarHTML(data)
+        .then(html =>{
+            formulario.innerHTML = html;
+        });
+    });
+    //CHANGE en el select del formularioUsuarios
+    document.getElementById("seleccionPanelUsuario").addEventListener("change", function() {
+        const formulario = document.getElementById("formularioUsuario");
+        const valorSeleccionado = this.value; // Obtiene el valor del select
+        const data = {
+            accion: 'mostrar_usuario',
+            cod_usuario: valorSeleccionado  // Parámetro adicional opcional
+        };
+    
+        // Limpiar formulario
+        formulario.innerHTML = "";
+        // Cargar el HTML
+        cargarHTML(data)
+        .then(html =>{
+            formulario.innerHTML = html;
+        });
+    });
+
+    //CLICK en filtrar Transacciones
+    document.getElementById("filtrarTransacciones").addEventListener("click", function() {
+        //Elementos de la página
+        const listado = document.getElementById("listaTransacciones");
+        const desdeFecha = document.getElementById("fechaInicioTrans");
+        const hastaFecha = document.getElementById("fechaFinTrans");
+        const desdeUsuario = document.getElementById("usuarioInicioTrans");
+        const hastaUsuario = document.getElementById("usuarioFinTrans");
+        const desdeActividad = document.getElementById("actividadInicioTrans");
+        const hastaActividad = document.getElementById("actividadFinTrans");
+        const data = {
+            accion: 'mostrar_transacciones',
+            desdeFecha: desdeFecha.value.toString(),
+            hastaFecha: hastaFecha.value.toString(),
+            desdeUsuario: desdeUsuario.value,
+            hastaUsuario: hastaUsuario.value,
+            desdeActividad: desdeActividad.value,
+            hastaActividad: hastaActividad.value,
+        };
+        
+        // Limpiar formulario
+        listado.innerHTML = "";
+        // Cargar el HTML
+        cargarHTML(data)
+        .then(html =>{
+            listado.innerHTML = html;
+        });
+    });
+
+    //CLICK en filtrar Marcajes
+    document.getElementById("filtrarMarcajes").addEventListener("click", function() {
+        //Elementos de la página
+        const listado = document.getElementById("listaMarcajes");
+        const desdeFecha = document.getElementById("fechaInicioMarcaje");
+        const hastaFecha = document.getElementById("fechaFinMarcaje");
+        const desdeEmpleado = document.getElementById("empleadoInicioMarcaje");
+        const hastaEmpleado = document.getElementById("empleadoFinMarcaje");
+        const desdeTipo = document.getElementById("tipoInicioMarcaje");
+        const hastaTipo = document.getElementById("tipoFinMarcaje");
+        const data = {
+            accion: 'mostrar_marcajes',
+            desdeFecha: desdeFecha.value.toString(),
+            hastaFecha: hastaFecha.value.toString(),
+            desdeEmpleado: desdeEmpleado.value,
+            hastaEmpleado: hastaEmpleado.value,
+            desdeTipo: desdeTipo.value,
+            hastaTipo: hastaTipo.value,
+        };
+        
+        // Limpiar formulario
+        listado.innerHTML = "";
+        // Cargar el HTML
+        cargarHTML(data)
+        .then(html =>{
+            listado.innerHTML = html;
+        });
+    });
+
+    //CHANGE en el select de Roles
+    document.getElementById("seleccionRol").addEventListener("change", function() {
+        const formulario = document.getElementById("datosRol");
+        const valorSeleccionado = this.value; // Obtiene el valor del select
+        const data = {
+            accion: 'mostrar_rol',
+            cod_rol: valorSeleccionado 
+        };
+    
+        // Limpiar formulario
+        formulario.innerHTML = "";
+        // Cargar el HTML
+        cargarHTML(data)
+        .then(html =>{
+            formulario.innerHTML = html;
+        });
+    });
 });
+
+async function cargarHTML(data){
+    try {
+        const response = await fetch('./logica/administracion_crud.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor');
+        }
+        
+        return await response.text();
+    } catch (error) {
+        console.error("Error:", error);
+        return `<p class="error-message">Error al cargar los datos: ${error.message}</p>`;
+    }
+}
 
 async function crud(datos){
     try {

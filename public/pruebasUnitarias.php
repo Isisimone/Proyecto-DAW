@@ -179,7 +179,7 @@ function pruebaTransaccion(bool $crear, bool $modificar, bool $mostrar, ?int $id
         
         $fecha1 = new DateTime('2025-3-17 10:10');
         $fecha2 = new DateTime('2025-3-25 10:10');
-        $transacciones=$transaccion->obtenerTransaccionesEntreFechas($fecha1,$fecha2);
+        $transacciones=$transaccion->obtenerTransaccionesFiltradas($fecha1,$fecha2,1,6,'','zzzzzzzz');
         var_dump($transacciones);
     }
 }
@@ -216,8 +216,8 @@ function pruebaUsuario(bool $crear, bool $modificar, bool $mostrar, ?int $id){
 pruebaAjuste(false,false,false,3);
 pruebaDatosBio(false,false,false,1);
 pruebaEmpleado(false,false,false,5);
-pruebaMarcaje(false,false,true,2);
+pruebaMarcaje(false,false,false,2);
 pruebaRol(false,false,false,3);
 pruebaTipoBio(false,false,false,1);
-pruebaTransaccion(false,false,false,6); //Sin pasar
+pruebaTransaccion(false,false,true,6); //Sin pasar
 pruebaUsuario(false,false,false,1);

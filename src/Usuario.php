@@ -204,6 +204,20 @@ class Usuario{
             return false;
         }
     }
+
+    public function obtenerUsuarios():array{
+        try{
+            $conexion=new Conexion();
+            $sql="SELECT COD_USUARIO, NOM_LOGIN, DES_CORREO FROM tusuario";
+            $stmt = $conexion->conexion->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }catch (PDOException $e){
+            echo "Error al cargar usuarios: " . $e->getMessage();
+            return[];
+        }
+
+    }
 //<<<<<<<<<<<<<<<<<<<<<<<<<< GETTERS Y SETTERS >>>>>>>>>>>>>>>>>>>>>>>>>>
 // Getters
 public function getCodUsuario(): int {

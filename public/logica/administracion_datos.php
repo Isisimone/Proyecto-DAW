@@ -60,6 +60,14 @@ if (isset($_SESSION['COD_USUARIO'])) {
                     break;
             }
         }
+
+        //Obtener lista de usuarios
+        $usuario=new Usuario();
+        $usuarios=$usuario->obtenerUsuarios();
+
+        //Obtención lista de roles;
+        $rol = new Rol();
+        $roles = $rol->cargarRoles();
         
     }
 }
