@@ -51,7 +51,6 @@ $nombrePrivilegios=[
             if (empty($datos['accion'])) {
                 throw new Exception('Acción no válida');
             }else{
-                
                 if ($datos['accion']=='actualizar_marcaje_incidencia'){
                     $marcaje= new Marcaje();
                     $marcaje->cargar($datos['cod_marcaje']);
@@ -365,7 +364,7 @@ $nombrePrivilegios=[
                                 ';
                                 foreach($ajustes as $clave=>$parametro){
                                     $html=$html.'
-                                    <div class="linea_Ajustes">
+                                    <div class="linea_Ajustes" id="listaAjustes">
                                         <label class="form-label">'.$parametro['NOM_AJUSTE'].'</label>
                                         <label class="form-label">'.$parametro['DESC_AJUSTE'].'</label>';
                                         switch($parametro['TIPO_AJUSTE']){
@@ -392,7 +391,48 @@ $nombrePrivilegios=[
                 header('Content-Type: text/html');
                 echo $html;
                 exit;
-            }    
+            }
+            
+            if ($datos['accion']=='mostrar_incidencia'){
+                $empleado=new Empleado();
+                $empleado->cargarDatosEmpleado($datos['cod_empleado']);
+                $marcaje = new Marcaje();
+                $marcajes = $marcaje->cargarMarcajesFiltro($datos['cod_empleado'],$datos['cod_empleado'],new DateTime($datos['fecha']),new DateTime($datos['fecha']),0,99);
+                $html='
+                <div class="contenedor-empleado">
+                    <button class="cerrar" aria-label="Cerrar ventana">&times;</button>
+                    <div class="cabecera-empleado">
+                        <img id="fotoIncidenciaEmpleado" src="./logica/mostrar_imagen.php?perfil=perfil&archivo='.$empleado->getFoto().'" class="foto-empleado">
+                        <div class="info-empleado">
+                            <p class="nombre-empleado" id="nombreEmpleadoIncidencia">'.$datos['nombre'].'</p>
+                            <p class="fecha-empleado" id="fechaIncidencia">Sobre la fecha:'. $datos['fecha'].'</p>
+                            <p id="incidenciaActiva" data-incidencia="'.$datos['id'].'">'.$datos['id'].'</p>
+                        </div>
+                    </div>
+
+                    <!-- Queja del empleado -->
+                    <div class="queja-empleado">
+                        <p id="quejaEmpleado"> '.$datos['comentario'].'</p>
+                    </div>
+                    <!-- Lista de eventos -->
+                    <h3>Registro de accesos:</h3>
+                    <div class="lista-eventos">
+                    ';
+                    foreach($marcajes as $indice=>$marca){
+                        $tipoTexto = $marca['COD_TIPO_MARCAJE'] == 1 ? "Entrada" : "Salida";
+                        
+                    $html=$html.'<div class="fila-evento marcajeIncidenciaP" data-id="'.$marca['COD_MARCAJE'].'">
+                            <span class="tipo-evento">'.$tipoTexto.'</span>
+                            <span class="fecha-evento">'.$marca['FEC_MARCAJE'].'</span>
+                            <img class="foto_peque" src="./logica/mostrar_imagen.php?archivo='.$marca['DES_FOTO'].'">
+                        </div>';
+                    };
+                    $html=$html.'</div>
+                </div>';
+                header('Content-Type: text/html');
+                echo $html;
+                exit;
+            }
 
         }
     } catch (Exception $e) {

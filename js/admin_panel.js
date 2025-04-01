@@ -115,47 +115,25 @@ document.addEventListener('click', function(e) {
             const fecha=incidenciaSeleccionada.FECHA_INC;
             const empleado = incidenciaSeleccionada.COD_EMPLEADO;
 
-
-            const marcajesFecha = Object.values(marcajesPorIncidencia)
-                .flat() // Aplanamos el array de arrays
-                .filter(marcaje => {
-                    return String(marcaje.FEC_MARCAJE).startsWith(fecha) && 
-                     marcaje.COD_EMPLEADO == empleado;
-                });
+            const comentario = incidenciaSeleccionada.COMENTARIO;
+            const formulario = document.getElementById("panelFichaIncidencia");
+            const datos = {
+                accion: 'mostrar_incidencia',
+                cod_empleado: empleado,
+                fecha: fecha,
+                nombre: nombre,
+                comentario: comentario,
+                id: id 
+            };
+    
+            // Limpiar formulario
+            formulario.innerHTML = "";
+                // Cargar el HTML
+                cargarHTML(datos)
+                .then(html =>{
+                formulario.innerHTML = html;
+            });
             
-            let html=`
-            <div class="contenedor-empleado">
-                    <!-- Cabecera con foto, nombre y fecha -->
-                    <button class="cerrar" aria-label="Cerrar ventana">&times;</button>
-                    <div class="cabecera-empleado">
-                        <img id="fotoIncidenciaEmpleado" src="./logica/mostrar_imagen.php?perfil=perfil&archivo=${foto}" class="foto-empleado">
-                        <div class="info-empleado">
-                            <p class="nombre-empleado" id="nombreEmpleadoIncidencia">${nombre}</p>
-                            <p class="fecha-empleado" id="fechaIncidencia">Sobre la fecha: ${fecha}</p>
-                            <p id="incidenciaActiva" data-incidencia="${id}">${id}</p>
-                        </div>
-                    </div>
-
-                    <!-- Queja del empleado -->
-                    <div class="queja-empleado">
-                        <p id="quejaEmpleado"> ${incidenciaSeleccionada.COMENTARIO}</p>
-                    </div>
-                    <!-- Lista de eventos -->
-                    <h3>Registro de accesos:</h3>
-                    <div class="lista-eventos">
-                    `;
-                    marcajesFecha.forEach(marcaje=>{
-                        const tipoTexto = marcaje.COD_TIPO_MARCAJE == 1 ? "Entrada" : "Salida";
-                        
-                    html+=`<div class="fila-evento marcajeIncidenciaP" data-id="${marcaje.COD_MARCAJE}">
-                            <span class="tipo-evento">${tipoTexto}</span>
-                            <span class="fecha-evento">${marcaje.FEC_MARCAJE}</span>
-                            <img class="foto_peque" src="./logica/mostrar_imagen.php?archivo=${encodeURIComponent(marcaje.DES_FOTO)}">
-                        </div>`;
-                    });
-                    html+=`</div>
-                </div>`;  
-                document.getElementById('panelFichaIncidencia').innerHTML = html;
             // Mostrar la ventana
             document.getElementById('panelFichaIncidencia').style.display = 'block';
         });
@@ -211,6 +189,7 @@ document.addEventListener('click', function(e) {
             formulario.innerHTML = html;
         });
     });
+
     //CHANGE en el select del formularioUsuarios
     document.getElementById("seleccionPanelUsuario").addEventListener("change", function() {
         const formulario = document.getElementById("formularioUsuario");
@@ -362,6 +341,7 @@ async function cargarHTML(data){
 }
 
 async function crud(datos){
+    console.error(datos);
     try {
         const respuesta = await fetch('./logica/administracion_crud.php', {
             method: 'POST',

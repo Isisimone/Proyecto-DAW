@@ -432,6 +432,9 @@ class Marcaje{
         //Método para cargar conjunto de marcajes entre fechas, devuelve array de registros
         public function cargarMarcajesFiltro(int $empleadoI, int $empleadoF, DateTime $fechaInicio, DateTime $fechaFin,int $tipoInicio, int $tipoFin): array {
             try{
+                if ($fechaInicio == $fechaFin){
+                    $fechaFin->modify('+1 day');
+                }
                 //Crea conexión de tipo SELECT
                 $conexion = new Conexion();
                 $consulta = $conexion->conexion->prepare("

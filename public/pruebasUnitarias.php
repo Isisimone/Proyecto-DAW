@@ -15,6 +15,7 @@ use Clases\TipoDatoBiometrico;
 use Clases\Transaccion;
 use Clases\Usuario;
 use Clases\Privilegio;
+use Clases\Incidencia;
 
 
 
