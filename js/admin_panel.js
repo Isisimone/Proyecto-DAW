@@ -317,6 +317,38 @@ document.addEventListener('click', function(e) {
             formulario.innerHTML = html;
         });
     });
+
+
+    //Mover roles CRUD
+    document.getElementById('panelAsignarRoles').addEventListener('click', async function(e) {
+        // Busca el elemento .linea_roles que tenga la clase rolesPosibles
+        const rolPosible = e.target.closest('.linea_roles.rolesPosibles');
+        const rolAsignado = e.target.closest('.linea_roles.rolesAsignados');
+        
+        if (rolPosible) {
+            var codRol = rolPosible.getAttribute('data-id');
+            var usuario = rolPosible.getAttribute('data-usuario');
+            var nombreRol = rolPosible.querySelector('.form-label').textContent;
+            datos={
+                accion: 'asigna_rol',
+                cod_usuario: usuario,
+                rol: codRol
+            };
+            await crud(datos);
+        }
+
+        if (rolAsignado) {
+            var codRol = rolAsignado.getAttribute('data-id');
+            var usuario = rolAsignado.getAttribute('data-usuario');
+            var nombreRol = rolAsignado.querySelector('.form-label').textContent;
+            datos={
+                accion: 'quita_rol',
+                cod_usuario: usuario,
+                rol: codRol
+            };
+            await crud(datos);
+        }
+    });
 });
 
 async function cargarHTML(data){

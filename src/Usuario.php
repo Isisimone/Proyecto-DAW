@@ -96,6 +96,7 @@ class Usuario{
     public function iniciarSesion(string $nom_login, string $contrasena): bool {
         try {
             $conexion = new Conexion();
+            $rol = new Rol();
             // Preparo la consulta SELECT
             $consulta = "SELECT * FROM tusuario WHERE NOM_LOGIN = :nom_login";
             $stmt = $conexion->conexion->prepare($consulta);
@@ -111,11 +112,16 @@ class Usuario{
                 $this->cargarRol();
                 //Cargamos el empelado asignado
                 $empleado = new Empleado();
+                $roles=[];
                 $empleado->cargarDatosPorUsuario($usuario['COD_USUARIO']);
+                foreach($this->roles as $rl){
+                    $rol->cargarRol($rl);
+                    $roles[]=$rol->getNombreRol();
+                }
                 //Define datos de sesión
                 $_SESSION['COD_USUARIO'] = $usuario['COD_USUARIO'];
                 $_SESSION['NOM_USUARIO'] = $usuario['NOM_LOGIN'];
-                $_SESSION['ROLES'] = $this->roles;
+                $_SESSION['ROLES'] = $roles;
                 $_SESSION['COD_EMPLEADO'] = $empleado->getCodEmpleado();
                 //devuelve true
                 return true;
@@ -254,6 +260,35 @@ public function getRoles():?array{
     return $this->roles;
 }
 // Setters
+
+public function setRol(int $rol){
+    try{
+        $conexion=new Conexion();
+            $sql="INSERT INTO Tusuariorol (COD_ROL,COD_USUARIO) VALUES (:rol,:usuario)";
+            $stmt = $conexion->conexion->prepare($sql);
+            $stmt->bindValue('rol',$rol,PDO::PARAM_INT);
+            $stmt->bindValue('usuario',$this->cod_usuario,PDO::PARAM_INT);
+            $stmt->execute();
+    }catch(PDOException $e){
+        echo "Error al asignar Rol: " . $e->getMessage();
+            return;
+    }
+}
+
+public function unsetRol(int $rol){
+    try{
+        $conexion=new Conexion();
+            $sql="DELETE FROM Tusuariorol WHERE COD_ROL=:rol AND COD_USUARIO=:usuario)";
+            $stmt = $conexion->conexion->prepare($sql);
+            $stmt->bindValue('rol',$rol,PDO::PARAM_INT);
+            $stmt->bindValue('usuario',$this->cod_usuario,PDO::PARAM_INT);
+            $stmt->execute();
+    }catch(PDOException $e){
+        echo "Error al quitar rol: " . $e->getMessage();
+            return;
+    }
+}
+
 public function setCodUsuario(int $cod_usuario): void {
     $this->cod_usuario = $cod_usuario;
 }

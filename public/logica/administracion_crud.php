@@ -80,6 +80,20 @@ $nombrePrivilegios=[
             echo json_encode(['success' => true]);
             }
 
+            if ($datos['accion']=='asigna_rol'){
+                $usuario = new Usuario();
+                $usuario->cargarUsuario($datos['cod_usuario']);
+                $usuario->setRol($datos['cod_usuario']);
+            echo json_encode(['success' => true]);
+            }
+
+            if ($datos['accion']=='quita_rol'){
+                $usuario = new Usuario();
+                $usuario->cargarUsuario($datos['cod_usuario']);
+                $usuario->setRol($datos['cod_usuario']);
+            echo json_encode(['success' => true]);
+            }
+
             if ($datos['accion']=='mostrar_empleado'){
                 $empleado = new Empleado();
                 $empleado->cargarDatosEmpleado($datos['cod_empleado']);
@@ -313,25 +327,21 @@ $nombrePrivilegios=[
                             <div class="contenedor-flex">
                                 <div class="columna-flex">
                                     <h6>Roles asignados</h6>
-                                    <div class="marcoListados">
+                                    <div class="marcoListados" id="rolesAsignados">
                                     ';
 
                                     foreach($rolesUsuario as $clave=>$rolUsuario){
                                         $rol->cargarRol($rolUsuario);
                                         $nombreRol = $rol->getNombreRol();
                                         $html=$html.'
-                                        <div class="linea_roles">
-                                            <label class="form-label" id="'.$rolUsuario.'">'.$nombreRol.'</label>
+                                        <div class="linea_roles rolesAsignados"  data-id="'.$rolUsuario.'" data-usuario="'.$datos['cod_usuario'].'">
+                                            <label class="form-label">'.$nombreRol.'</label>
                                         </div>';
                                     }
                                     $html=$html.'
                                     </div>
                                 </div>
-                                <div class="columna-vertical">
-                                        <button>&lt;</button>
-                                        </br>
-                                        <button>&gt;</button>
-                                </div>
+                                
                                 <div class="columna-flex">
                                     <h6>Roles disponibles</h6>
                                     <div class="marcoListados">
@@ -339,8 +349,8 @@ $nombrePrivilegios=[
                                     foreach($rolesPosibles as $rolPosible){
                                         if(!in_array($rolPosible['COD_ROL'],$rolesUsuario)){
                                             $html=$html.'
-                                            <div class="linea_roles">
-                                                <label class="form-label" id="'.$rolPosible['COD_ROL'].'">'.$rolPosible['NOM_ROL'].'</label>
+                                            <div class="linea_roles rolesPosibles" data-id="'.$rolPosible['COD_ROL'].'" data-usuario="'.$datos['cod_usuario'].'">
+                                                <label class="form-label">'.$rolPosible['NOM_ROL'].'</label>
                                             </div>';
                                         }
                                     }
