@@ -54,6 +54,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
         grid-template-columns: auto 1fr auto; 
         align-items: center; 
         gap: 10px;
+        padding-top: 10px;
     }
     .fila {
             display: flex;
@@ -536,6 +537,22 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
         padding: 10px;
         border-bottom: 1px solid #ddd;
     }
+    .linea_roles {
+        display: grid;
+        gap: 10px;
+        align-items: left;
+        grid-template-columns: 250px 20px;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+    .linea_Ajustes {
+        display: grid;
+        gap: 10px;
+        align-items: left;
+        grid-template-columns: 24% 50% 24%;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
     .cabecera_trans{
         display: grid;
         gap: 10px;
@@ -550,7 +567,68 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
     .linea_trans:nth-child(even) {
         background-color: #f2f2f2;
     }
-    </style>
+
+
+
+    .formulario-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    width: 100%;
+}
+
+.fila-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 10px;
+    width: 100%;
+}
+
+.fila-completa {
+    grid-column: 1 / -1;
+}
+
+.fila-botones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Estilos comunes para inputs */
+input[type="text"],
+input[type="date"],
+input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+    .contenedor-flex{
+        display: flex;
+        width: 100%;
+        gap: 20px;
+    }
+
+    .columna-flex{
+        flex: 1; 
+        min-width: 0;
+    }
+
+    .columna-vertical{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+    }
     </style>
     
 </head>
@@ -838,9 +916,9 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                             <button id="nuevoEmpleado" name="nuevoEmpleado">Nuevo</button>
                         </div>
                     </div>
-                    <form id="formularioEmpleado">
+                    <div class="contenido" id="formularioEmpleado">
                          
-                    </form>
+                    </div>
                 <div class="enLinea">
                     <input type="checkbox" id="incluirBajaEmpelados" name="incluirBajaEmpelados" value="1">
                     <label for="incluirBajaEmpelados" style="text-align:left">Incluir empelados de baja.</label>
@@ -877,9 +955,9 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                             <button id="nuevoUsuario" name="nuevoUsuario">Nuevo</button>
                         </div>
                     </div>
-                    <form id="formularioUsuario">
+                    <div class="contenido" id="formularioUsuario">
                          
-                    </form>
+                    </div>
                 <div class="enLinea">
                     <input type="checkbox" id="incluirBajaUsuarios" name="incluirBajaUsuarios" value="1">
                     <label for="incluirBajaUsuarios" style="text-align:left">Incluir usuarios de baja.</label>
@@ -991,12 +1069,11 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                     <div>
                         <div style="display: flex; gap:10px;height:50px;">
                             <select name="seleccionRol" id="seleccionRol" style="width:250px;" class="form-select" required>
-                            <?php var_dump($roles);?>
                             <?php if (!empty($roles)): ?>
                                 <?php foreach ($roles as $rol): ?>
                                     <?php 
-                                        $codigo = htmlspecialchars($rol->getCodigoRol() ?? '');
-                                        $nombreRol = $rol->getNombreRol();
+                                        $codigo = $rol['COD_ROL'];
+                                        $nombreRol = $rol['NOM_ROL'];
                                     ?>
                                         <option value="<?php echo $codigo; ?>">
                                             <?php echo $nombreRol; ?>
@@ -1014,36 +1091,31 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                     </div>
                 </div> 
             </div>
-            <!--Panel listado usuarios asignados por Rol-->
-            <div id="panelUsuariosAsignados" style="display: none;"></div>
             <!--Panel de Mantenimiento de usuarios por rol-->
             <div id="panelAsignarRoles" style="display: none;">
-                <h2>Asignación de Roles a Usuarios</h2>
-                <p>Aquí podrás buscar usuarios y asignarles roles.</p>
-
-                <div>
-                    <label for="search-user">Buscar Usuario:</label>
-                    <input type="text" id="search-user" placeholder="Buscar por nombre..." oninput="searchUser()">
-                </div>
-
-                <div id="search-results">
-                    <p>No hay resultados.</p>
-                </div>
-
-                <h3>Asignar Rol</h3>
-                <form id="assign-role-form" method="POST">
-                    <label for="user-select">Seleccionar Usuario:</label>
-                    <select id="user-select" name="user-select" required></select>
-
-                    <label for="role-select"> Seleccionar Rol:</label>
-                    <select id="role-select" name="role-select" required>
-                        <option value="admin">Administrador</option>
-                        <option value="empleado">Empleado</option>
-                        <option value="supervisor">Supervisor</option>
-                    </select>
-
-                    <button type="submit" name="assign-role">Asignar Rol</button>
-                </form>
+                <div class="contenido">
+                    <div style="display: flex; gap:10px;height:50px;">
+                        <select name="seleccionUsuarioRol" id="seleccionUsuarioRol" style="width:250px;" class="form-select" required>
+                            <?php if (!empty($usuarios)): ?>
+                                <?php foreach ($usuarios as $usuario): ?>
+                                    <?php 
+                                        $codigo = $usuario['COD_USUARIO'] ?? 0;
+                                        $nombreLogin = $usuario['NOM_LOGIN']??'';
+                                    ?>
+                                        <option value="<?php echo $codigo; ?>">
+                                            <?php echo $nombreLogin; ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <option value="" disabled>No hay usuarios disponibles</option>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="datosUsuarioRol">
+                     
+                    </div>
+                </div> 
             </div>
             <!--Panel de ajustes-->
             <div id="panelAjustes" style="display: none;"></div>

@@ -152,7 +152,7 @@ class Rol {
             //Vuelca el resultado
             $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
             //recorre el resultado creando roles
-            foreach ($resultados as $resultado) {
+            /*foreach ($resultados as $resultado) {
                 $rol = new Rol();
                 $rol->cod_Rol = $resultado['COD_ROL'];
                 $rol->nom_Rol = $resultado['NOM_ROL'];
@@ -165,12 +165,30 @@ class Rol {
                 $roles[] = $rol;
             }
             //devuelve roles
-            return $roles;
+            return $roles;*/
+            return $resultados;
         }catch(PDOException $e){
             //Muestra error y devuelve false
             error_log("Error al cargar roles: " . $e->getMessage());
             return [];
         }
+    }
+
+    //Método para cargar usuarios por rol
+    public function cargarUsuariosPorRol($codRol):array{
+        try{
+            $conexion=new Conexion();
+            $sql="SELECT * FROM tusuariorol WHERE COD_ROL = :rol";
+            $stmt = $conexion->conexion->prepare($sql);
+            $stmt->bindValue('rol',$codRol??0,PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }catch(PDOException $e){
+            //Muestra error y devuelve false
+            error_log("Error al cargar usuarios por rol: " . $e->getMessage());
+            return [];
+        }
+        
     }
 
 /*

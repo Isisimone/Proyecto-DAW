@@ -304,6 +304,40 @@ document.addEventListener('click', function(e) {
             formulario.innerHTML = html;
         });
     });
+
+    //CHANGE en el select de usuarioRoles
+    document.getElementById("seleccionUsuarioRol").addEventListener("change", function() {
+        const formulario = document.getElementById("datosUsuarioRol");
+        const valorSeleccionado = this.value; // Obtiene el valor del select
+        const data = {
+            accion: 'mostrar_usuariorol',
+            cod_usuario: valorSeleccionado 
+        };
+    
+        // Limpiar formulario
+        formulario.innerHTML = "";
+        // Cargar el HTML
+        cargarHTML(data)
+        .then(html =>{
+            formulario.innerHTML = html;
+        });
+    });
+
+    //CLICK en menú ajustes
+    document.getElementById("menuAjustes").addEventListener("click", function() {
+        const formulario = document.getElementById("panelAjustes");
+        const data = {
+            accion: 'mostrar_ajustes'
+        };
+    
+        // Limpiar formulario
+        formulario.innerHTML = "";
+        // Cargar el HTML
+        cargarHTML(data)
+        .then(html =>{
+            formulario.innerHTML = html;
+        });
+    });
 });
 
 async function cargarHTML(data){

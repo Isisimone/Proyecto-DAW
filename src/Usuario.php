@@ -28,8 +28,6 @@ class Usuario{
         $this->roles[]=null;
     }
 
-    
-
     // Método para cargar datos de la bbdd
     public function cargarUsuario(int $cod_usuario): void {
         try {
@@ -64,7 +62,7 @@ class Usuario{
     }
 
     //Método para obtender roles
-    private function cargarRol(){
+    public function cargarRol(){
         try {
             //Prepara consulta SELECT
             $conexion = new Conexion();
@@ -81,7 +79,7 @@ class Usuario{
                     $codRol = $r['COD_ROL'];
                     $rol->cargarRol($codRol);
                     //Añade el rol obtenido en un array
-                    $arrayRoles[]=$rol->getRol();
+                    $arrayRoles[]=$rol->getCodigoRol();
                     
                 }
                 //añade el array de roles al usuario
@@ -93,7 +91,7 @@ class Usuario{
             return;
         }
     }
-    
+
     //Método para iniciar sesión
     public function iniciarSesion(string $nom_login, string $contrasena): bool {
         try {
@@ -174,7 +172,7 @@ class Usuario{
             //parametriza yejecuta
             $stmt->bindParam(':NOM_LOGIN', $nombre, PDO::PARAM_STR);
             $stmt->bindParam(':DES_CONTRASENA', $hashedPassword, PDO::PARAM_STR);
-            $stmt->bindParam(':COD_USUARIO', $this->cod_Usuario, PDO::PARAM_INT);
+            $stmt->bindParam(':COD_USUARIO', $this->cod_usuario, PDO::PARAM_INT);
             $stmt->execute();
             return true;
         } catch (PDOException $e) {
@@ -193,9 +191,9 @@ class Usuario{
             $stmt = $conexion->conexion->prepare($consulta);
             $fec_Baja = new DateTime(); //define fecha baja a hoy
             //Parametriza y ejecuta
-            $stmt->bindParam(':FEC_BAJA', $fec_Baja->format('Y-m-d H:i:s'), PDO::PARAM_STR);
-            $stmt->bindParam(':NOM_USUARIO_BAJA', $nom_Usuario_Baja, PDO::PARAM_STR);
-            $stmt->bindParam(':COD_USUARIO', $this->cod_Usuario, PDO::PARAM_INT);
+            $stmt->bindParam(':FEC_BAJA', $fec_Baja->format('Y-m-d H:i:s')??null, PDO::PARAM_STR);
+            $stmt->bindParam(':NOM_USUARIO_BAJA', $nom_usuario_baja ?? '', PDO::PARAM_STR);
+            $stmt->bindParam(':COD_USUARIO', $this->cod_usuario, PDO::PARAM_INT);
             $stmt->execute();
             return true;
         } catch (PDOException $e) {
@@ -252,6 +250,9 @@ public function getNomUsuarioBaja(): ?string {
     return $this->nom_usuario_baja;
 }
 
+public function getRoles():?array{
+    return $this->roles;
+}
 // Setters
 public function setCodUsuario(int $cod_usuario): void {
     $this->cod_usuario = $cod_usuario;
