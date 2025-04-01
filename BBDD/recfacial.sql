@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-03-2025 a las 01:37:35
+-- Tiempo de generación: 01-04-2025 a las 18:58:59
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -30,15 +30,17 @@ SET time_zone = "+00:00";
 CREATE TABLE `tajuste` (
   `ID_AJUSTE` int(11) NOT NULL,
   `NOM_AJUSTE` varchar(20) DEFAULT NULL,
-  `VALOR_AJUSTE` varchar(20) DEFAULT NULL
+  `VALOR_AJUSTE` varchar(20) DEFAULT NULL,
+  `TIPO_AJUSTE` varchar(5) DEFAULT NULL,
+  `DESC_AJUSTE` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tajuste`
 --
 
-INSERT INTO `tajuste` (`ID_AJUSTE`, `NOM_AJUSTE`, `VALOR_AJUSTE`) VALUES
-(1, 'MaxLoginRq', '3');
+INSERT INTO `tajuste` (`ID_AJUSTE`, `NOM_AJUSTE`, `VALOR_AJUSTE`, `TIPO_AJUSTE`, `DESC_AJUSTE`) VALUES
+(1, 'MaxLoginRq', '3', 'int', 'Número máximo de intentos de acceso');
 
 -- --------------------------------------------------------
 
@@ -92,7 +94,7 @@ CREATE TABLE `templeado` (
 --
 
 INSERT INTO `templeado` (`COD_EMPLEADO`, `COD_USUARIO`, `NOM_EMPLEADO`, `APE1_EMPLEADO`, `APE2_EMPLEADO`, `CONTACTO_EMPLEADO`, `FEC_ALTA`, `NOM_USUARIO_ALTA`, `FEC_BAJA`, `NOM_USUARIO_BAJA`, `FOTO`, `HORARIO`, `FLEX`, `MAX_HORA_DIA`, `BOLSA_HORAS`) VALUES
-(1, 2, 'David', 'Martín', 'Prados', 'David@david.com', '2025-03-20 11:32:41', 'admon', NULL, NULL, 'emp_0001_da_ma_pr.jpg', '8h a 19h', 1, 6, 4.09),
+(1, 2, 'David', 'Martín', 'Prados', 'David@david.com', '2025-03-20 11:32:41', 'admon', NULL, NULL, 'emp_0001_da_ma_pr.jpg', '8h a 19h', 1, 6, 4.52),
 (3, 1, 'Juan', 'Perez', 'Gomez', 'juanpg@local.com', '2025-03-20 11:34:57', 'admon', NULL, NULL, 'emp_0002_ju_pe_go.jpg', '8h a 16h', 0, 8, 0);
 
 -- --------------------------------------------------------
@@ -108,16 +110,19 @@ CREATE TABLE `tincidencia` (
   `COMENTARIO` text DEFAULT NULL COMMENT 'Comentario del empleado',
   `PRIORIDAD` int(1) DEFAULT NULL COMMENT 'Prioridad dada por el empelado',
   `COD_EMPLEADO` int(2) DEFAULT NULL COMMENT 'Código del empleado',
-  `RESUELTA` tinyint(1) DEFAULT NULL COMMENT 'Estado de la incidencia'
+  `RESUELTA` tinyint(1) DEFAULT NULL COMMENT 'Estado de la incidencia',
+  `COD_USUARIO` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tincidencia`
 --
 
-INSERT INTO `tincidencia` (`ID`, `FECHA_REV`, `FECHA_INC`, `COMENTARIO`, `PRIORIDAD`, `COD_EMPLEADO`, `RESUELTA`) VALUES
-(1, '2025-03-27', '2025-03-24', 'ddd', 0, 1, 0),
-(2, '2025-03-27', '2025-03-27', 'Horas Extras', 0, 1, 0);
+INSERT INTO `tincidencia` (`ID`, `FECHA_REV`, `FECHA_INC`, `COMENTARIO`, `PRIORIDAD`, `COD_EMPLEADO`, `RESUELTA`, `COD_USUARIO`) VALUES
+(1, '2025-03-27', '2025-03-24', 'ddd', 1, 1, 1, 2),
+(2, '2025-03-27', '2025-03-27', 'Horas Extras', 3, 1, 0, NULL),
+(26, '2025-03-28', '2025-03-28', 'Mios', 1, 1, 0, NULL),
+(27, '2025-03-28', '2025-03-20', 'Está mal', 2, 1, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -162,7 +167,7 @@ INSERT INTO `tmarcaje` (`COD_MARCAJE`, `COD_TIPO_MARCAJE`, `COD_EMPLEADO`, `COD_
 (36, 1, 1, 2, 'empleado_1_1742819095.jpg', 1, '2025-03-21 16:06:01', NULL, '2025-03-21 16:06:01', NULL, 0, 0, ''),
 (37, 2, 1, 2, 'empleado_1_1742819161.jpg', 1, '2025-03-21 18:16:22', NULL, '2025-03-21 18:16:22', NULL, 0, 0, ''),
 (38, 1, 1, 2, 'empleado_1_1742819095.jpg', 1, '2025-03-24 08:00:55', NULL, '2025-03-24 08:00:55', NULL, 0, 0, ''),
-(39, 2, 1, 2, 'empleado_1_1742819161.jpg', 1, '2025-03-24 12:05:12', NULL, '2025-03-24 12:05:12', NULL, 0, 0, ''),
+(39, 2, 1, 2, 'empleado_1_1742819161.jpg', 1, '2025-03-24 12:15:01', NULL, '2025-03-24 12:05:12', NULL, 0, 0, ''),
 (40, 1, 1, 2, 'empleado_1_1742819095.jpg', 1, '2025-03-20 08:02:00', NULL, '2025-03-20 08:02:00', NULL, 0, 0, ''),
 (41, 2, 1, 2, 'empleado_1_1742819161.jpg', 1, '2025-03-20 14:03:03', NULL, '2025-03-20 14:03:03', NULL, 0, 0, ''),
 (42, 1, 1, 2, 'empleado_1_1742819095.jpg', 1, '2025-03-20 16:10:25', NULL, '2025-03-20 16:10:25', NULL, 0, 0, ''),
@@ -178,8 +183,12 @@ INSERT INTO `tmarcaje` (`COD_MARCAJE`, `COD_TIPO_MARCAJE`, `COD_EMPLEADO`, `COD_
 (52, 2, 1, 2, 'empleado_1_1742819095.jpg', 99, '2025-03-17 14:00:00', NULL, '2025-03-17 14:00:00', NULL, 0, 0, ''),
 (53, 2, 1, 2, 'empleado_1_1743011885.jpg', 1, '2025-03-26 18:58:05', NULL, '2025-03-26 18:58:05', NULL, 0, 0, ''),
 (54, 1, 1, 2, 'empleado_1_1743060817.jpg', 1, '2025-03-27 08:33:37', NULL, '2025-03-27 08:33:37', NULL, 0, 0, ''),
-(55, 2, 1, 2, 'empleado_1_1743080252.jpg', 1, '2025-03-27 13:57:32', NULL, '2025-03-27 13:57:32', NULL, 0, 0, ''),
-(56, 1, 1, 2, 'empleado_1_1743274535.jpg', 1, '2025-03-29 19:55:35', NULL, '2025-03-29 19:55:35', NULL, 0, 0, '');
+(55, 2, 1, 2, 'empleado_1_1743080252.jpg', 1, '2025-03-27 13:59:32', NULL, '2025-03-27 13:57:32', NULL, 0, 0, ''),
+(56, 1, 1, 2, 'empleado_1_1743146363.jpg', 1, '2025-03-28 08:19:23', NULL, '2025-03-28 08:19:23', NULL, 0, 0, ''),
+(57, 2, 1, 2, 'empleado_1_1743148134.jpg', 1, '2025-03-28 08:52:54', NULL, '2025-03-28 08:48:54', NULL, 0, 0, ''),
+(59, 1, 1, 2, 'empleado_1_1743402990.jpg', 1, '2025-03-31 08:36:30', NULL, '2025-03-31 08:36:30', NULL, 0, 0, ''),
+(60, 2, 1, 2, 'empleado_1_1743431511.jpg', 1, '2025-03-31 16:31:51', NULL, '2025-03-31 16:31:51', NULL, 0, 0, ''),
+(61, 1, 1, 2, 'empleado_1_1743488616.jpg', 1, '2025-04-01 08:23:36', NULL, '2025-04-01 08:23:37', NULL, 0, 0, '');
 
 -- --------------------------------------------------------
 
@@ -429,13 +438,13 @@ ALTER TABLE `templeado`
 -- AUTO_INCREMENT de la tabla `tincidencia`
 --
 ALTER TABLE `tincidencia`
-  MODIFY `ID` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID de la incidencia', AUTO_INCREMENT=3;
+  MODIFY `ID` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID de la incidencia', AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT de la tabla `tmarcaje`
 --
 ALTER TABLE `tmarcaje`
-  MODIFY `COD_MARCAJE` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `COD_MARCAJE` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT de la tabla `trol`
