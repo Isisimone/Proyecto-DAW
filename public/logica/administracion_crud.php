@@ -82,16 +82,157 @@ $nombrePrivilegios=[
 
             if ($datos['accion']=='asigna_rol'){
                 $usuario = new Usuario();
-                $usuario->cargarUsuario($datos['cod_usuario']);
-                $usuario->setRol($datos['cod_usuario']);
+                $cod_usuario = $datos['cod_usuario'];
+                $cod_rol = $datos['cod_rol'];
+                $usuario->cargarUsuario((int)$cod_usuario);
+                $usuario->setRol((int)$cod_rol);
             echo json_encode(['success' => true]);
             }
 
             if ($datos['accion']=='quita_rol'){
                 $usuario = new Usuario();
-                $usuario->cargarUsuario($datos['cod_usuario']);
-                $usuario->setRol($datos['cod_usuario']);
+                $cod_usuario = $datos['cod_usuario'];
+                $cod_rol = $datos['cod_rol'];
+                $usuario->cargarUsuario((int)$cod_usuario);
+                $usuario->unsetRol((int)$cod_rol);
             echo json_encode(['success' => true]);
+            }
+
+            if ($datos['accion']=='guarda_ajuste'){
+                $ajuste = new Ajuste();
+                $cod_ajuste = $datos['cod_ajuste'];
+                $valor = $datos['valor'];
+                $ajuste->cargar($cod_ajuste);
+                $ajuste->setValor($valor);
+                $ajuste->grabar();
+            echo json_encode(['success' => true]);
+            }
+
+            if ($datos['accion']=='guarda_rol'){
+                $rol = new Rol();
+                $codusuario = $_SESSION['COD_USUARIO'];
+                $user = new Usuario();
+                $user->cargarUsuario($codusuario);
+                $usuario = $user->getNomLogin();
+                $privilegio = new Privilegio();
+                $privilegio->setPrivilegios($datos['privilegios']);
+                $cod_rol = $datos['cod_rol'];
+                $nom_rol = $datos['nom_rol'];
+                $des_rol = $datos['des_rol'];
+                if ($cod_rol>0){ $rol->cargarRol($cod_rol);} else {
+                    $rol->setUsuarioAlta($usuario);
+                    $rol->setFechaAlta(new DateTime());
+                }
+                $rol->setNombreRol($nom_rol);
+                $rol->setDescripcion($des_rol);
+                $rol->setPermisos($privilegio);
+                $rol->grabar();
+
+            echo json_encode(['success' => true]);
+            }
+
+            if ($datos['accion']=='baja_rol'){
+                $rol = new Rol();
+                $cod_rol = $datos['cod_rol'];
+                $fecha = new DateTime();
+                $usuario = new Usuario();
+                $usuario->cargarUsuario($_SESSION['COD_USUARIO']);
+                $nom_usuario = $usuario->getNomLogin();
+                $rol->cargarRol($cod_rol);
+                $rol->setFechaBaja($fecha);
+                $rol->setUsuarioBaja($nom_usuario);
+                $rol->grabar();
+                echo json_encode(['success' => true]);
+            }
+
+            if ($datos['accion'] == 'baja_empleado') {
+                try {
+                    $codusuario = $_SESSION['COD_USUARIO'];
+                    $user = new Usuario();
+                    $user->cargarUsuario($codusuario);
+                    $usuario = $user->getNomLogin();
+                    $empleado = new Empleado();
+                    $empleado->cargarDatosEmpleado($datos['cod_empleado']);
+                    $fechaBaja = new DateTime();
+                    $empleado->setFecBaja($fechaBaja);
+                    $empleado->setNomUsuarioBaja($usuario);
+                    $empleado->grabar();
+                    
+                    echo json_encode(['success' => true]);
+            
+                } catch (Exception $e) {
+                    // Registro de error y respuesta
+                    error_log('Error en baja_empleado: ' . $e->getMessage());
+                    echo json_encode([
+                        'success' => false,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
+
+            if ($datos['accion']=='bolsa_empleado'){
+                $empleado = new Empleado();
+                $empleado->cargarDatosEmpleado($datos['cod_empleado']);
+                $empleado->procesarHorasExtrasMensuales($empleado->getMaxHorasDia());
+                $empelado->grabar();
+                echo json_encode(['success' => true]);
+            }
+            
+            if ($datos['accion'] == 'graba_empleado') {
+                try {
+                    // Validaciones básicas
+                    if (!isset($datos['cod_empleado'], $datos['apellido1'], $datos['nombre'], 
+                              $datos['horario'], $datos['horas'], $datos['usuario'])) {
+                        throw new Exception('Faltan datos obligatorios');
+                    }
+            
+                    $empleado = new Empleado();
+                    $codusuario = $_SESSION['COD_USUARIO'] ?? null;
+                    
+                    if (!$codusuario) {
+                        throw new Exception('Usuario no autenticado');
+                    }
+            
+                    $user = new Usuario();
+                    $user->cargarUsuario($codusuario);
+                    $usuario = $user->getNomLogin();
+            
+                    // Cargar o crear nuevo empleado
+                    if ($datos['cod_empleado'] > 0) {
+                        $empleado->cargarDatosEmpleado((int)$datos['cod_empleado']);
+                    } else {
+                        $empleado->setNomUsuarioAlta($usuario);
+                        $empleado->setFecAlta(new DateTime('now', new DateTimeZone('Europe/Madrid')));
+                    }
+            
+                    // Asignar datos con sanitización básica
+                    $empleado->setApellido1(htmlspecialchars($datos['apellido1']));
+                    $empleado->setApellido2(htmlspecialchars($datos['apellido2'] ?? ''));
+                    $empleado->setNombre(htmlspecialchars($datos['nombre']));
+                    $empleado->setHorario(htmlspecialchars($datos['horario']));
+                    $empleado->setMaxHorasDia((float)$datos['horas']);
+                    $empleado->setFoto($datos['foto'] ?? null);
+                    $empleado->setCodUsuario((int)$datos['usuario']);
+                    $empleado->setContacto($datos['contacto'] ?? null);
+            
+                    // Procesar y grabar
+                    $empleado->procesarHorasExtrasMensuales($empleado->getMaxHorasDia());
+                    
+                    if ($empleado->grabar()) {
+                        echo json_encode([
+                            'success' => true,
+                            'message' => 'Empleado guardado correctamente'
+                        ]);
+                    } else {
+                        throw new Exception('Error al grabar el empleado');
+                    }
+            
+                } catch (Exception $e) {
+                    echo json_encode([
+                        'success' => false,
+                        'error' => $e->getMessage()
+                    ]);
+                }
             }
 
             if ($datos['accion']=='mostrar_empleado'){
@@ -105,7 +246,7 @@ $nombrePrivilegios=[
                 $html= '<div class="formulario-grid">
                             <div class="fila-grid">
                                 <div style="grid-column: span 2;">
-                                    <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo='.$empleado->getFoto().'" width="100" id="fotoEmpleado" height="100" class="rounded-circle me-2">
+                                    <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo='.$empleado->getFoto().'" width="100" id="fotoEmpleado" data-foto="'.$empleado->getFoto().'" height="100" class="rounded-circle me-2">
                                 </div>
                                 <div style="grid-column: span 5;">
                                     <label for="apellido1Empleado">1er apellido</label>
@@ -158,13 +299,83 @@ $nombrePrivilegios=[
                             <div class="fila-botones">
                                 <button class="btn btn-primary" id="guardarEmpleado">Guardar cambios</button>
                                 <button class="btn btn-secondary" id="recalcularBolsa">Recalcular Bolsa</button>
-                                <button class="btn btn-danger" id="bajaEmpelado">Dar de baja</button>
+                                <button class="btn btn-danger" id="bajaEmpleado">Dar de baja</button>
                             </div>
                         </div>';
                     header('Content-Type: text/html');
                     echo $html;
                     exit;
             } 
+
+            if ($datos['accion']=='mostrar_nuevo_empleado'){
+                $empleado = new Empleado();
+                $empleado->cargarDatosEmpleado($datos['cod_empleado']);
+                $fecha = $empleado->getFecAlta();
+                $fechaAlta = $fecha ? $fecha->format('Y-m-d') : '';
+                $fecha = $empleado->getFecBaja();
+                $fechaBaja = $fecha ? $fecha->format('Y-m-d') : '';
+                
+                $html= '<div class="formulario-grid">
+                            <div class="fila-grid">
+                                <div style="grid-column: span 2;">
+                                    <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo='.$empleado->getFoto().'" width="100" id="fotoEmpleado" data-foto="'.$empleado->getFoto().'" height="100" class="rounded-circle me-2">
+                                </div>
+                                <div style="grid-column: span 5;">
+                                    <label for="apellido1Empleado">1er apellido</label>
+                                    <input type="text" id="apellido1Empleado" value="'.$empleado->getApellido1().'">
+                                </div>
+                                <div style="grid-column: span 5;">
+                                    <label for="apellido2Empleado">2º apellido</label>
+                                    <input type="text" id="apellido2Empleado" value="'.$empleado->getApellido2().'">
+                                </div>
+                            </div>
+                            <div class="fila-grid">
+                                <div style="grid-column: span 6;">
+                                    <label for="nombreEmpleado">Nombre</label>
+                                    <input type="text" id="nombreEmpleado" value="'.$empleado->getNombre().'">
+                                    <input type="text" id="codEmpleado" value="'.$empleado->getCodEmpleado().'" hidden>
+                                </div>
+                                <div style="grid-column: span 3;">
+                                    <label for="fechaAltaEmpleado">Fecha Alta</label>
+                                    <input type="date" id="fechaAltaEmpleado" value="'.$fechaAlta.'" readonly>
+                                </div> 
+                                <div style="grid-column: span 3;">
+                                    <label for="fechaBajaEmpleado">Fecha Baja</label>
+                                    <input type="date" id="fechaBajaEmpleado" value="'.$fechaBaja.'" readonly>
+                                </div>
+                            </div>
+                            <div class="fila-grid fila-completa">
+                                <div style="grid-column: span 10;">
+                                    <label for="contactoEmpleado">Contacto</label>
+                                    <input type="text" id="contactoEmpleado" value="'.$empleado->getContacto().'">
+                                </div>
+                                <div style="grid-column: span 2;">
+                                    <label for="usuarioEmpleado">Usuario</label>
+                                    <input type="text" id="usuarioEmpleado" value="'.$empleado->getCodUsuario().'">
+                                </div>
+                            </div>
+                            <div class="fila-grid">
+                                <div style="grid-column: span 4;">
+                                    <label for="horarioEmpleado">Horario</label>
+                                    <input type="text" id="horarioEmpleado" value="'.$empleado->getHorario().'">
+                                </div>
+                                <div style="grid-column: span 4;">
+                                    <label for="horasEmpleado">Máx.horas</label>
+                                    <input type="number" id="horasEmpleado" value="'.$empleado->getMaxHorasDia().'">
+                                </div>
+                                <div style="grid-column: span 4;">
+                                    <label for="bolsaEmpleado">Bolsa de horas</label>
+                                    <input type="text" id="bolsaEmpleado" value="'.$empleado->getBolsa().'">
+                                </div>
+                            </div>
+                            <div class="fila-botones">
+                                <button class="btn btn-primary" id="guardarEmpleado">Guardar cambios</button>
+                            </div>
+                        </div>';
+                    header('Content-Type: text/html');
+                    echo $html;
+                    exit;
+            }
 
             if ($datos['accion']=='mostrar_usuario'){
                 $usuario = new Usuario();
@@ -267,34 +478,35 @@ $nombrePrivilegios=[
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <label class="form-label">Código</label>
-                                        <input type="text" class="form-control" value="'.$rol->getCodigoRol().'" readonly>
+                                        <input type="number" id="campoCodRol" class="form-control" value="'.$rol->getCodigoRol().'" readonly>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Nombre</label>
-                                        <input type="text" class="form-control" value="'.$rol->getNombreRol().'">
+                                        <input type="text" id="campoNomRol" class="form-control" value="'.$rol->getNombreRol().'">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Descripción</label>
-                                        <textarea class="form-control">'.$rol->getDescripcion().'</textarea>
+                                        <textarea id="campoDesRol" class="form-control">'.$rol->getDescripcion().'</textarea>
                                     </div>
                                 </div>
-                                <div class="marcoListados">
+                                <div class="marcoListados listaPrivilegios">
                                 ';
                                 $permiso = new Privilegio;
                                 $permiso = $rol->getPermisos();
                                 $privilegios = $permiso->getPrivilegios();
                                 foreach($privilegios as $clave=>$privi){
+                                    $checked = $privi ? 'checked' : '';
                                     $html=$html.'
                                     <div class="linea_roles">
                                         <label class="form-label">'.$nombrePrivilegios[$clave].'</label>
-                                        <input type="checkbox" id="'.$clave.'" value="'.$privi.'">
+                                        <input type="checkbox" class="rolCheckbox" data-id="'.$clave.'" '.$checked.'>
                                     </div>';
                                 }
                                 $html=$html.'
                                 </div>
-                                <div class="enLinea">
+                                <div class="enLinea botonesRol">
                                     <button class="btn btn-primary" id="guardarRol">Guardar cambios</button>
-                                    <button class="btn btn-danger" id="eliminarRol">Eliminar</button>
+                                    <button class="btn btn-danger" id="bajaRol">Dar de baja</button>
                                 </div>
                             </div>
                         </div>
@@ -307,6 +519,55 @@ $nombrePrivilegios=[
                     $html=$html.'<li class="linea_trans">'.$nombreUsuario.'</li>';
                 }
                 $html=$html.'   
+                            </ul>
+                        </div>
+                        ';
+                header('Content-Type: text/html');
+                echo $html;
+                exit;
+            }
+
+            if ($datos['accion']=='mostrar_nuevo_rol'){
+                $rol=new Rol();
+                $html='<div class="contenido">
+                            <h4>Mantenimiento de roles</h4>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Código</label>
+                                        <input type="number" id="campoCodRol" class="form-control" value="" readonly>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Nombre</label>
+                                        <input type="text" id="campoNomRol" class="form-control" value="">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Descripción</label>
+                                        <textarea id="campoDesRol" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="marcoListados listaPrivilegios">
+                                ';
+                                $permiso = new Privilegio;
+                                $privilegios = $permiso->getPrivilegios();
+                                foreach($privilegios as $clave=>$privi){
+                                    $checked = $privi ? 'checked' : '';
+                                    $html=$html.'
+                                    <div class="linea_roles">
+                                        <label class="form-label">'.$nombrePrivilegios[$clave].'</label>
+                                        <input type="checkbox" class="rolCheckbox" data-id="'.$clave.'" '.$checked.'>
+                                    </div>';
+                                }
+                                $html=$html.'
+                                </div>
+                                <div class="enLinea botonesRol">
+                                    <button class="btn btn-primary" id="guardarRol">Guardar cambios</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="contenido">
+                            <h4>Usuarios con este rol asignado</h4>
+                            <ul class="marcoListados">   
                             </ul>
                         </div>
                         ';
@@ -370,28 +631,28 @@ $nombrePrivilegios=[
                 $ajustes = $ajuste->obtenerAjustes();
                 $html='<div class="contenido">
                             <h4>Mantenimiento de ajustes</h4>
-                                <div class="marcoListados">
+                                <div class="marcoListados" id="listaAjustes">
                                 ';
                                 foreach($ajustes as $clave=>$parametro){
                                     $html=$html.'
-                                    <div class="linea_Ajustes" id="listaAjustes">
+                                    <div class="linea_Ajustes">
                                         <label class="form-label">'.$parametro['NOM_AJUSTE'].'</label>
                                         <label class="form-label">'.$parametro['DESC_AJUSTE'].'</label>';
                                         switch($parametro['TIPO_AJUSTE']){
                                             case 'int':
-                                                $html=$html.'<input type="number" data-id="'.$parametro['ID_AJUSTE'].'" value="'.$parametro['VALOR_AJUSTE'].'">';
+                                                $html=$html.'<input class="elementoAjuste" type="number" data-id="'.$parametro['ID_AJUSTE'].'" value="'.$parametro['VALOR_AJUSTE'].'">';
                                                 break;
                                             case 'string':
-                                                $html=$html.'<input type="text" data-id="'.$parametro['ID_AJUSTE'].'" value="'.$parametro['VALOR_AJUSTE'].'">';
+                                                $html=$html.'<input class="elementoAjuste" type="text" data-id="'.$parametro['ID_AJUSTE'].'" value="'.$parametro['VALOR_AJUSTE'].'">';
                                                 break;
                                             case 'bool':
-                                                $html=$html.'<input type="checkbox" data-id="'.$parametro['ID_AJUSTE'].'" value="'.$parametro['VALOR_AJUSTE'].'">';
+                                                $html=$html.'<input class="elementoAjuste" type="checkbox" data-id="'.$parametro['ID_AJUSTE'].'" value="'.$parametro['VALOR_AJUSTE'].'">';
                                                 break;
                                             case 'date':
-                                                $html=$html.'<input type="date" data-id="'.$parametro['ID_AJUSTE'].'" value="'.date($parametro['VALOR_AJUSTE']).'">';
+                                                $html=$html.'<input class="elementoAjuste" type="date" data-id="'.$parametro['ID_AJUSTE'].'" value="'.date($parametro['VALOR_AJUSTE']).'">';
                                                 break;
                                             default:
-                                                $html=$html.'<input type="text" data-id="'.$parametro['ID_AJUSTE'].'" value="'.$parametro['VALOR_AJUSTE'].'">';
+                                                $html=$html.'<input class="elementoAjuste" type="text" data-id="'.$parametro['ID_AJUSTE'].'" value="'.$parametro['VALOR_AJUSTE'].'">';
                                         }
                                 }
                                 $html=$html.'</div>

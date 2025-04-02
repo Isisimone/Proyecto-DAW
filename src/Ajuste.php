@@ -56,6 +56,19 @@ class Ajuste {
         $this->grabar();
     }
 
+    //Método para cargar un ajuste
+    public function cargar(int $id_ajuste){
+        $this->id = $id_ajuste;
+        $ajuste = $this->obtenerAjuste($id_ajuste);
+        if (count($ajuste)>0){
+            $this->setNombreAjuste($ajuste['NOM_AJUSTE']);
+            $this->setValor($ajuste['VALOR_AJUSTE']);
+            $this->tipo = $ajuste['TIPO_AJUSTE'];
+            $this->descripcion = $ajuste['DESC_AJUSTE'];
+        }else{
+            return false;
+        }
+    }
     // Método para grabar un ajuste en la base de datos
     public function grabar() {
         $conexion = new Conexion();
@@ -70,13 +83,13 @@ class Ajuste {
                 $consulta = "UPDATE tajuste SET NOM_AJUSTE = :nom_ajuste, VALOR_AJUSTE = :valor_ajuste, TIPO_AJUSTE = :tipo, DESC_AJUSTE=:descr WHERE ID_AJUSTE = :id_ajuste";
                 $stmt = $conexion->conexion->prepare($consulta); 
                 //Al ser un update añade el parámetro de id
-                $stmt->bindParam(':id_ajuste', $id, PDO::PARAM_INT);
+                $stmt->bindValue('id_ajuste', $this->id, PDO::PARAM_INT);
             }
             //Resto de parámetros/campos para la consulta
-            $stmt->bindParam(':nom_ajuste', $this->nombre_ajuste, PDO::PARAM_STR);
-            $stmt->bindParam(':valor_ajuste', $this->valor, PDO::PARAM_STR);
-            $stmt->bindParam('tipo',$this->tipo??"",PDO::PARAM_STR);
-            $stmt->bindParam(':descr', $this->descripcion??"", PDO::PARAM_STR);
+            $stmt->bindValue('nom_ajuste', $this->nombre_ajuste, PDO::PARAM_STR);
+            $stmt->bindValue('valor_ajuste', $this->valor, PDO::PARAM_STR);
+            $stmt->bindValue('tipo',$this->tipo??"",PDO::PARAM_STR);
+            $stmt->bindValue('descr', $this->descripcion??"", PDO::PARAM_STR);
             //Ejecutamos la consulta
             $stmt->execute();
             //termina la función devolviendo true

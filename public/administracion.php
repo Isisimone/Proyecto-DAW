@@ -630,6 +630,53 @@ label {
         gap: 10px;
     }
 
+    #ventana_emergente, #ventana_emergente_mensaje {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+.emergente {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.botonesSN {
+    margin-top: 15px;
+}
+
+#botonSI, #botonNO, #botonACEPTAR {
+    padding: 8px 16px;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+#botonSI {
+    background: #4CAF50;
+    color: white;
+    border: none;
+}
+
+#botonACEPTAR {
+    background:rgb(32, 153, 159);
+    color: white;
+    border: none;
+}
+
+#botonNO {
+    background: #f44336;
+    color: white;
+    border: none;
+}
     
     </style>
     
@@ -678,65 +725,63 @@ label {
         </div>
 
         <!-- Sección Principal con el Logo y mensaje de Bienvenida -->
-        <div id="main" class="section">
-            <div id="welcome-message">
-                <div class="logo-container">
-                    <img src="../recursos/logo.png" alt="Logo" class="logo">
-                        <div id="current-time"></div>
-                </div>
+    <div id="main" class="section">
+        <div id="welcome-message">
+            <div class="logo-container">
+                <img src="../recursos/logo.png" alt="Logo" class="logo">
+                    <div id="current-time"></div>
             </div>
+        </div>
 
-            <div id="dynamicContent">
-                <h1>Bienvenido al Panel de Administración</h1>
-                <div id="current-time"></div>
+        <div id="dynamicContent" class="section">
+            <h1>Bienvenido al Panel de Administración</h1>
+            
             <!--Paneles de la página principal-->
             <!--Panel de datos del empleado administrador-->
             <div id="panelDatosAdmin" class="contenido" style="display: none;">
                 
-            <div class="dashboard">
-                <!-- Columna 1: Progreso y horas -->
-                <div class="columna-progreso">
-                    <div class="barra-progreso">
-                        <div class="progreso" style="width:<?php echo htmlspecialchars($progresoHorario); ?>%;"></div>
+                <div class="dashboard">
+                    <!-- Columna 1: Progreso y horas -->
+                    <div class="columna-progreso">
+                        <div class="barra-progreso">
+                            <div class="progreso" style="width:<?php echo htmlspecialchars($progresoHorario); ?>%;"></div>
+                        </div>
+                        <div class="horas">
+                            <h3>Horas trabajadas hoy</h3>
+                            <?php 
+                                $horas = floor($horasTrabajadas); // Parte entera de las horas
+                                $minutos = round(($horasTrabajadas - $horas) * 60); // Calcula los minutos
+                            ?>
+                            <p><?php echo $horas . ' horas y ' . $minutos . ' minutos'; ?></p>
+                        </div>
+                        <div class="bolsa">
+                            <h3>Bolsa acumulada</h3>
+                            <?php 
+                                $horas = intval($bolsa); // Parte entera de las horas
+                                $minutos = abs(round(($bolsa - $horas) * 60)); // Calcula los minutos
+                                //ajustamos si son negativos
+                                if ($bolsa < 0 && $minutos > 0) {
+                                    $horas = $horas === 0 ? -1 : $horas; // Asegura que las horas sean negativas si es necesario
+                                    $minutos = -$minutos;
+                                }
+                            ?>
+                            <p><?php echo $horas . ' horas y ' . $minutos . ' minutos '; ?></p>
+                        </div>
                     </div>
-                    <div class="horas">
-                        <h3>Horas trabajadas hoy</h3>
-                        <?php 
-                            $horas = floor($horasTrabajadas); // Parte entera de las horas
-                            $minutos = round(($horasTrabajadas - $horas) * 60); // Calcula los minutos
-                        ?>
-                        <p><?php echo $horas . ' horas y ' . $minutos . ' minutos'; ?></p>
+                
+                    <!-- Columna 2: Foto -->
+                    <div class="columna-foto">
+                        <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?php echo htmlspecialchars($empleado->getFoto()); ?>" alt="Foto empleado" class="foto-empleado">
                     </div>
-                    <div class="bolsa">
-                        <h3>Bolsa acumulada</h3>
-                        <?php 
-                            $horas = intval($bolsa); // Parte entera de las horas
-                            $minutos = abs(round(($bolsa - $horas) * 60)); // Calcula los minutos
-                            //ajustamos si son negativos
-                            if ($bolsa < 0 && $minutos > 0) {
-                                $horas = $horas === 0 ? -1 : $horas; // Asegura que las horas sean negativas si es necesario
-                                $minutos = -$minutos;
-                            }
-                        ?>
-                        <p><?php echo $horas . ' horas y ' . $minutos . ' minutos '; ?></p>
-                    </div>
-                </div>
-
-                <!-- Columna 2: Foto -->
-                <div class="columna-foto">
-                    <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?php echo htmlspecialchars($empleado->getFoto()); ?>" alt="Foto empleado" class="foto-empleado">
-                </div>
-
-                <!-- Columna 3: Nombre y horario -->
-                <div class="columna-info">
-                    <div class="nombre-empleado"><?php echo htmlspecialchars($empleado->getNombre()." ".$empleado->getApellido1()); ?></div>
+                    <!-- Columna 3: Nombre y horario -->
+                    <div class="columna-info">
+                        <div class="nombre-empleado"><?php echo htmlspecialchars($empleado->getNombre()." ".$empleado->getApellido1()); ?></div>
                         <div class="horario">
                             <p><strong>Horario:</strong></p>
                             <p><?php echo htmlspecialchars($empleado->getHorario()); ?></p>
                         </div>
                     </div>
                 </div>
-                
             </div>
             <div></br></div>
             <!--Paneles de incidencias-->
@@ -758,7 +803,7 @@ label {
                                     $marcajes=$marcaje->marcajesHoy($incidenciaP['COD_EMPLEADO'],new DateTime($incidenciaP['FECHA_INC']));
                                     $marcajesPorIncidencia[$incidenciaP['ID']] = $marcajes;
                                 ?>
-                                <div class="fila-tarea incidenciaP" data-id="<?php echo $incidenciaP['ID'];?>" data-foto="<?php echo htmlspecialchars($fotoIncidencia); ?>" 
+                            <div class="fila-tarea incidenciaP" data-id="<?php echo $incidenciaP['ID'];?>" data-foto="<?php echo htmlspecialchars($fotoIncidencia); ?>" 
                                 data-nombre="<?php echo htmlspecialchars($empleadoIncidencia);?>" data-empleado="<?php echo $incidenciaP['COD_EMPLEADO'] ?>" 
                                 data-fecha="<?php echo $incidenciaP['FECHA_INC']?>">
                                 
@@ -791,36 +836,34 @@ label {
                 </div>
             </div>    
                 <!--Subpanel ficha incidencia-->
-            <div id="panelFichaIncidencia" class="ventana" style="display: none;">
-                
-            </div>
+            <div id="panelFichaIncidencia" class="ventana" style="display: none;"></div>
                 <!--Subpanel Formulario de resolución-->
             <div id="panelFormularioResolucion" class = "ventana" style="display: none;">     
-            <button class="cerrar" aria-label="Cerrar ventana">&times;</button>
-            <form>
+                <button class="cerrar" aria-label="Cerrar ventana">&times;</button>
+                <form>
                     <div class="campo-formulario">
                         <label for="cod_marcaje">COD_MARCAJE:</label>
                         <input type="text" id="resolucionCod" name="cod_marcaje" readonly>
                     </div>
                     <div class="campo-formulario">
-                    <select name="empleado" id="resolucionEmpleado" class="form-select" required>
+                        <select name="empleado" id="resolucionEmpleado" class="form-select" required>
                         <?php if (!empty($empleados)): ?>
                         <?php foreach ($empleados as $empleado): ?>
-                        <?php 
+                            <?php 
                             $codigo = htmlspecialchars($empleado['COD_EMPLEADO'] ?? '');
                             $nombreCompleto = htmlspecialchars(
                                 trim(($empleado['NOM_EMPLEADO'] ?? '') . ' ' . 
                             ($empleado['APE1_EMPLEADO'] ?? ''))
                             );
-                        ?>
-                        <option value="<?php echo $codigo; ?>">
-                            <?php echo $nombreCompleto; ?>
-                        </option>
-                    <?php endforeach; ?>
-                    <?php else: ?>
-                        <option value="" disabled>No hay empleados disponibles</option>
-                    <?php endif; ?>
-                    </select>
+                            ?>
+                            <option value="<?php echo $codigo; ?>">
+                                <?php echo $nombreCompleto; ?>
+                            </option>
+                            <?php endforeach; ?>
+                            <?php else: ?>
+                            <option value="" disabled>No hay empleados disponibles</option>
+                            <?php endif; ?>
+                        </select>
                     </div>
                     <div class="campo-formulario">
                         <label for="fec_marcaje">FEC_MARCAJE:</label>
@@ -833,7 +876,6 @@ label {
             <!--Panel de Entradas y salidas-->
             <div id="panelEntrasSalidas" style="display: none;">
                 <div class="dashboard-columnas">
-                    <!-- Columna 1: Sin acceso -->
                     <div class="columna-estado sin-acceso marcoListados">
                         <div class="cabecera-columna">Sin acceso</div>
                         <div class="lista-empleados">
@@ -846,12 +888,8 @@ label {
                                 </div>
                             </div>
                             <?php endforeach;?>
-                
-                <!-- Repetir estructura para más empleados -->
                         </div>
                     </div>
-        
-        <!-- Columna 2: Trabajando -->
                     <div class="columna-estado trabajando marcoListados">
                         <div class="cabecera-columna">Trabajando</div>
                         <div class="lista-empleados">
@@ -864,12 +902,8 @@ label {
                                 </div>
                             </div>
                             <?php endforeach;?>
-                
-                <!-- Más empleados -->
                         </div>
                     </div>
-        
-        <!-- Columna 3: Fuera -->
                     <div class="columna-estado fuera marcoListados">
                         <div class="cabecera-columna">Fuera</div>
                         <div class="lista-empleados">
@@ -882,8 +916,6 @@ label {
                                 </div>
                             </div>
                             <?php endforeach;?>
-                
-                            <!-- Más empleados -->
                         </div>
                     </div>
                 </div>
@@ -896,7 +928,7 @@ label {
                 <div class="contenido">
                     <div>
                         <div style="display: flex; gap:10px;height:50px;">
-                        <select name="empleado" id="seleccionPanelEmpleado" style="width:250px;" class="form-select" required>
+                            <select name="empleado" id="seleccionPanelEmpleado" style="width:250px;" class="form-select" required>
                             <?php if (!empty($empleados)): ?>
                                 <?php foreach ($empleados as $empleado): ?>
                                     <?php 
@@ -921,25 +953,23 @@ label {
                     <div class="contenido" id="formularioEmpleado">
                          
                     </div>
-                <div class="enLinea">
-                    <input type="checkbox" id="incluirBajaEmpelados" name="incluirBajaEmpelados" value="1">
-                    <label for="incluirBajaEmpelados" style="text-align:left">Incluir empelados de baja.</label>
-                    <button id="exportarEmpleados">Exportar</button>    
-                </div>
+                    <div class="enLinea">
+                        <input type="checkbox" id="incluirBajaEmpelados" name="incluirBajaEmpelados" value="1">
+                        <label for="incluirBajaEmpelados" style="text-align:left">Incluir empelados de baja.</label>
+                        <button id="exportarEmpleados">Exportar</button>    
+                    </div>
                 </div>    
             </div>
                 <!--Subpanel Confirmar Baja-->
             <div id="panelConfirmarBaja" style="display: none;"></div>
                 <!--Subpanel Exportar Empleados-->
-            <div id="panelExportarEmpleados" style="display: none;">
-
-            </div>
+            <div id="panelExportarEmpleados" style="display: none;"></div>
             <!--Panel de Mantenimiento de usuarios-->
             <div id="panelUsuarios" style="display: none;">
-            <div class="contenido">
+                <div class="contenido">
                     <div>
                         <div style="display: flex; gap:10px;height:50px;">
-                        <select name="usuario" id="seleccionPanelUsuario" style="width:250px;" class="form-select" required>
+                            <select name="usuario" id="seleccionPanelUsuario" style="width:250px;" class="form-select" required>
                             <?php if (!empty($usuarios)): ?>
                                 <?php foreach ($usuarios as $usuario): ?>
                                     <?php 
@@ -960,11 +990,11 @@ label {
                     <div class="contenido" id="formularioUsuario">
                          
                     </div>
-                <div class="enLinea">
-                    <input type="checkbox" id="incluirBajaUsuarios" name="incluirBajaUsuarios" value="1">
-                    <label for="incluirBajaUsuarios" style="text-align:left">Incluir usuarios de baja.</label>
-                    <button id="exportarUsuarios">Exportar</button>    
-                </div>
+                    <div class="enLinea">
+                        <input type="checkbox" id="incluirBajaUsuarios" name="incluirBajaUsuarios" value="1">
+                        <label for="incluirBajaUsuarios" style="text-align:left">Incluir usuarios de baja.</label>
+                        <button id="exportarUsuarios">Exportar</button>    
+                    </div>
                 </div> 
             
             </div>
@@ -978,7 +1008,7 @@ label {
             <div id="panelListadoTransacciones" style="display: none;">
                 <div class="contenedor container py-5">
                     <h1 class="mb-4">Transacciones</h1>
-                        <div class="row g-4">
+                    <div class="row g-4">
                         <!-- Filtros de Fecha -->
                         <div class="row g-3">
                             <div class="col-md-3">
@@ -1015,15 +1045,15 @@ label {
                             </div>
                         </div>
                             
-                        </div>
+                    </div>
                 </div>
                 <div class="contenedor" id="listaTransacciones"></div>                   
             </div>
             <!--Panel Listado Marcajes-->
             <div id="panelListadoMarcajes" style="display: none;">
-            <div class="contenedor container py-5">
+                <div class="contenedor container py-5">
                     <h1 class="mb-4">Marcajes</h1>
-                        <div class="row g-4">
+                    <div class="row g-4">
                         <!-- Filtros de Fecha -->
                         <div class="row g-3">
                             <div class="col-md-3">
@@ -1060,27 +1090,30 @@ label {
                             </div>
                         </div>
                             
-                        </div>
+                    </div>
                 </div>
                 <div class="contenedor" id="listaMarcajes"></div>                   
             </div>
             <!--Paneles de la página Configuración-->
             <!--Panel Mantenimiento de permisos por Rol-->
             <div id="panelRoles" style="display: none;">
-            <div class="contenido">
+                <div class="contenido">
                     <div>
                         <div style="display: flex; gap:10px;height:50px;">
                             <select name="seleccionRol" id="seleccionRol" style="width:250px;" class="form-select" required>
                             <?php if (!empty($roles)): ?>
                                 <?php foreach ($roles as $rol): ?>
                                     <?php 
-                                        $codigo = $rol['COD_ROL'];
-                                        $nombreRol = $rol['NOM_ROL'];
+                                        // Verificar si el rol NO está dado de baja (FEC_BAJA es NULL)
+                                        if ($rol['FEC_BAJA'] === null) {
+                                            $codigo = $rol['COD_ROL'];
+                                            $nombreRol = $rol['NOM_ROL'];
                                     ?>
-                                        <option value="<?php echo $codigo; ?>">
-                                            <?php echo $nombreRol; ?>
-                                        </option>
-                                    <?php endforeach; ?>
+                                    <option value="<?php echo $codigo; ?>">
+                                        <?php echo $nombreRol; ?>
+                                    </option>
+                                    <?php } ?>
+                                <?php endforeach; ?>
                                 <?php else: ?>
                                     <option value="" disabled>No hay roles disponibles</option>
                                 <?php endif; ?>
@@ -1111,19 +1144,37 @@ label {
                                 <?php else: ?>
                                     <option value="" disabled>No hay usuarios disponibles</option>
                                 <?php endif; ?>
-                            </select>
-                        </div>
+                        </select>
                     </div>
                     <div id="datosUsuarioRol">
-                     
+
                     </div>
                 </div> 
             </div>
             <!--Panel de ajustes-->
             <div id="panelAjustes" style="display: none;"></div>
+            <!--Ventana de confirmación-->
+            <div id="ventana_emergente" style="display: none;">
+                <div class="emergente">
+                    <p id="mensaje_confirmacion"></p>
+                    <div class="botonesSN">
+                        <button id="botonSI">Sí</button>
+                        <button id="botonNO">No</button>
+                    </div>
+                </div>
+            </div>
+            <!--Ventana de mensajes-->
+            <div id="ventana_emergente_mensaje" style="display: none;">
+                <div class="emergente">
+                    <p id="mensaje_info"></p>
+                    <div class="botonesSN">
+                        <button id="botonACEPTAR">Aceptar</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</div>
     <!--Bootstrap para el dropdown con fotos de empleados-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     

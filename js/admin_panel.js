@@ -53,11 +53,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('menuEmpleados').addEventListener('click', () => {
         cerrar_bloques();
         panelEmpleados.style.display = 'block';
+        const event = new Event('change');
+        document.getElementById('seleccionPanelEmpleado').dispatchEvent(event);
     });
 
     document.getElementById('menuUsuarios').addEventListener('click', () => {
         cerrar_bloques();
         panelUsuarios.style.display = 'block';
+        const event = new Event('change');
+        document.getElementById('seleccionPanelUsuario').dispatchEvent(event);
     });
 
     document.getElementById('menuMarcajes').addEventListener('click', () => {
@@ -68,16 +72,21 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('menuTransacciones').addEventListener('click', () => {
         cerrar_bloques();
         panelListadoTransacciones.style.display = 'block';
+
     });  
 
     document.getElementById('menuRoles').addEventListener('click', () => {
         cerrar_bloques();
         panelRoles.style.display = 'block';
+        const event = new Event('change');
+        document.getElementById('seleccionRol').dispatchEvent(event);
     });  
 
     document.getElementById('menuUsuariosRoles').addEventListener('click', () => {
         cerrar_bloques();
         panelAsignarRoles.style.display = 'block';
+        const event = new Event('change');
+        document.getElementById('seleccionUsuarioRol').dispatchEvent(event);
     });
 
     document.getElementById('menuAjustes').addEventListener('click', () => {
@@ -324,29 +333,191 @@ document.addEventListener('click', function(e) {
         // Busca el elemento .linea_roles que tenga la clase rolesPosibles
         const rolPosible = e.target.closest('.linea_roles.rolesPosibles');
         const rolAsignado = e.target.closest('.linea_roles.rolesAsignados');
+        const formulario = document.getElementById("datosUsuarioRol");
         
         if (rolPosible) {
-            var codRol = rolPosible.getAttribute('data-id');
-            var usuario = rolPosible.getAttribute('data-usuario');
+            var codRol = Number(rolPosible.getAttribute('data-id'));
+            var usuario = Number(rolPosible.getAttribute('data-usuario'));
             var nombreRol = rolPosible.querySelector('.form-label').textContent;
             datos={
                 accion: 'asigna_rol',
                 cod_usuario: usuario,
-                rol: codRol
+                cod_rol: codRol
             };
             await crud(datos);
+            const data = {
+                accion: 'mostrar_usuariorol',
+                cod_usuario: usuario 
+            };
+        
+            // Limpiar formulario
+            formulario.innerHTML = "";
+            // Cargar el HTML
+            await cargarHTML(data)
+            .then(html =>{
+                formulario.innerHTML = html;
+            });
         }
 
         if (rolAsignado) {
-            var codRol = rolAsignado.getAttribute('data-id');
-            var usuario = rolAsignado.getAttribute('data-usuario');
+            var codRol = Number(rolAsignado.getAttribute('data-id'));
+            var usuario = Number(rolAsignado.getAttribute('data-usuario'));
             var nombreRol = rolAsignado.querySelector('.form-label').textContent;
             datos={
                 accion: 'quita_rol',
                 cod_usuario: usuario,
-                rol: codRol
+                cod_rol: codRol
             };
             await crud(datos);
+            const data = {
+                accion: 'mostrar_usuariorol',
+                cod_usuario: usuario 
+            };
+        
+            // Limpiar formulario
+            formulario.innerHTML = "";
+            // Cargar el HTML
+            await cargarHTML(data)
+            .then(html =>{
+                formulario.innerHTML = html;
+            });
+        }
+    });
+
+    //Asignar Ajustes CRUD
+    document.getElementById('panelAjustes').addEventListener('change', async function(e) {
+        // Busca el elemento .linea_roles que tenga la clase rolesPosibles
+        const lineaAjuste = e.target.closest('.elementoAjuste');
+        const valor = e.target.value;
+
+        const datos={
+            accion: 'guarda_ajuste',
+            cod_ajuste: lineaAjuste.getAttribute('data-id'),
+            valor: e.target.value
+        };
+        await crud(datos);
+                
+    });
+
+    //CLICK en guardar rol
+    document.getElementById('panelRoles').addEventListener('click', async function(e) {
+        if (e.target && e.target.id === 'guardarRol') {
+            const checkboxes = document.querySelectorAll('.rolCheckbox');
+            const privilegios = {};
+            checkboxes.forEach(checkbox => {
+            const clave = checkbox.getAttribute('data-id');
+            privilegios[clave] = checkbox.checked ? true : false;
+            });
+            codRol = document.getElementById('campoCodRol').value>"" ? Number(document.getElementById('campoCodRol').value) : 0;
+            
+            const datos = {
+                accion: 'guarda_rol',
+                privilegios: privilegios,
+                cod_rol: codRol,
+                nom_rol: document.getElementById('campoNomRol').value,
+                des_rol: document.getElementById('campoDesRol').value
+
+            };
+            await crud(datos);
+            if (codRol==0){location.reload();}
+        }
+        if (e.target && e.target.id === 'bajaRol') {
+            const respuesta = await mensajeConfirmacion("¿Estás seguro de dar de baja este rol?");
+            if (respuesta) {
+                const datos = {
+                    accion: 'baja_rol',
+                    cod_rol: document.getElementById('campoCodRol').value
+                };
+                await crud(datos);
+                const event = new Event('click');
+                document.getElementById('panelRoles').dispatchEvent(event);
+            } else {
+                
+            }
+            
+        }
+
+        if (e.target && e.target.id === 'nuevoRol') {
+            const formulario = document.getElementById("datosRol");
+            const valorSeleccionado = this.value; // Obtiene el valor del select
+            const data = {
+                accion: 'mostrar_nuevo_rol',
+                cod_rol: valorSeleccionado 
+            };
+    
+            // Limpiar formulario
+            formulario.innerHTML = "";
+            // Cargar el HTML
+            await cargarHTML(data)
+            .then(html =>{
+                formulario.innerHTML = html;
+            });
+            
+        }
+    });
+
+    //CLICK en guardar empleado
+    document.getElementById('formularioEmpleado').addEventListener('click', async function(e) {
+        if (e.target && e.target.id === 'guardarEmpleado') {
+            const cod_empleado = document.getElementById('seleccionPanelEmpleado').value>""? Number(document.getElementById('seleccionPanelEmpleado').value) : 0;
+            const apellido1 = document.getElementById('apellido1Empleado').value;
+            const apellido2 = document.getElementById('apellido2Empleado').value;
+            const nombre = document.getElementById('nombreEmpleado').value;
+            const contacto = document.getElementById('contactoEmpleado').value;
+            const usuario = document.getElementById('usuarioEmpleado').value;
+            const horario = document.getElementById('horarioEmpleado').value;
+            const horas = document.getElementById('horasEmpleado').value;
+            const foto = document.getElementById('fotoEmpleado').getAttribute("data-foto");
+
+            const datos = {
+                accion: 'graba_empleado',
+                cod_empleado: cod_empleado,
+                apellido1: apellido1,
+                apellido2: apellido2,
+                nombre: nombre,
+                contacto: contacto,
+                usuario: Number(usuario),
+                horario: horario,
+                horas: Number(horas),
+                foto: foto
+            };
+            
+            await crud(datos);
+            if (cod_empleado==0){location.reload();}
+        }
+
+        if (e.target && e.target.id === 'bajaEmpleado') {
+            const cod_empleado = document.getElementById('seleccionPanelEmpleado').value>""? Number(document.getElementById('seleccionPanelEmpleado').value) : 0;
+            const respuesta = await mensajeConfirmacion("¿Estás seguro de dar de baja este empleado?");
+            if (respuesta) {
+                const datos = {
+                    accion: 'baja_empleado',
+                    cod_empleado: cod_empleado
+                };
+                await crud(datos);
+                const event = new Event('click');
+                document.getElementById('panelRoles').dispatchEvent(event);
+            } else {
+                
+            }
+            
+        }
+
+        if (e.target && e.target.id === 'nuevoEmpleado') {
+            const formulario = document.getElementById("formularioEmpleado");
+            const valorSeleccionado = this.value; // Obtiene el valor del select
+            const data = {
+                accion: 'mostrar_nuevo_empleado',
+                cod_rol: valorSeleccionado 
+            };
+    
+            // Limpiar formulario
+            formulario.innerHTML = "";
+            // Cargar el HTML
+            await cargarHTML(data)
+            .then(html =>{
+                formulario.innerHTML = html;
+            });  
         }
     });
 });
@@ -385,7 +556,7 @@ async function crud(datos){
         const resultado = await respuesta.json();
         
         if (resultado.success) {
-            alert('¡Datos actualizados correctamente!');            
+            await mensajeInformacion("Datos actualizados correctamente.");           
         } else {
             throw new Error(resultado.error || 'Error desconocido');
         }
@@ -452,4 +623,46 @@ function loadChart() {
 // Función de logout
 function logout() {
     alert("Has cerrado sesión.");
+}
+
+function mensajeConfirmacion(mensaje) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('ventana_emergente');
+        const messageElement = document.getElementById('mensaje_confirmacion');
+        const btnYes = document.getElementById('botonSI');
+        const btnNo = document.getElementById('botonNO');
+
+        // Mostrar el mensaje
+        messageElement.textContent = mensaje;
+        modal.style.display = 'flex';
+
+        // Botón "Sí"
+        btnYes.onclick = () => {
+            modal.style.display = 'none';
+            resolve(true);
+        };
+
+        // Botón "No"
+        btnNo.onclick = () => {
+            modal.style.display = 'none';
+            resolve(false);
+        };
+    });
+}
+
+function mensajeInformacion(mensaje) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('ventana_emergente_mensaje');
+        const messageElement = document.getElementById('mensaje_info');
+        const btnAceptar = document.getElementById('botonACEPTAR');
+
+        // Mostrar el mensaje
+        messageElement.textContent = mensaje;
+        modal.style.display = 'flex';
+
+        btnAceptar.onclick = () => {
+            modal.style.display = 'none';
+            resolve(true);
+        };
+    });
 }

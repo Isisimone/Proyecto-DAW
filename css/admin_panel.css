@@ -264,6 +264,7 @@ canvas {
 
 /* Estilo para el contenido dinámico */
 #dynamicContent {
+    
     width: 100%;
     max-width: 900px;
     margin-top: 30px;

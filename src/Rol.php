@@ -56,7 +56,25 @@ class Rol {
         $this->privilegios = $privilegios;
     }
 
-    
+    //Método para eliminar el rol de la bbdd
+    public function eliminar(): bool {
+        try{
+            // Crear la conexión
+            $conexion = new Conexion();
+            // Consulta DELETE
+            $sql = "DELETE FROM trol WHERE COD_ROL = :cod_Rol";
+            $stmt = $conexion->conexion->prepare($sql);
+            $stmt->bindValue(':cod_Rol', $this->cod_Rol, PDO::PARAM_INT);
+            $stmt->execute();
+            //elimina la consulta y devuelve true
+            $stmt=null;
+            return true;
+        }catch(PDOException $e){
+            //Muestra error y devuelve false
+            error_log("Error al eliminar el rol: " . $e->getMessage());
+            return false;
+        }
+    }
 
 //Método para cargar rol de la bbdd a partir del código de rol
     public function cargarRol(int $cod_Rol): bool {
@@ -151,21 +169,7 @@ class Rol {
             $stmt->execute();
             //Vuelca el resultado
             $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            //recorre el resultado creando roles
-            /*foreach ($resultados as $resultado) {
-                $rol = new Rol();
-                $rol->cod_Rol = $resultado['COD_ROL'];
-                $rol->nom_Rol = $resultado['NOM_ROL'];
-                $rol->descripcion = $resultado['DES_ROL'];
-                $rol->fec_Alta = new DateTime($resultado['FEC_ALTA']);
-                $rol->nom_Usuario_Alta = $resultado['NOM_USUARIO_ALTA'];
-                $rol->fec_Baja = $resultado['FEC_BAJA'] ? new DateTime($resultado['FEC_BAJA']) : null;
-                $rol->nom_Usuario_Baja = $resultado['NOM_USUARIO_BAJA'] ?? null;
-                $rol->privilegios = unserialize($resultado['PRIVILEGIOS']);
-                $roles[] = $rol;
-            }
-            //devuelve roles
-            return $roles;*/
+            
             return $resultados;
         }catch(PDOException $e){
             //Muestra error y devuelve false

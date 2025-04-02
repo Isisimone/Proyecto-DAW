@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 01-04-2025 a las 18:58:59
+-- Tiempo de generación: 02-04-2025 a las 18:57:32
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -40,7 +40,7 @@ CREATE TABLE `tajuste` (
 --
 
 INSERT INTO `tajuste` (`ID_AJUSTE`, `NOM_AJUSTE`, `VALOR_AJUSTE`, `TIPO_AJUSTE`, `DESC_AJUSTE`) VALUES
-(1, 'MaxLoginRq', '3', 'int', 'Número máximo de intentos de acceso');
+(1, 'MaxLoginRq', '5', 'int', 'Número máximo de intentos de acceso');
 
 -- --------------------------------------------------------
 
@@ -94,7 +94,7 @@ CREATE TABLE `templeado` (
 --
 
 INSERT INTO `templeado` (`COD_EMPLEADO`, `COD_USUARIO`, `NOM_EMPLEADO`, `APE1_EMPLEADO`, `APE2_EMPLEADO`, `CONTACTO_EMPLEADO`, `FEC_ALTA`, `NOM_USUARIO_ALTA`, `FEC_BAJA`, `NOM_USUARIO_BAJA`, `FOTO`, `HORARIO`, `FLEX`, `MAX_HORA_DIA`, `BOLSA_HORAS`) VALUES
-(1, 2, 'David', 'Martín', 'Prados', 'David@david.com', '2025-03-20 11:32:41', 'admon', NULL, NULL, 'emp_0001_da_ma_pr.jpg', '8h a 19h', 1, 6, 4.52),
+(1, 2, 'David', 'Martín', 'Prados', 'David@gmail.com', '2025-03-20 11:32:41', 'admon', NULL, NULL, 'emp_0001_da_ma_pr.jpg', '8h a 19h', 1, 6, 9),
 (3, 1, 'Juan', 'Perez', 'Gomez', 'juanpg@local.com', '2025-03-20 11:34:57', 'admon', NULL, NULL, 'emp_0002_ju_pe_go.jpg', '8h a 16h', 0, 8, 0);
 
 -- --------------------------------------------------------
@@ -188,7 +188,9 @@ INSERT INTO `tmarcaje` (`COD_MARCAJE`, `COD_TIPO_MARCAJE`, `COD_EMPLEADO`, `COD_
 (57, 2, 1, 2, 'empleado_1_1743148134.jpg', 1, '2025-03-28 08:52:54', NULL, '2025-03-28 08:48:54', NULL, 0, 0, ''),
 (59, 1, 1, 2, 'empleado_1_1743402990.jpg', 1, '2025-03-31 08:36:30', NULL, '2025-03-31 08:36:30', NULL, 0, 0, ''),
 (60, 2, 1, 2, 'empleado_1_1743431511.jpg', 1, '2025-03-31 16:31:51', NULL, '2025-03-31 16:31:51', NULL, 0, 0, ''),
-(61, 1, 1, 2, 'empleado_1_1743488616.jpg', 1, '2025-04-01 08:23:36', NULL, '2025-04-01 08:23:37', NULL, 0, 0, '');
+(61, 1, 1, 2, 'empleado_1_1743488616.jpg', 1, '2025-04-01 08:23:36', NULL, '2025-04-01 08:23:37', NULL, 0, 0, ''),
+(62, 2, 1, 2, 'empleado_1_1743577305.jpg', 1, '2025-04-01 19:01:45', NULL, '2025-04-02 09:01:45', NULL, 0, 0, ''),
+(63, 1, 1, 2, 'empleado_1_1743577374.jpg', 1, '2025-04-02 08:02:54', NULL, '2025-04-02 09:02:54', NULL, 0, 0, '');
 
 -- --------------------------------------------------------
 
@@ -212,7 +214,7 @@ CREATE TABLE `trol` (
 --
 
 INSERT INTO `trol` (`COD_ROL`, `NOM_ROL`, `DES_ROL`, `FEC_ALTA`, `NOM_USUARIO_ALTA`, `FEC_BAJA`, `NOM_USUARIO_BAJA`, `PRIVILEGIOS`) VALUES
-(1, 'Conserje', 'Acceso a la aplicación de reconocimiento', '2025-03-20 11:40:27', 'Admon', NULL, NULL, 'O:17:\"Clases\\Privilegio\":20:{s:27:\"\0Clases\\Privilegio\0empCrear\";b:0;s:31:\"\0Clases\\Privilegio\0empModificar\";b:0;s:26:\"\0Clases\\Privilegio\0empBaja\";b:0;s:27:\"\0Clases\\Privilegio\0usrCrear\";b:0;s:31:\"\0Clases\\Privilegio\0usrModificar\";b:0;s:26:\"\0Clases\\Privilegio\0usrBaja\";b:0;s:33:\"\0Clases\\Privilegio\0usrGenerarPass\";b:0;s:33:\"\0Clases\\Privilegio\0marCrearPropio\";b:0;s:37:\"\0Clases\\Privilegio\0marConsultarPropio\";b:0;s:27:\"\0Clases\\Privilegio\0marCrear\";b:0;s:31:\"\0Clases\\Privilegio\0marModificar\";b:0;s:30:\"\0Clases\\Privilegio\0marEliminar\";b:0;s:31:\"\0Clases\\Privilegio\0marConsultar\";b:0;s:26:\"\0Clases\\Privilegio\0marAuth\";b:0;s:27:\"\0Clases\\Privilegio\0bioCrear\";b:0;s:30:\"\0Clases\\Privilegio\0bioEliminar\";b:0;s:27:\"\0Clases\\Privilegio\0rolCrear\";b:0;s:31:\"\0Clases\\Privilegio\0rolModificar\";b:0;s:30:\"\0Clases\\Privilegio\0rolEliminar\";b:0;s:35:\"\0Clases\\Privilegio\0ajustesModificar\";b:0;}'),
+(1, 'Conserje', 'Acceso a la aplicación de reconocimiento facial', '2025-03-20 11:40:27', 'Admon', NULL, NULL, 'O:17:\"Clases\\Privilegio\":20:{s:27:\"\0Clases\\Privilegio\0empCrear\";b:0;s:31:\"\0Clases\\Privilegio\0empModificar\";b:0;s:26:\"\0Clases\\Privilegio\0empBaja\";b:0;s:27:\"\0Clases\\Privilegio\0usrCrear\";b:0;s:31:\"\0Clases\\Privilegio\0usrModificar\";b:0;s:26:\"\0Clases\\Privilegio\0usrBaja\";b:0;s:33:\"\0Clases\\Privilegio\0usrGenerarPass\";b:0;s:33:\"\0Clases\\Privilegio\0marCrearPropio\";b:0;s:37:\"\0Clases\\Privilegio\0marConsultarPropio\";b:0;s:27:\"\0Clases\\Privilegio\0marCrear\";b:0;s:31:\"\0Clases\\Privilegio\0marModificar\";b:0;s:30:\"\0Clases\\Privilegio\0marEliminar\";b:0;s:31:\"\0Clases\\Privilegio\0marConsultar\";b:0;s:26:\"\0Clases\\Privilegio\0marAuth\";b:0;s:27:\"\0Clases\\Privilegio\0bioCrear\";b:0;s:30:\"\0Clases\\Privilegio\0bioEliminar\";b:0;s:27:\"\0Clases\\Privilegio\0rolCrear\";b:0;s:31:\"\0Clases\\Privilegio\0rolModificar\";b:0;s:30:\"\0Clases\\Privilegio\0rolEliminar\";b:0;s:35:\"\0Clases\\Privilegio\0ajustesModificar\";b:0;}'),
 (2, 'Admin', 'Acceso al portal de administración', '2025-03-20 11:48:41', 'Admon', NULL, NULL, 'O:17:\"Clases\\Privilegio\":20:{s:27:\"\0Clases\\Privilegio\0empCrear\";b:0;s:31:\"\0Clases\\Privilegio\0empModificar\";b:0;s:26:\"\0Clases\\Privilegio\0empBaja\";b:0;s:27:\"\0Clases\\Privilegio\0usrCrear\";b:0;s:31:\"\0Clases\\Privilegio\0usrModificar\";b:0;s:26:\"\0Clases\\Privilegio\0usrBaja\";b:0;s:33:\"\0Clases\\Privilegio\0usrGenerarPass\";b:0;s:33:\"\0Clases\\Privilegio\0marCrearPropio\";b:0;s:37:\"\0Clases\\Privilegio\0marConsultarPropio\";b:0;s:27:\"\0Clases\\Privilegio\0marCrear\";b:0;s:31:\"\0Clases\\Privilegio\0marModificar\";b:0;s:30:\"\0Clases\\Privilegio\0marEliminar\";b:0;s:31:\"\0Clases\\Privilegio\0marConsultar\";b:0;s:26:\"\0Clases\\Privilegio\0marAuth\";b:0;s:27:\"\0Clases\\Privilegio\0bioCrear\";b:0;s:30:\"\0Clases\\Privilegio\0bioEliminar\";b:0;s:27:\"\0Clases\\Privilegio\0rolCrear\";b:0;s:31:\"\0Clases\\Privilegio\0rolModificar\";b:0;s:30:\"\0Clases\\Privilegio\0rolEliminar\";b:0;s:35:\"\0Clases\\Privilegio\0ajustesModificar\";b:0;}'),
 (3, 'Empleado', 'Acceso al portal de empleado', '2025-03-20 11:48:41', 'Admon', NULL, NULL, 'O:17:\"Clases\\Privilegio\":20:{s:27:\"\0Clases\\Privilegio\0empCrear\";b:0;s:31:\"\0Clases\\Privilegio\0empModificar\";b:0;s:26:\"\0Clases\\Privilegio\0empBaja\";b:0;s:27:\"\0Clases\\Privilegio\0usrCrear\";b:0;s:31:\"\0Clases\\Privilegio\0usrModificar\";b:0;s:26:\"\0Clases\\Privilegio\0usrBaja\";b:0;s:33:\"\0Clases\\Privilegio\0usrGenerarPass\";b:0;s:33:\"\0Clases\\Privilegio\0marCrearPropio\";b:0;s:37:\"\0Clases\\Privilegio\0marConsultarPropio\";b:0;s:27:\"\0Clases\\Privilegio\0marCrear\";b:0;s:31:\"\0Clases\\Privilegio\0marModificar\";b:0;s:30:\"\0Clases\\Privilegio\0marEliminar\";b:0;s:31:\"\0Clases\\Privilegio\0marConsultar\";b:0;s:26:\"\0Clases\\Privilegio\0marAuth\";b:0;s:27:\"\0Clases\\Privilegio\0bioCrear\";b:0;s:30:\"\0Clases\\Privilegio\0bioEliminar\";b:0;s:27:\"\0Clases\\Privilegio\0rolCrear\";b:0;s:31:\"\0Clases\\Privilegio\0rolModificar\";b:0;s:30:\"\0Clases\\Privilegio\0rolEliminar\";b:0;s:35:\"\0Clases\\Privilegio\0ajustesModificar\";b:0;}');
 
@@ -331,8 +333,8 @@ CREATE TABLE `tusuariorol` (
 
 INSERT INTO `tusuariorol` (`COD_USUARIO`, `COD_ROL`) VALUES
 (1, 1),
-(2, 3),
-(2, 2);
+(2, 2),
+(2, 3);
 
 --
 -- Índices para tablas volcadas
@@ -409,7 +411,7 @@ ALTER TABLE `tusuario`
 -- Indices de la tabla `tusuariorol`
 --
 ALTER TABLE `tusuariorol`
-  ADD KEY `COD_USUARIO` (`COD_USUARIO`),
+  ADD UNIQUE KEY `uk_usuario_rol` (`COD_USUARIO`,`COD_ROL`),
   ADD KEY `COD_ROL` (`COD_ROL`);
 
 --
@@ -432,7 +434,7 @@ ALTER TABLE `tbio`
 -- AUTO_INCREMENT de la tabla `templeado`
 --
 ALTER TABLE `templeado`
-  MODIFY `COD_EMPLEADO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `COD_EMPLEADO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `tincidencia`
@@ -444,13 +446,13 @@ ALTER TABLE `tincidencia`
 -- AUTO_INCREMENT de la tabla `tmarcaje`
 --
 ALTER TABLE `tmarcaje`
-  MODIFY `COD_MARCAJE` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `COD_MARCAJE` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT de la tabla `trol`
 --
 ALTER TABLE `trol`
-  MODIFY `COD_ROL` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `COD_ROL` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `ttbio`

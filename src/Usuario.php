@@ -49,6 +49,7 @@ class Usuario{
                 $this->nom_usuario_alta = $usuario['NOM_USUARIO_ALTA'];
                 $this->fec_baja = $usuario['FEC_BAJA'] ? new DateTime($usuario['FEC_BAJA']) : null;
                 $this->nom_usuario_baja = $usuario['NOM_USUARIO_BAJA'];
+                $this->cargarRol();
             }
         } catch (PDOException $e) {
             //muestro error
@@ -264,28 +265,30 @@ public function getRoles():?array{
 public function setRol(int $rol){
     try{
         $conexion=new Conexion();
-            $sql="INSERT INTO Tusuariorol (COD_ROL,COD_USUARIO) VALUES (:rol,:usuario)";
-            $stmt = $conexion->conexion->prepare($sql);
-            $stmt->bindValue('rol',$rol,PDO::PARAM_INT);
-            $stmt->bindValue('usuario',$this->cod_usuario,PDO::PARAM_INT);
-            $stmt->execute();
+        $usuario = $this->getCodUsuario();
+        $sql="INSERT INTO tusuariorol (COD_ROL,COD_USUARIO) VALUES (:rol,:usuario)";
+        $stmt = $conexion->conexion->prepare($sql);
+        $stmt->bindValue('rol',$rol,PDO::PARAM_INT);
+        $stmt->bindValue('usuario',$usuario,PDO::PARAM_INT);
+        $stmt->execute();
     }catch(PDOException $e){
-        echo "Error al asignar Rol: " . $e->getMessage();
-            return;
+        error_log("Error al asignar Rol - " . date('Y-m-d H:i:s') . ": ".$rol." ".$usuario." ". $e->getMessage());
+        throw new Exception("Error al asignar el rol. Detalles: ".$rol." ".$usuario." ". $e->getMessage());
     }
 }
 
 public function unsetRol(int $rol){
     try{
         $conexion=new Conexion();
-            $sql="DELETE FROM Tusuariorol WHERE COD_ROL=:rol AND COD_USUARIO=:usuario)";
-            $stmt = $conexion->conexion->prepare($sql);
-            $stmt->bindValue('rol',$rol,PDO::PARAM_INT);
-            $stmt->bindValue('usuario',$this->cod_usuario,PDO::PARAM_INT);
-            $stmt->execute();
+        $usuario = $this->getCodUsuario();
+        $sql="DELETE FROM tusuariorol WHERE COD_ROL=:rol AND COD_USUARIO=:usuario";
+        $stmt = $conexion->conexion->prepare($sql);
+        $stmt->bindValue('rol',$rol,PDO::PARAM_INT);
+        $stmt->bindValue('usuario',$usuario,PDO::PARAM_INT);
+        $stmt->execute();
     }catch(PDOException $e){
-        echo "Error al quitar rol: " . $e->getMessage();
-            return;
+        error_log("Error al quitar Rol - " . date('Y-m-d H:i:s') . ": ".$rol." ".$usuario." ". $e->getMessage());
+        throw new Exception("Error al quitar el rol. Detalles: ".$rol." ".$usuario." ". $e->getMessage());
     }
 }
 

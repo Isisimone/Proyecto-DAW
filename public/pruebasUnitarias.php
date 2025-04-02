@@ -33,7 +33,10 @@ function pruebaAjuste(bool $crear, bool $modificar, bool $mostrar, ?int $id){
         $ajuste->crear('MaxLoginRq','3');
     }
     if ($modificar){
-        $ajuste->actualizarAjuste(1, 'umbral', '0.8');
+        //$ajuste->actualizarAjuste(1, 'umbral', '0.8');
+        $ajuste->cargar($id);
+        $ajuste->setValor('4');
+        $ajuste->grabar();
     }
     if ($mostrar){
         $ajustes = $ajuste->obtenerAjustes($id);
@@ -137,8 +140,16 @@ function pruebaRol(bool $crear, bool $modificar, bool $mostrar, ?int $id){
         $rol->grabar();
     }
     if ($mostrar){
-        $roles = $rol->cargarRoles();
-        var_dump($roles);
+        $rol->cargarRol(1);
+        $privis=$rol->getPermisos();
+        //var_dump($privis);
+        $privilegios = $privis->getPrivilegios();
+        //var_dump($privilegios);
+        $privilegios['empCrear'] = true;
+        $privis->setPrivilegios($privilegios);
+        var_dump($privis->getPrivilegios());
+        $rol->setPermisos($privis);
+        //$rol->grabar();
     }
 }
 function pruebaTipoBio(bool $crear, bool $modificar, bool $mostrar, ?int $id){
@@ -196,29 +207,45 @@ function pruebaUsuario(bool $crear, bool $modificar, bool $mostrar, ?int $id){
         $usuario->grabar();
     }
     if ($modificar){
-        $usuario->cargarUsuario(1);
-        $usuario->setDesContrasena('Prueba');
-        $usuario->grabar();
+        $usuario->cargarUsuario(cod_usuario: $id);
+        /*$usuario->setDesContrasena('Prueba');
+        $usuario->grabar();*/
+        //$usuario->setRol(2);
+        //var_dump($usuario->getRoles());
+        //$usuario->unsetRol(2);
+        //var_dump($usuario->getRoles());
     }
     if ($mostrar){
-        /*$usuario->cargarUsuario(1);
-        $resultado=$usuario->compararContrasena('Prueba');
-        if ($resultado){
+        $usuario->cargarUsuario($id);
+        //$resultado=$usuario->compararContrasena('Prueba');
+        //if ($resultado){
             var_dump($usuario);
-        } else {
-            echo "Error de login";
-        }*/
-        $usuario->iniciarSesion('Admon','Prueba');
-        var_dump($_SESSION);
+        //} else {
+        //    echo "Error de login";
+        //}
+        //$usuario->iniciarSesion('Admon','Prueba');
+        //var_dump($_SESSION);*/
     }
 }
 
 
-pruebaAjuste(false,false,false,3);
+pruebaAjuste(false,false,false,1);
 pruebaDatosBio(false,false,false,1);
 pruebaEmpleado(false,false,false,5);
 pruebaMarcaje(false,false,false,2);
 pruebaRol(false,false,false,3);
 pruebaTipoBio(false,false,false,1);
-pruebaTransaccion(false,false,true,6); //Sin pasar
-pruebaUsuario(false,false,false,1);
+pruebaTransaccion(false,false,false,6); //Sin pasar
+pruebaUsuario(false,false,false,2);
+
+
+$codusuario = 2;//$_SESSION['COD_USUARIO'];
+                    $user = new Usuario();
+                    $user->cargarUsuario($codusuario);
+                    $usuario = $user->getNomLogin();
+                    $empleado = new Empleado();
+                    $empleado->cargarDatosEmpleado(intval(2));
+                    $fechaBaja = new DateTime();
+                    $empleado->setFecBaja($fechaBaja);
+                    $empleado->setNomUsuarioBaja($usuario);
+                    $empleado->grabar();

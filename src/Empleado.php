@@ -32,6 +32,17 @@ class Empleado {
         $this->nom_Usuario_Baja = null;
         $this->foto_Empleado="";
         $this->maxHorasDia=0;
+        $this->cod_Usuario=0;
+        $this->nombre="";
+        $this->apellido1="";
+        $this->apellido2="";
+        $this->contacto="";
+        $this->fec_Alta = new DateTime();
+        $this->nom_Usuario_Alta = "";
+        $this->horario = "";
+        $this->flex = false;
+        $this->bolsa = 0;
+
     }
 
     
@@ -138,7 +149,7 @@ class Empleado {
             //Si no hay cod_empleado realiza un INSERT
             if ($this->cod_Empleado==0 || is_null($this->cod_Empleado)){
                 $sql = "INSERT INTO templeado (COD_USUARIO, NOM_EMPLEADO, APE1_EMPLEADO, APE2_EMPLEADO, CONTACTO_EMPLEADO, FEC_ALTA, NOM_USUARIO_ALTA, FEC_BAJA, NOM_USUARIO_BAJA, FOTO, HORARIO, FLEX, MAX_HORA_DIA, BOLSA_HORAS) 
-                    VALUES (:cod_Usuario, :nombre, :apellido1, :apellido2, :contacto, :fec_Alta, :nom_Usuario_Alta, :fec_Baja, :nom_Usuario_Baja, :horario, :flex, :max_dia, :bolsa)";
+                    VALUES (:cod_Usuario, :nombre, :apellido1, :apellido2, :contacto, :fec_Alta, :nom_Usuario_Alta, :fec_Baja, :nom_Usuario_Baja, :foto, :horario, :flex, :max_dia, :bolsa)";
                 $stmt = $conexion->conexion->prepare($sql);
             //En caso contrario realiza un UPDATE
             } else{
@@ -163,7 +174,7 @@ class Empleado {
             $stmt->bindValue(':horario', $this->horario, PDO::PARAM_STR);
             $stmt->bindValue(':flex', $this->flex, PDO::PARAM_BOOL);
             $stmt->bindValue(':max_dia', $this->maxHorasDia, PDO::PARAM_INT);
-            $stmt->bindValue(':bolsa', $this->bolsa);
+            $stmt->bindValue(':bolsa', $this->bolsa, PDO::PARAM_INT);
 
             //Devuelve directamente el resultado como true o false
             return $stmt->execute();
@@ -349,6 +360,14 @@ class Empleado {
     
         public function setNomUsuarioAlta(string $nom_Usuario_Alta): void {
             $this->nom_Usuario_Alta = $nom_Usuario_Alta;
+        }
+
+        public function setFecBaja(DateTime $fec_Baja): void {
+            $this->fec_Baja = $fec_Baja;
+        }
+    
+        public function setNomUsuarioBaja(string $nom_Usuario_Baja): void {
+            $this->nom_Usuario_Baja = $nom_Usuario_Baja;
         }
 
         public function setFoto(string $foto):void {
