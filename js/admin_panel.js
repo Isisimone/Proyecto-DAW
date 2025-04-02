@@ -456,7 +456,86 @@ document.addEventListener('click', function(e) {
         }
     });
 
-    //CLICK en guardar empleado
+    //CLICK en nuevo usuario
+    document.getElementById('nuevoUsuario').addEventListener('click', async function() {
+        
+        document.getElementById('seleccionPanelUsuario').value=0;
+        const formulario = document.getElementById("formularioUsuario");
+        const data = {
+            accion: 'mostrar_nuevo_usuario'
+        };
+
+        // Limpiar formulario
+        formulario.innerHTML = "";
+        // Cargar el HTML
+        await cargarHTML(data)
+        .then(html =>{
+            formulario.innerHTML = html;
+        });  
+    
+    });
+
+    //CLICK en grabar y baja usuario
+    document.getElementById('formularioUsuario').addEventListener('click', async function(e) {
+        if (e.target && e.target.id === 'guardarUsuario') {
+            const cod_usuario = document.getElementById('codigoUsuarioUsuario').value>""? Number(document.getElementById('codigoUsuarioUsuario').value) : 0;
+            const login = document.getElementById('loginUsuario').value;
+            const email = document.getElementById('emailUsuario').value;
+            
+            const datos = {
+                accion: 'graba_usuario',
+                cod_usuario: cod_usuario,
+                login: login,
+                email: email
+            };
+            
+            await crud(datos);
+            if (cod_empleado==0){location.reload();
+                const event = new Event('click');
+                document.getElementById('panelUsuario').dispatchEvent(event);
+            }
+        }
+
+        if (e.target && e.target.id === 'bajaUsuario') {
+            const cod_empleado = document.getElementById('seleccionPanelUsuario').value>""? Number(document.getElementById('seleccionPanelUsuario').value) : 0;
+            const respuesta = await mensajeConfirmacion("¿Estás seguro de dar de baja este usuario?");
+            if (respuesta) {
+                const datos = {
+                    accion: 'baja_usuario',
+                    cod_empleado: cod_empleado
+                };
+                await crud(datos);
+                const event = new Event('click');
+                document.getElementById('panelUsuarios').dispatchEvent(event);
+            } else {
+                
+            }
+            
+        }
+
+        
+    });
+
+    //CLICK en nuevo empleado
+    document.getElementById('nuevoEmpleado').addEventListener('click', async function() {
+        
+            document.getElementById('seleccionPanelEmpleado').value=0;
+            const formulario = document.getElementById("formularioEmpleado");
+            const data = {
+                accion: 'mostrar_nuevo_empleado'
+            };
+    
+            // Limpiar formulario
+            formulario.innerHTML = "";
+            // Cargar el HTML
+            await cargarHTML(data)
+            .then(html =>{
+                formulario.innerHTML = html;
+            });  
+        
+    });
+
+    //CLICK en grabar y baja empleado
     document.getElementById('formularioEmpleado').addEventListener('click', async function(e) {
         if (e.target && e.target.id === 'guardarEmpleado') {
             const cod_empleado = document.getElementById('seleccionPanelEmpleado').value>""? Number(document.getElementById('seleccionPanelEmpleado').value) : 0;
@@ -483,7 +562,10 @@ document.addEventListener('click', function(e) {
             };
             
             await crud(datos);
-            if (cod_empleado==0){location.reload();}
+            if (cod_empleado==0){location.reload();
+                const event = new Event('click');
+                document.getElementById('panelEmpleados').dispatchEvent(event);
+            }
         }
 
         if (e.target && e.target.id === 'bajaEmpleado') {
@@ -496,29 +578,14 @@ document.addEventListener('click', function(e) {
                 };
                 await crud(datos);
                 const event = new Event('click');
-                document.getElementById('panelRoles').dispatchEvent(event);
+                document.getElementById('panelEmpleados').dispatchEvent(event);
             } else {
                 
             }
             
         }
 
-        if (e.target && e.target.id === 'nuevoEmpleado') {
-            const formulario = document.getElementById("formularioEmpleado");
-            const valorSeleccionado = this.value; // Obtiene el valor del select
-            const data = {
-                accion: 'mostrar_nuevo_empleado',
-                cod_rol: valorSeleccionado 
-            };
-    
-            // Limpiar formulario
-            formulario.innerHTML = "";
-            // Cargar el HTML
-            await cargarHTML(data)
-            .then(html =>{
-                formulario.innerHTML = html;
-            });  
-        }
+        
     });
 });
 

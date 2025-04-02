@@ -235,6 +235,58 @@ $nombrePrivilegios=[
                 }
             }
 
+            if ($datos['accion'] == 'graba_usuario') {
+                $usuario = new Usuario();
+                if ($datos['cod_usuario'] > 0) {
+                    $usuario->cargarUsuario($datos['cod_usuario']);
+                } else {
+                    $usuario->setFecAlta(new DateTime());
+                    $usuario_temp = new Usuario();
+                    $usuario_temp->cargarUsuario($usuarioBaja);
+                    $usuario->setNomUsuarioAlta($usuario_temp->getNomLogin());
+                }
+                $usuario->setNomLogin($datos['login']);
+                $usuario->setDesCorreo($datos['email']);
+                $usuario->setDesContrasena($datos['contrasena']);
+                $usuario->grabar();
+                echo json_encode(['success' => true]);
+            }
+
+            if ($datos['accion'] == 'baja_usuario') {
+                $usuario = new Usuario();
+                $usuario->cargarUsuario($datos['cod_usuario']);
+                $fechaBaja = new DateTime();
+                $usuario->setFecBaja($fechaBaja);
+                $usuarioBaja=$_SESSION['COD_USUARIO'];
+                $usuario_temp = new Usuario();
+                $usuario_temp->cargarUsuario($usuarioBaja);
+                $usuario->setNomUsuarioBaja($usuario_temp->getNomLogin());
+                $usuario->grabar();
+                echo json_encode(['success' => true]);
+            }
+
+            if ($datos['accion'] == 'pass_usuario') {
+                $usuario = new Usuario();
+                $usuario->cargarUsuario($datos['cod_usuario']);
+                $caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-=+;:,.?';
+                $longitud = 8;
+                $contrasena = '';
+                for ($i = 0; $i < $longitud; $i++) {
+                    $indice = rand(0, strlen($caracteres) - 1);
+                    $contrasena .= $caracteres[$indice];
+                }
+                $usuario->setDesContrasena($contrasena);
+                $usuario->grabar();
+                enviarCorreoBasico($usuario->getDesCorreo(), 'Nueva contraseña', 'Su nueva contraseña es: '.$contrasena);
+                echo json_encode(['success' => true]);
+            }
+
+            if ($datos['accion'] == 'graba_bio') {
+            }
+
+            if ($datos['accion'] == 'muestra_bio_usuario') {
+            }
+
             if ($datos['accion']=='mostrar_empleado'){
                 $empleado = new Empleado();
                 $empleado->cargarDatosEmpleado($datos['cod_empleado']);
@@ -242,7 +294,8 @@ $nombrePrivilegios=[
                 $fechaAlta = $fecha ? $fecha->format('Y-m-d') : '';
                 $fecha = $empleado->getFecBaja();
                 $fechaBaja = $fecha ? $fecha->format('Y-m-d') : '';
-                
+                $usuario=new Usuario();
+                $usuarios=$usuario->obtenerUsuarios();
                 $html= '<div class="formulario-grid">
                             <div class="fila-grid">
                                 <div style="grid-column: span 2;">
@@ -273,13 +326,34 @@ $nombrePrivilegios=[
                                 </div>
                             </div>
                             <div class="fila-grid fila-completa">
-                                <div style="grid-column: span 10;">
+                                <div style="grid-column: span 8;">
                                     <label for="contactoEmpleado">Contacto</label>
                                     <input type="text" id="contactoEmpleado" value="'.$empleado->getContacto().'">
                                 </div>
-                                <div style="grid-column: span 2;">
+                                <div style="grid-column: span 4;">
                                     <label for="usuarioEmpleado">Usuario</label>
-                                    <input type="text" id="usuarioEmpleado" value="'.$empleado->getCodUsuario().'">
+                                    <select name="usuarioEmpleado" id="usuarioEmpleado" class="form-select" required>
+                                    ';
+                                    if (!empty($usuarios)){
+                                        foreach ($usuarios as $usuario){
+                                        if ($empleado->getCodUsuario() == $usuario['COD_USUARIO']){
+                                            $selected='selected';
+                                        } else {
+                                            $selected='';
+                                        }
+                                        $codigo = htmlspecialchars($usuario['COD_USUARIO'] ?? 0);
+                                        $nombreUsuario = $usuario['NOM_LOGIN'];
+                                        $html=$html.'    
+                                        <option value="'.$codigo.'" '.$selected.'>
+                                            '.$nombreUsuario.'
+                                        </option>';
+                                        }
+                                        }else{
+                                    $html=$html.'<option value="" disabled>No hay usuarios disponibles</option>';
+                                }
+                            
+                                $html=$html.'
+                                </select>
                                 </div>
                             </div>
                             <div class="fila-grid">
@@ -305,71 +379,107 @@ $nombrePrivilegios=[
                     header('Content-Type: text/html');
                     echo $html;
                     exit;
-            } 
+            }
 
             if ($datos['accion']=='mostrar_nuevo_empleado'){
-                $empleado = new Empleado();
-                $empleado->cargarDatosEmpleado($datos['cod_empleado']);
-                $fecha = $empleado->getFecAlta();
-                $fechaAlta = $fecha ? $fecha->format('Y-m-d') : '';
-                $fecha = $empleado->getFecBaja();
-                $fechaBaja = $fecha ? $fecha->format('Y-m-d') : '';
-                
+                $usuario=new Usuario();
+                $usuarios=$usuario->obtenerUsuarios();
                 $html= '<div class="formulario-grid">
                             <div class="fila-grid">
                                 <div style="grid-column: span 2;">
-                                    <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo='.$empleado->getFoto().'" width="100" id="fotoEmpleado" data-foto="'.$empleado->getFoto().'" height="100" class="rounded-circle me-2">
+                                    <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo=emp_base.jpg" width="100" id="fotoEmpleado" data-foto="emp_base.jpg" height="100" class="rounded-circle me-2">
                                 </div>
                                 <div style="grid-column: span 5;">
                                     <label for="apellido1Empleado">1er apellido</label>
-                                    <input type="text" id="apellido1Empleado" value="'.$empleado->getApellido1().'">
+                                    <input type="text" id="apellido1Empleado" value="">
                                 </div>
                                 <div style="grid-column: span 5;">
                                     <label for="apellido2Empleado">2º apellido</label>
-                                    <input type="text" id="apellido2Empleado" value="'.$empleado->getApellido2().'">
+                                    <input type="text" id="apellido2Empleado" value="">
                                 </div>
                             </div>
                             <div class="fila-grid">
                                 <div style="grid-column: span 6;">
                                     <label for="nombreEmpleado">Nombre</label>
-                                    <input type="text" id="nombreEmpleado" value="'.$empleado->getNombre().'">
-                                    <input type="text" id="codEmpleado" value="'.$empleado->getCodEmpleado().'" hidden>
+                                    <input type="text" id="nombreEmpleado" value="">
+                                    <input type="text" id="codEmpleado" value="0" hidden>
                                 </div>
                                 <div style="grid-column: span 3;">
                                     <label for="fechaAltaEmpleado">Fecha Alta</label>
-                                    <input type="date" id="fechaAltaEmpleado" value="'.$fechaAlta.'" readonly>
+                                    <input type="date" id="fechaAltaEmpleado" value="" readonly>
                                 </div> 
                                 <div style="grid-column: span 3;">
                                     <label for="fechaBajaEmpleado">Fecha Baja</label>
-                                    <input type="date" id="fechaBajaEmpleado" value="'.$fechaBaja.'" readonly>
+                                    <input type="date" id="fechaBajaEmpleado" value="" readonly>
                                 </div>
                             </div>
                             <div class="fila-grid fila-completa">
-                                <div style="grid-column: span 10;">
+                                <div style="grid-column: span 8;">
                                     <label for="contactoEmpleado">Contacto</label>
-                                    <input type="text" id="contactoEmpleado" value="'.$empleado->getContacto().'">
+                                    <input type="text" id="contactoEmpleado" value="">
                                 </div>
-                                <div style="grid-column: span 2;">
+                                <div style="grid-column: span 4;">
                                     <label for="usuarioEmpleado">Usuario</label>
-                                    <input type="text" id="usuarioEmpleado" value="'.$empleado->getCodUsuario().'">
-                                </div>
+                                    <select name="usuarioEmpleado" id="usuarioEmpleado" class="form-select" required>
+                                    ';
+                                    if (!empty($usuarios)){
+                                        foreach ($usuarios as $usuario){
+                                        $codigo = htmlspecialchars($usuario['COD_USUARIO'] ?? 0);
+                                        $nombreUsuario = $usuario['NOM_LOGIN'];
+                                        $html=$html.'    
+                                        <option value="'.$codigo.'">
+                                            '.$nombreUsuario.'
+                                        </option>';
+                                        }
+                                        }else{
+                                    $html=$html.'<option value="" disabled>No hay usuarios disponibles</option>';
+                                }
+                            
+                                $html=$html.'
+                                </select>
+                            </div>
                             </div>
                             <div class="fila-grid">
                                 <div style="grid-column: span 4;">
                                     <label for="horarioEmpleado">Horario</label>
-                                    <input type="text" id="horarioEmpleado" value="'.$empleado->getHorario().'">
+                                    <input type="text" id="horarioEmpleado" value="">
                                 </div>
                                 <div style="grid-column: span 4;">
                                     <label for="horasEmpleado">Máx.horas</label>
-                                    <input type="number" id="horasEmpleado" value="'.$empleado->getMaxHorasDia().'">
+                                    <input type="number" id="horasEmpleado" value="">
                                 </div>
                                 <div style="grid-column: span 4;">
                                     <label for="bolsaEmpleado">Bolsa de horas</label>
-                                    <input type="text" id="bolsaEmpleado" value="'.$empleado->getBolsa().'">
+                                    <input type="text" id="bolsaEmpleado" value="">
                                 </div>
                             </div>
                             <div class="fila-botones">
                                 <button class="btn btn-primary" id="guardarEmpleado">Guardar cambios</button>
+                            </div>
+                        </div>';
+                    header('Content-Type: text/html');
+                    echo $html;
+                    exit;
+            }
+
+            if ($datos['accion']=='mostrar_nuevo_usuario'){
+                $html= '<div >
+                            <div >
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Código Usuario</label>
+                                        <input type="text" id="codigoUsuarioUsuario" class="form-control" value="0" readonly>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Login</label>
+                                        <input type="text" id="loginUsuario" class="form-control" value="">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Correo</label>
+                                        <input type="email" id="emailUsuario" class="form-control" value="">
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" id="guardarUsuario">Guardar cambios</button>
                             </div>
                         </div>';
                     header('Content-Type: text/html');
@@ -385,20 +495,21 @@ $nombrePrivilegios=[
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <label class="form-label">Código Usuario</label>
-                                        <input type="text" class="form-control" value="'.$usuario->getCodUsuario().'" readonly>
+                                        <input type="text" id="codigoUsuarioUsuario" class="form-control" value="'.$usuario->getCodUsuario().'" readonly>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Login</label>
-                                        <input type="text" class="form-control" value="'.$usuario->getNomLogin().'">
+                                        <input type="text" id="loginUsuario" class="form-control" value="'.$usuario->getNomLogin().'">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Correo</label>
-                                        <input type="email" class="form-control" value="'.$usuario->getDesCorreo().'">
+                                        <input type="email" id="emailUsuario" class="form-control" value="'.$usuario->getDesCorreo().'">
                                     </div>
                                 </div>
                                 <button class="btn btn-primary" id="guardarUsuario">Guardar cambios</button>
                                 <button class="btn btn-danger" id="bajaUsuario">Dar de baja</button>
                                 <button class="btn btn-success" id="bioUsuario">Datos Biométricos</button>
+                                <button class="btn btn-secondary" id="passUsuario">Generar Password</button>
                             </div>
                         </div>';
                     header('Content-Type: text/html');
@@ -712,4 +823,17 @@ $nombrePrivilegios=[
             'success' => false,
             'error' => $e->getMessage()
     ]);
+}
+
+function enviarCorreoBasico($destinatario, $asunto, $mensaje) {
+    $headers = "From: webmaster@recfacial.com\r\n";
+    $headers .= "Reply-To: no-reply@recfacial.com\r\n";
+    $headers .= "MIME-Version: 1.0\r\n";
+    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+    
+    if (mail($destinatario, $asunto, $mensaje, $headers)) {
+        return true;
+    } else {
+        return "Error al enviar el correo";
+    }
 }
