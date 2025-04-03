@@ -1,4 +1,5 @@
 <?php
+header("Cache-Control: no-cache");
 date_default_timezone_set('Europe/Madrid');
 //Carga la lógica de la página
 require './logica/empleado_datos.php';
@@ -45,8 +46,9 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                     <h1>Bienvenido a tu portal de empelado</h1>
                 </div>
                 <div id="perfil" style="display:none;">
-                    <h1 id="employee-name"><?php echo htmlspecialchars($nombreCompleto); ?></h1> 
-                    <img class="foto" src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?php echo htmlspecialchars($fotoEmpleado); ?>" alt="Foto del empleado">
+                    <h1 id="employee-name" data-id="<?php echo $empleado->getCodEmpleado();?>"><?php echo htmlspecialchars($nombreCompleto); ?></h1> 
+                    <img id="foto_empleado" class="foto" src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?php echo htmlspecialchars($fotoEmpleado); ?>" alt="Foto del empleado">
+                    <input type='file' id='fileinput' accept='image/jpeg' style='display:none;'>
                     <h4><?php echo $empleado->getContacto(); ?></h4>
                     <h4><?php echo "Horario: ".$empleado->getHorario(); ?></h4>
                     <div class="incidencias-container">

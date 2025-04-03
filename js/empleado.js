@@ -147,6 +147,51 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('registro-id-datos').innerHTML = html;
         bloqueMostrarDatos.style.display = 'block';
     });
+
+    document.getElementById('foto_empleado').addEventListener('click', () => {
+        document.getElementById('fileinput').click();
+    });
+
+    document.getElementById('fileinput').addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const maxSize = 2 * 1024 * 1024;
+            if (file.type !== 'image/jpeg') {
+                alert('Por favor, selecciona una imagen en formato JPEG.');
+                event.target.value = '';
+            } else if (file.size > maxSize) {
+                alert('El tamaño de la imagen no debe exceder 2 MB.');
+                event.target.value = '';
+            } else {
+                // Crear FormData y añadir la imagen
+                const formData = new FormData();
+                const cod_empleado = document.getElementById('employee-name').getAttribute('data-id');
+                formData.append('imagen', file); 
+                formData.append('cod_empleado', cod_empleado);
+                
+                // Enviar la imagen al servidor
+                fetch('logica/subir_foto.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la subida');
+                    }
+                    return response.text(); // o response.json() si tu PHP devuelve JSON
+                })
+                .then(data => {
+                    console.log('Imagen subida con éxito:', data);
+                        location.reload();                    
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Hubo un error al subir la imagen');
+                });
+            }
+        }
+    });
+
 });
 
 // Configuración de la gráfica
@@ -248,29 +293,6 @@ function openTab(evt, tabName) {
     evt.currentTarget.classList.add("active");
 }
 
-// Función para actualizar dinámicamente el contenido
-/*function updateContent(section) {
-    const dynamicContent = document.getElementById('dynamicContent');
-
-    // Selección de contenido según la sección
-    switch (section) {
-        case 'perfil':
-            renderPerfilContent();
-            break;
-        case 'actividades':
-            renderActividadesContent();
-            break;
-        case 'notificaciones':
-            renderUltimosContent();
-            break;
-        case 'filtrar':
-            renderFiltrarContent();
-            break;
-        default:
-            dynamicContent.innerHTML = `<h2>Sección no encontrada</h2>`;
-    }
-}
-*/
 // Función para renderizar contenido de la sección
 function updateContent(seccion) {
     cerrarSecciones();
