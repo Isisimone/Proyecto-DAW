@@ -3,7 +3,7 @@ session_start();
 date_default_timezone_set('Europe/Madrid');
 
 // Carga librerías de Composer
-require '../vendor/autoload.php';
+require($_SERVER['DOCUMENT_ROOT'] . '/Proyecto-DAW/vendor/autoload.php');
 
 // Clases a usar
 use Clases\Incidencia;

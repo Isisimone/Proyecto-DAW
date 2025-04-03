@@ -1,7 +1,7 @@
 <?php
 // filepath: c:\xampp\htdocs\Proyecto-DAW\public\exportar_registros.php
-require '../../vendor/autoload.php';
-require 'empleado_datos.php'; // Asegúrate de que `$datosMarcajes` esté disponible
+require($_SERVER['DOCUMENT_ROOT'] . '/Proyecto-DAW/vendor/autoload.php');
+require($_SERVER['DOCUMENT_ROOT'] . '/Proyecto-DAW/public/logica/empleado_datos.php');
 
 // Verifica el tipo de exportación solicitado
 $tipo = $_GET['tipo'] ?? 'csv';

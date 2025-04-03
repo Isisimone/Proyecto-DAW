@@ -262,9 +262,9 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                     <div class="cabeceraRegistros">
                         <h3>Registros detallados</h3>
                         <div>
-                            <a href="exportar_registros.php?tipo=csv" class="export-button">CSV</a>
-                            <a href="exportar_registros.php?tipo=excel" class="export-button">Excel</a>
-                            <a href="exportar_registros.php?tipo=pdf" class="export-button">PDF</a>
+                            <a href="./logica/exportar_registros.php?tipo=csv" class="export-button">CSV</a>
+                            <a href="./logica/exportar_registros.php?tipo=excel" class="export-button">Excel</a>
+                            <a href="./logica/exportar_registros.php?tipo=pdf" class="export-button">PDF</a>
                         </div>
                     </div>
                     <div class="registro">

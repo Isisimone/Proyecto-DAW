@@ -249,7 +249,7 @@ function openTab(evt, tabName) {
 }
 
 // Función para actualizar dinámicamente el contenido
-function updateContent(section) {
+/*function updateContent(section) {
     const dynamicContent = document.getElementById('dynamicContent');
 
     // Selección de contenido según la sección
@@ -270,7 +270,7 @@ function updateContent(section) {
             dynamicContent.innerHTML = `<h2>Sección no encontrada</h2>`;
     }
 }
-
+*/
 // Función para renderizar contenido de la sección
 function updateContent(seccion) {
     cerrarSecciones();
