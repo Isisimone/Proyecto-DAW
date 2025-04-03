@@ -1,21 +1,9 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+
 h1 {
     text-align: center;
     margin-top: 20px;
 }
-.container {
-    display: flex;
-    justify-content: space-between;
-    width: 80%;
-    margin-top: 20px;
-}
+
 .section {
     flex: 1;
     text-align: center;
@@ -40,16 +28,16 @@ h1 {
     padding: 5px;
 }
 .contenedor-grafica-reg{
-    display: flex; /* Alinea los elementos en fila */
-justify-content: space-between; /* Espaciado entre los elementos */
-align-items: flex-start; /* Alinea los elementos al inicio vertical */
-width: 90%; /* Ocupa todo el ancho disponible */
+    display: flex; 
+justify-content: space-between; 
+align-items: flex-start; 
+width: 90%; 
 margin-top: 20px;
 max-height: 400px;
 }
 .chart-container {
-    flex: 1; /* Ocupa la mitad del espacio */
-max-width: 50%; /* Limita el ancho al 50% */
+    flex: 1; 
+max-width: 50%; 
 max-height: 350px;
     
 }
@@ -67,14 +55,14 @@ canvas {
 }
 
 .registro {
-    flex: 2; /* Ocupa el doble del espacio que la gráfica */
-max-height: 400px; /* Altura máxima del contenedor */
+    flex: 2; 
+max-height: 400px; 
 height: 100%;
-overflow-y: auto; /* Habilita el scroll vertical */
-border: 1px solid #ccc; /* Borde para separar visualmente */
+overflow-y: auto; 
+border: 1px solid #ccc; 
 padding: 10px;
-margin-left: 20px; /* Espaciado a la izquierda del gráfico */
-background-color: #f9f9f9; /* Fondo claro */
+margin-left: 20px; 
+background-color: #f9f9f9; 
 }
 
 .registro h3 {
@@ -89,10 +77,10 @@ margin: 0;
 }
 
 .registro li {
-display: grid; /* Usa grid para organizar los elementos */
-grid-template-columns: 100px 100px 100px 100px 100px 100px 100px; /* Define anchos fijos para cada columna */
-gap: 10px; /* Espaciado entre columnas */
-align-items: center; /* Alinea verticalmente los elementos */
+display: grid; 
+grid-template-columns: 100px 100px 100px 100px 100px 100px 100px; 
+gap: 10px; 
+align-items: center; 
 margin-bottom: 10px;
 font-size: 14px;
 line-height: 1.5;
@@ -102,17 +90,17 @@ text-align: center;
 }
 
 .registro li span.incidencia {
-color: #FF0000; /* Color para la incidencia */
+color: #FF0000; 
 font-weight: bold;
 }
 
 .registro li span.estado {
-color: #555; /* Color para el estado */
+color: #555; 
 font-style: italic;
 }
 
 span.tipoA {
-color: #007BFF; /* Color para el tipo de marcaje */
+color: #007BFF; 
 font-weight: bold;
 }
 span.tipoB {
@@ -366,3 +354,295 @@ cursor: pointer;
     padding: 2px 6px;
     border-radius: 3px;
 }
+
+
+
+
+/* ISIS
+
+/* Estilo general de la página */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7fc;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+
+/* Contenedor principal */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    min-height: 100vh;
+    padding-top: 80px;
+}
+
+/* Barra de navegación superior */
+.navbar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #26D0CE;
+    color: white;
+    padding: 15px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.nav-btn {
+    padding: 12px 20px;
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+.nav-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Estilo para el contenido principal */
+#main {
+    padding-top: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    text-align: center;
+}
+
+#main h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Logo en la parte superior */
+#logo-container {
+    width: 150px;
+    margin-bottom: 20px;
+}
+
+#logo-container img {
+    width: 100%;
+    height: auto;
+}
+
+/* Contenido dinámico */
+#dynamicContent {
+    width: 100%;
+    max-width: 900px;
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* Estilo para el perfil */
+.profile-info {
+    text-align: left;
+    margin-top: 20px;
+}
+
+.profile-info p {
+    font-size: 1.2rem;
+}
+
+.profile-info img {
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+}
+
+/* Estilo para los formularios */
+form {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+form input, form select, form button {
+    padding: 12px;
+    font-size: 1rem;
+    margin: 10px 0;
+    width: 100%;
+    max-width: 350px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+form label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+form button {
+    background-color: #26D0CE;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: auto;
+    margin-top: 10px;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+/* Estilo para el dropdown de ajustes */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 5px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+/* Sección de Ajustes */
+.ajustes-options {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-top: 30px;
+}
+
+.ajustes-options div {
+    margin-bottom: 15px;
+}
+
+.ajustes-options label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.ajustes-options input, .ajustes-options select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Estilo para el modo oscuro */
+body.dark-mode {
+    background-color: #121212;
+    color: #fff;
+}
+
+body.dark-mode .navbar {
+    background-color: #333;
+}
+
+body.dark-mode .nav-btn {
+    color: #fff;
+}
+
+body.dark-mode #dynamicContent {
+    background-color: #1d1d1d;
+    color: #fff;
+}
+
+body.dark-mode .ajustes-options input,
+body.dark-mode .ajustes-options select {
+    background-color: #333;
+    color: #fff;
+    border-color: #555;
+}
+
+/* Caja de sugerencias - Baja la caja de sugerencias */
+.ajustes-options textarea {
+    margin-top: 20px; /* Agregar espacio entre los campos */
+}
+
+/* Ajuste en la parte inferior para el logo */
+#logo-container-inferior {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+#logo-container-inferior img {
+    width: 150px; /* Ajusta el tamaño del logo */
+    height: auto;
+}
+
+/* Contenedor principal */
+.user-panel-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    min-height: 100vh;
+    padding-top: 80px; /* Ajuste para el espacio debajo de la barra de navegación */
+}
+/*Barra de progreso de horas*/
+.barra-progreso {
+    height: 20px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .progreso {
+    height: 100%;
+    background: #4CAF50;
+    border-radius: 10px;
+    animation: animacion-progreso 2s ease-in-out;
+  }
+
+  .dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* 3 columnas iguales */
+    gap: 20px; /* Espacio entre columnas */
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Columna 1: Progreso y horas */
+  .columna {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }

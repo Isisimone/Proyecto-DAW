@@ -87,7 +87,7 @@ class DatosBiometricos{
     }
 
     //Método para cargar de la base de datos un registro a partir del código
-    public static function cargar(int $cod_bio): ?DatosBiometricos {
+    public function cargar(int $cod_bio): ?DatosBiometricos {
         // Crear la conexión
         $conexion = new Conexion();
         // Crear la sentencia SQL
@@ -104,22 +104,35 @@ class DatosBiometricos{
         if (!$resultado) {
             return null;
         }
-    
-        // Crear una instancia de DatosBiometricos
-        $datosBiometricos = new DatosBiometricos();
-    
         // Asignar los valores a los atributos del objeto
-        $datosBiometricos->setCodBio($resultado['COD_BIO']);
-        $datosBiometricos->setCodEmpleado($resultado['COD_EMPLEADO']);
-        $datosBiometricos->setCodTipo($resultado['COD_TIPO_BIO']);
-        $datosBiometricos->setDatoBio($resultado['DATO_BIO']);
-        $datosBiometricos->setFecAlta(new DateTime($resultado['FEC_ALTA']));
-        $datosBiometricos->setNomUsuarioAlta($resultado['NOM_USUARIO_ALTA']);
+        $this->setCodBio($resultado['COD_BIO']);
+        $this->setCodEmpleado($resultado['COD_EMPLEADO']);
+        $this->setCodTipo($resultado['COD_TIPO_BIO']);
+        $this->setDatoBio($resultado['DATO_BIO']);
+        $this->setFecAlta(new DateTime($resultado['FEC_ALTA']));
+        $this->setNomUsuarioAlta($resultado['NOM_USUARIO_ALTA']);
     
         // Devolver la instancia de DatosBiometricos
-        return $datosBiometricos;
+        return $this;
     }
 
+    //Método para obtener todos los registros por tipo
+    public static function biosPorEmpleado(int $cod_empleado): array {
+        //Crea la conexión  
+        $conexion = new Conexion();
+        //Define la sentencia SQL
+        $sql = "SELECT * FROM tbio WHERE COD_EMPLEADO = :cod_empleado";
+        //Preparamos la consulta
+        $stmt = $conexion->conexion->prepare($sql);
+        //Parámetros
+        $stmt->bindValue(':cod_empleado', $cod_empleado, PDO::PARAM_INT);
+        //Ejecuta
+        $stmt->execute();
+        //Vuelca los resultados
+        $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        //Devuelve un array de objetos DatosBiometricos
+        return $resultados;
+    }
     //Método para obtener todos los registros por tipo
     public static function listarPorTipo(int $cod_tipo): array {
         //Crea la conexión  

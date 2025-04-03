@@ -48,6 +48,11 @@ if (isset($_SESSION['COD_USUARIO'])) {
             $fechaHoy->setTimezone(new DateTimeZone('Europe/Madrid'));
             $horasTrabajadas = $marcaje->calcularHorasTrabajadas($codEmpleado, $fechaHoy,0,89);
             $horasSemanales = $marcaje->calcularHorasSemana($codEmpleado,$fechaHoy,0,89);
+            $progresoHorario=($horasTrabajadas*100)/$empleado->getMaxHorasDia();
+            $horasMes = $marcaje->calcularHorasMensual($codEmpleado,$fechaHoy);
+            $mesPasado = $fechaHoy->modify('first day of previous month');
+            $horasMesPasado = $marcaje->calcularHorasMensual($codEmpleado,$mesPasado);
+            
 
             //Calcula la bolsa de horas del empleado a partir de los marcajes del mes indicado
             $marcaje->calcularBolsaMensual($codEmpleado,$fechaHoy);

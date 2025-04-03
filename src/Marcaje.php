@@ -15,8 +15,6 @@ class Marcaje{
     private int $cod_bio;
     private DateTime $fec_Marcaje;
     private DateTime $fec_Grabacion;
-    private DateTime $hor_Marcaje;
-    private DateTime $hor_Grabacion;
     private bool $incidencia;
     private bool $pendiente;
     private string $foto;
@@ -147,6 +145,58 @@ class Marcaje{
         } catch (Exception $e) {
             // Manejo de errores
             error_log("Error al calcular la bolsa mensual: " . $e->getMessage());
+        }
+    }
+
+    public function calcularHorasMensual(int $codEmpleado, DateTime $fecha): array {
+        try {
+            // Obtiene el empleado y su configuración
+            $empleado = new Empleado();
+            $empleado->cargarDatosEmpleado($codEmpleado);
+            $maxHorasDia = $empleado->getMaxHorasDia();
+            $bolsaActual = $empleado->getBolsa();
+    
+            // Obtiene el primer y último día del mes de la fecha consultada
+            $fechaInicio = (clone $fecha)->modify('first day of this month');
+            $fechaFin = (clone $fecha)->modify('last day of this month');
+    
+            // Obtiene los días del mes con registros
+            $conexion = new Conexion();
+            $consulta = $conexion->conexion->prepare("
+                SELECT DISTINCT DATE(FEC_MARCAJE) AS dia
+                FROM tmarcaje
+                WHERE COD_EMPLEADO = :codEmpleado AND COD_TIPO_ACCESO < 90
+                AND FEC_MARCAJE BETWEEN :fechaInicio AND :fechaFin
+            ");
+            $consulta->bindValue(':codEmpleado', $codEmpleado, PDO::PARAM_INT);
+            $consulta->bindValue(':fechaInicio', $fechaInicio->format('Y-m-d 00:00:00'));
+            $consulta->bindValue(':fechaFin', $fechaFin->format('Y-m-d 23:59:59'));
+            $consulta->execute();
+            $diasConRegistros = $consulta->fetchAll(PDO::FETCH_COLUMN);
+    
+            // Inicializa el acumulador de horas extras
+            $totalHorasExtras = 0.0;
+            $totalHorasNormales =0.0;
+    
+            // Calcula las horas trabajadas y las horas extras para cada día con registros
+            foreach ($diasConRegistros as $dia) {
+                $fechaDia = new DateTime($dia, new DateTimeZone('Europe/Madrid'));
+                $horasTrabajadas = $this->calcularHorasTrabajadas($codEmpleado, $fechaDia,0,89);
+    
+                // Calcula las horas extras del día
+                $horasExtras = $horasTrabajadas - $maxHorasDia;
+                if($horasExtras>0){$totalHorasNormales += $maxHorasDia;}else{$totalHorasNormales += $horasTrabajadas;}
+                $totalHorasExtras += $horasExtras;
+            }
+            $horasfinales=[
+                'Normales' => $totalHorasNormales,
+                'Extras' => $totalHorasExtras
+            ];
+            return $horasfinales;
+        } catch (Exception $e) {
+            // Manejo de errores
+            error_log("Error al calcular la bolsa mensual: " . $e->getMessage());
+            return [];
         }
     }
 

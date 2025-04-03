@@ -16,7 +16,8 @@ use Clases\Transaccion;
 use Clases\Usuario;
 use Clases\Privilegio;
 use Clases\Incidencia;
-
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 
 //$privilejio = new Privilejio();
@@ -227,7 +228,9 @@ function pruebaUsuario(bool $crear, bool $modificar, bool $mostrar, ?int $id){
         //var_dump($_SESSION);*/
     }
 }
-
+$bio = new DatosBiometricos();
+                    $bio->cargar(2);
+                    $bio->eliminar();
 
 pruebaAjuste(false,false,false,1);
 pruebaDatosBio(false,false,false,1);
@@ -239,13 +242,51 @@ pruebaTransaccion(false,false,false,6); //Sin pasar
 pruebaUsuario(false,false,false,2);
 
 
-$codusuario = 2;//$_SESSION['COD_USUARIO'];
-                    $user = new Usuario();
-                    $user->cargarUsuario($codusuario);
-                    $usuario = $user->getNomLogin();
-                    $empleado = new Empleado();
-                    $empleado->cargarDatosEmpleado(intval(2));
-                    $fechaBaja = new DateTime();
-                    $empleado->setFecBaja($fechaBaja);
-                    $empleado->setNomUsuarioBaja($usuario);
-                    $empleado->grabar();
+function enviarCorreoBasico($destinatario, $asunto, $mensaje) {
+    $so = PHP_OS;
+        if (stripos($so, 'WIN') !== false) {
+            $ruta_mail = 'c:/xampp/mail.txt';
+        } else {
+            $ruta_mail = '/var/www/mail.txt';
+        }
+
+        //Compruebo si existe el archivo de conexión
+        if (!file_exists($ruta_mail)) {
+            die("Error: No se encontró el archivo de la conexión a la base de datos.");
+        } else {
+            //Leo los datos de conexión desde el archivo
+            $datos = file($ruta_mail);
+            //Vuelco los datos eliminando espacios en blanco, saltos de línea, etc...
+            $localMail = trim($datos[0]);
+            $localPass = trim($datos[1]);
+            $smtp = trim($datos[2]);
+            $mail = new PHPMailer(true);
+
+            try {
+                // Configuración del servidor SMTP de Gmail
+                $mail->isSMTP();
+                $mail->Host = $smtp;
+                $mail->SMTPAuth = true;
+                $mail->Username = $localMail;
+                $mail->Password = $localPass;
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // TLS
+                $mail->Port = 587; // Puerto para TLS
+
+                // Remitente y destinatario
+                $mail->setFrom($localMail, 'Administración'); // El nombre es opcional
+                $mail->addAddress($destinatario, ''); // Puedes añadir múltiples destinatarios
+    
+                // Contenido del correo
+                $mail->isHTML(true); // Establecer el formato del email a HTML
+                $mail->Subject = $asunto;
+                $mail->Body    = $mensaje;
+                $mail->AltBody = $mensaje;
+
+                $mail->send();
+            } catch (Exception $e) {
+                echo("No se pudo enviar el mensaje. Error: {$mail->ErrorInfo}");
+            }
+        }
+}
+
+//enviarCorreoBasico("usdital@gmail.com","Prueba de correo","Esto es una prueba de correo");

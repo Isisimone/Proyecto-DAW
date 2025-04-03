@@ -490,19 +490,19 @@ document.addEventListener('click', function(e) {
             };
             
             await crud(datos);
-            if (cod_empleado==0){location.reload();
+            if (cod_usuario==0){location.reload();
                 const event = new Event('click');
                 document.getElementById('panelUsuario').dispatchEvent(event);
             }
         }
 
         if (e.target && e.target.id === 'bajaUsuario') {
-            const cod_empleado = document.getElementById('seleccionPanelUsuario').value>""? Number(document.getElementById('seleccionPanelUsuario').value) : 0;
+            const cod_usuario = document.getElementById('seleccionPanelUsuario').value>""? Number(document.getElementById('seleccionPanelUsuario').value) : 0;
             const respuesta = await mensajeConfirmacion("¿Estás seguro de dar de baja este usuario?");
             if (respuesta) {
                 const datos = {
                     accion: 'baja_usuario',
-                    cod_empleado: cod_empleado
+                    cod_usuario: cod_usuario
                 };
                 await crud(datos);
                 const event = new Event('click');
@@ -511,6 +511,18 @@ document.addEventListener('click', function(e) {
                 
             }
             
+        }
+
+        if (e.target && e.target.id === 'passUsuario') {
+        const cod_usuario = document.getElementById('seleccionPanelUsuario').value>""? Number(document.getElementById('seleccionPanelUsuario').value) : 0;
+        if (cod_usuario>0){
+            const datos ={
+                accion:'pass_usuario',
+                cod_usuario: cod_usuario
+            };
+            await crud(datos);
+        }
+               
         }
 
         
@@ -534,9 +546,65 @@ document.addEventListener('click', function(e) {
             });  
         
     });
+    //CLICK en listaDescriptores
+    document.getElementById('guardarDescriptor').addEventListener('click', async function(e) {
+        const selectElement = document.getElementById('seleccionPanelEmpleado');
+        const nombreCompleto = selectElement.options[selectElement.selectedIndex].text;
+        await guardarRostro(nombreCompleto);
+        document.querySelectorAll('.ventana').forEach(ventana => {
+            ventana.style.display = 'none';
+        });
+    });
+    //CLICK en listaDescriptores
+    document.getElementById('panelDescriptores').addEventListener('click', async function(e) {
+        if (e.target && e.target.id === 'nuevoDescriptor') {
+            const formulario = document.getElementById("panelDescriptores");
+            document.getElementById('panelCamara').style.display = 'block';
+            cargar();
+
+        }
+        const lineaBioElement = e.target.closest('.linea_bio');
+        if (lineaBioElement) {
+            lineaBioElement.classList.toggle('selected');
+        }
+        if (e.target && e.target.id === 'eliminarDescriptor' && document.querySelectorAll('.linea_bio.selected').length > 0) {
+            const respuesta = await mensajeConfirmacion("¿Estás seguro de eliminar los datos biométricos seleccionados?");
+            if (respuesta) {
+                // Corrección: Usar forEach desde la NodeList devuelta por querySelectorAll
+                document.querySelectorAll('.linea_bio.selected').forEach(async function(element) {
+                    const codBio = element.getAttribute('data-id');
+                    const datos = {
+                        accion: 'baja_bio',
+                        cod_bio: codBio
+                    };
+                    await crud(datos);
+                });
+                document.querySelectorAll('.ventana').forEach(ventana => {
+                    ventana.style.display = 'none';
+                });
+            }
+        }
+    });
 
     //CLICK en grabar y baja empleado
     document.getElementById('formularioEmpleado').addEventListener('click', async function(e) {
+        if (e.target && e.target.id === 'bioEmpleado') {
+            const formulario = document.getElementById('listaDescriptores');
+            const cod_empleado = document.getElementById('seleccionPanelEmpleado').value>""? Number(document.getElementById('seleccionPanelEmpleado').value) : 0;
+            const datos ={
+                accion:'muestra_bio_empleado',
+                cod_empleado: cod_empleado
+            }
+            // Limpiar formulario
+            formulario.innerHTML = "";
+            // Cargar el HTML
+            await cargarHTML(datos)
+            .then(html =>{
+                formulario.innerHTML = html;
+                document.getElementById('panelDescriptores').style.display = 'block';
+            });
+        }
+        
         if (e.target && e.target.id === 'guardarEmpleado') {
             const cod_empleado = document.getElementById('seleccionPanelEmpleado').value>""? Number(document.getElementById('seleccionPanelEmpleado').value) : 0;
             const apellido1 = document.getElementById('apellido1Empleado').value;

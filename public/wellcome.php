@@ -60,5 +60,14 @@ if (isset($_SESSION['COD_USUARIO'])) {
         <!--Contenedor para el estado de la página-->
         <div id="status"></div>
     </div>
+    <script>// Espera a que todos los scripts con defer estén listos
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verifica si la función existe
+        if (typeof cargar === 'function') {
+            cargar();
+        } else {
+            console.error('La función cargar no está definida');
+        }
+    });</script>
 </body>
 </html>

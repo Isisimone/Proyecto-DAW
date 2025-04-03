@@ -19,6 +19,8 @@ use Clases\Marcaje;
 use Clases\DatosBiometricos;
 use Clases\Privilegio;
 use Clases\Rol;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 $nombrePrivilegios=[
     "empCrear"=>"Alta empleados",
@@ -236,57 +238,113 @@ $nombrePrivilegios=[
             }
 
             if ($datos['accion'] == 'graba_usuario') {
-                $usuario = new Usuario();
+                try{$usuario = new Usuario();
                 if ($datos['cod_usuario'] > 0) {
                     $usuario->cargarUsuario($datos['cod_usuario']);
                 } else {
                     $usuario->setFecAlta(new DateTime());
                     $usuario_temp = new Usuario();
-                    $usuario_temp->cargarUsuario($usuarioBaja);
+                    $usuario_temp->cargarUsuario($_SESSION['COD_USUARIO']);
                     $usuario->setNomUsuarioAlta($usuario_temp->getNomLogin());
                 }
                 $usuario->setNomLogin($datos['login']);
                 $usuario->setDesCorreo($datos['email']);
-                $usuario->setDesContrasena($datos['contrasena']);
                 $usuario->grabar();
                 echo json_encode(['success' => true]);
+                }catch(Exception $e) {
+                    echo json_encode([
+                        'success' => false,
+                        'error' => $e->getMessage()
+                    ]);
+                }
             }
 
             if ($datos['accion'] == 'baja_usuario') {
-                $usuario = new Usuario();
-                $usuario->cargarUsuario($datos['cod_usuario']);
-                $fechaBaja = new DateTime();
-                $usuario->setFecBaja($fechaBaja);
-                $usuarioBaja=$_SESSION['COD_USUARIO'];
-                $usuario_temp = new Usuario();
-                $usuario_temp->cargarUsuario($usuarioBaja);
-                $usuario->setNomUsuarioBaja($usuario_temp->getNomLogin());
-                $usuario->grabar();
-                echo json_encode(['success' => true]);
+                try{
+                    $usuario = new Usuario();
+                    $usuario->cargarUsuario($datos['cod_usuario']);
+                    $fechaBaja = new DateTime();
+                    $usuario->setFecBaja($fechaBaja);
+                    $usuarioBaja=$_SESSION['COD_USUARIO'];
+                    $usuario_temp = new Usuario();
+                    $usuario_temp->cargarUsuario($usuarioBaja);
+                    $usuario->setNomUsuarioBaja($usuario_temp->getNomLogin());
+                    $usuario->grabar();
+                    echo json_encode(['success' => true]);
+                }catch(Exception $e) {
+                    echo json_encode([
+                        'success' => false,
+                        'error' => $e->getMessage()
+                    ]);
+                }
             }
 
             if ($datos['accion'] == 'pass_usuario') {
-                $usuario = new Usuario();
-                $usuario->cargarUsuario($datos['cod_usuario']);
-                $caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-=+;:,.?';
-                $longitud = 8;
-                $contrasena = '';
-                for ($i = 0; $i < $longitud; $i++) {
-                    $indice = rand(0, strlen($caracteres) - 1);
-                    $contrasena .= $caracteres[$indice];
+                try{
+                    $usuario = new Usuario();
+                    $usuario->cargarUsuario($datos['cod_usuario']);
+                    $caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-=+;:,.?';
+                    $longitud = 8;
+                    $contrasena = '';
+                    for ($i = 0; $i < $longitud; $i++) {
+                        $indice = rand(0, strlen($caracteres) - 1);
+                        $contrasena .= $caracteres[$indice];
+                    }
+                    $usuario->setDesContrasena($contrasena);
+                    $usuario->grabar();
+                    enviarCorreoBasico($usuario->getDesCorreo(), 'Nuevo Password Recfacial', 'Su nuevo password es: '.$contrasena);
+                    echo json_encode(['success' => true]);
+                }catch(Exception $e) {
+                    echo json_encode([
+                        'success' => false,
+                        'error' => $e->getMessage()
+                    ]);
                 }
-                $usuario->setDesContrasena($contrasena);
-                $usuario->grabar();
-                enviarCorreoBasico($usuario->getDesCorreo(), 'Nueva contraseña', 'Su nueva contraseña es: '.$contrasena);
-                echo json_encode(['success' => true]);
             }
 
             if ($datos['accion'] == 'graba_bio') {
             }
 
-            if ($datos['accion'] == 'muestra_bio_usuario') {
+            if ($datos['accion'] == 'baja_bio') {
+                try{
+                    $bio = new DatosBiometricos();
+                    $bio->cargar($datos['cod_bio']);
+                    $bio->eliminar();
+                    echo json_encode(['success' => true]);
+                }catch(Exception $e) {
+                    echo json_encode([
+                        'success' => false,
+                        'error' => $e->getMessage()
+                    ]);
+                }
             }
 
+            if ($datos['accion'] == 'muestra_bio_empleado') {
+                $empleado = $datos['cod_empleado'];
+                $bio = new DatosBiometricos();
+                $bios=$bio->biosPorEmpleado($empleado);
+                $html='
+                    <ul class="marcoListados">
+                        <li class="cabecera_bio">
+                            <span class="">Código</span>
+                            <span class="">Tipo</span>
+                            <span class="">Fecha</span>
+                            <span class="">Alta</span>
+                        </li>';
+                        foreach($bios as $registro){
+                            $html=$html.'<li class="linea_bio" data-id="'.$registro['COD_BIO'].'">
+                                <span><b>'.$registro['COD_BIO'].'</b></span>
+                                <span>'.$registro['COD_TIPO_BIO'].'</span>
+                                <span>'.$registro['FEC_ALTA'].'</span>
+                                <span>'.$registro['NOM_USUARIO_ALTA'].'</span>
+                            </li>';
+                        }
+                $html=$html.'</ul>';
+                header('Content-Type: text/html');
+                echo $html;
+                exit;
+            }
+            
             if ($datos['accion']=='mostrar_empleado'){
                 $empleado = new Empleado();
                 $empleado->cargarDatosEmpleado($datos['cod_empleado']);
@@ -373,6 +431,7 @@ $nombrePrivilegios=[
                             <div class="fila-botones">
                                 <button class="btn btn-primary" id="guardarEmpleado">Guardar cambios</button>
                                 <button class="btn btn-secondary" id="recalcularBolsa">Recalcular Bolsa</button>
+                                <button class="btn btn-success" id="bioEmpleado">Datos Biométricos</button>
                                 <button class="btn btn-danger" id="bajaEmpleado">Dar de baja</button>
                             </div>
                         </div>';
@@ -508,7 +567,6 @@ $nombrePrivilegios=[
                                 </div>
                                 <button class="btn btn-primary" id="guardarUsuario">Guardar cambios</button>
                                 <button class="btn btn-danger" id="bajaUsuario">Dar de baja</button>
-                                <button class="btn btn-success" id="bioUsuario">Datos Biométricos</button>
                                 <button class="btn btn-secondary" id="passUsuario">Generar Password</button>
                             </div>
                         </div>';
@@ -826,14 +884,48 @@ $nombrePrivilegios=[
 }
 
 function enviarCorreoBasico($destinatario, $asunto, $mensaje) {
-    $headers = "From: webmaster@recfacial.com\r\n";
-    $headers .= "Reply-To: no-reply@recfacial.com\r\n";
-    $headers .= "MIME-Version: 1.0\r\n";
-    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+    $so = PHP_OS;
+        if (stripos($so, 'WIN') !== false) {
+            $ruta_mail = 'c:/xampp/mail.txt';
+        } else {
+            $ruta_mail = '/var/www/mail.txt';
+        }
+
+        //Compruebo si existe el archivo de conexión
+        if (!file_exists($ruta_mail)) {
+            die("Error: No se encontró el archivo de la conexión a la base de datos.");
+        } else {
+            //Leo los datos de conexión desde el archivo
+            $datos = file($ruta_mail);
+            //Vuelco los datos eliminando espacios en blanco, saltos de línea, etc...
+            $localMail = trim($datos[0]);
+            $localPass = trim($datos[1]);
+            $smtp = trim($datos[2]);
+            $mail = new PHPMailer(true);
+
+            try {
+                // Configuración del servidor SMTP de Gmail
+                $mail->isSMTP();
+                $mail->Host = $smtp;
+                $mail->SMTPAuth = true;
+                $mail->Username = $localMail;
+                $mail->Password = $localPass;
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // TLS
+                $mail->Port = 587; // Puerto para TLS
+
+                // Remitente y destinatario
+                $mail->setFrom($localMail, 'Administración'); // El nombre es opcional
+                $mail->addAddress($destinatario, ''); // Puedes añadir múltiples destinatarios
     
-    if (mail($destinatario, $asunto, $mensaje, $headers)) {
-        return true;
-    } else {
-        return "Error al enviar el correo";
-    }
+                // Contenido del correo
+                $mail->isHTML(true); // Establecer el formato del email a HTML
+                $mail->Subject = $asunto;
+                $mail->Body    = $mensaje;
+                $mail->AltBody = $mensaje;
+
+                $mail->send();
+            } catch (Exception $e) {
+                echo("No se pudo enviar el mensaje. Error: {$mail->ErrorInfo}");
+            }
+        }
 }

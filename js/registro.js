@@ -15,15 +15,18 @@ let ultimoCodBio="";
 
 //Promesa de carga de modelos, hasta que no lo estén no se ejecuta el código
 //Necesario para dar tiempo a cargar los modelos de reconocimiento
-Promise.all([
-    faceapi.nets.tinyFaceDetector.loadFromUri('../js/models'),
-    faceapi.nets.faceLandmark68Net.loadFromUri('../js/models'),
-    faceapi.nets.faceRecognitionNet.loadFromUri('../js/models'),
-    faceapi.nets.faceExpressionNet.loadFromUri('../js/models')
-    ]).then(() => {
-    //Cuando están inicia el vídeo.
-    iniciarVideo();
-});
+
+function cargar(){
+    Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri('../js/models'),
+        faceapi.nets.faceLandmark68Net.loadFromUri('../js/models'),
+        faceapi.nets.faceRecognitionNet.loadFromUri('../js/models'),
+        faceapi.nets.faceExpressionNet.loadFromUri('../js/models')
+        ]).then(() => {
+        //Cuando están inicia el vídeo.
+        iniciarVideo();
+    });
+}
 
 //Inicia la webcam si está disponible o muestra error en estado
 function iniciarVideo() {
@@ -59,13 +62,13 @@ function updateClock() {
 }
 
 //Guarda el rostro detectado en la base de datos
-async function guardarRostro() {
+async function guardarRostro(nombre="") {
     //Captura el rostro destectado
     const rostro = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
     if (rostro) {
         //si lo hay pide un nombre y guarda en el servidor y actualiza el detector de rostros.
         const descriptor = rostro.descriptor;
-        const nombre = prompt("Introduce un nombre para este rostro:");
+        if (nombre=="") {nombre = prompt("Introduce un nombre para este rostro:");}
         if (nombre) {
             //Mandamos el descriptor empleado y usuario que realiza el alta
             //Modificar cuando haya <<<<<<<<<<< BACK-END >>>>>>>>>>>>>>>>

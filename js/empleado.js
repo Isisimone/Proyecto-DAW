@@ -247,3 +247,44 @@ function openTab(evt, tabName) {
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.classList.add("active");
 }
+
+// Función para actualizar dinámicamente el contenido
+function updateContent(section) {
+    const dynamicContent = document.getElementById('dynamicContent');
+
+    // Selección de contenido según la sección
+    switch (section) {
+        case 'perfil':
+            renderPerfilContent();
+            break;
+        case 'actividades':
+            renderActividadesContent();
+            break;
+        case 'notificaciones':
+            renderUltimosContent();
+            break;
+        case 'filtrar':
+            renderFiltrarContent();
+            break;
+        default:
+            dynamicContent.innerHTML = `<h2>Sección no encontrada</h2>`;
+    }
+}
+
+// Función para renderizar contenido de la sección
+function updateContent(seccion) {
+    cerrarSecciones();
+    document.getElementById(seccion).style.display = "block";
+}
+
+function cerrarSecciones(){
+    document.getElementById('principal').style.display = "none";
+    document.getElementById('perfil').style.display = "none";
+    document.getElementById('actividades').style.display = "none";
+    document.getElementById('ultimos').style.display = "none";
+    document.getElementById('filtrar').style.display = "none";
+}
+// Función de logout
+function logout() {
+    alert("Has cerrado sesión.");
+}

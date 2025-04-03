@@ -48,7 +48,7 @@ class Usuario{
                 $this->fec_alta = new DateTime($usuario['FEC_ALTA']);
                 $this->nom_usuario_alta = $usuario['NOM_USUARIO_ALTA'];
                 $this->fec_baja = $usuario['FEC_BAJA'] ? new DateTime($usuario['FEC_BAJA']) : null;
-                $this->nom_usuario_baja = $usuario['NOM_USUARIO_BAJA'];
+                $this->nom_usuario_baja = $usuario['NOM_USUARIO_BAJA'] ? $usuario['NOM_USUARIO_BAJA'] : null;
                 $this->cargarRol();
             }
         } catch (PDOException $e) {
@@ -143,12 +143,12 @@ class Usuario{
             $conexion = new Conexion();
             //si no hay cod_usuario prepara un INSERT
             if ($this->cod_usuario==0 || is_null($this->cod_usuario)){
-                $consulta = "INSERT INTO tusuario (NOM_LOGIN, DES_CONTRASENA, DES_CORREO, FEC_ALTA, NOM_USUARIO_ALTA) VALUES (:nom_Login, :des_Contrasena, :des_Correo, :fec_Alta, :nom_Usuario_Alta)";
+                $consulta = "INSERT INTO tusuario (NOM_LOGIN, DES_CONTRASENA, DES_CORREO, FEC_ALTA, NOM_USUARIO_ALTA, FEC_BAJA, NOM_USUARIO_BAJA) VALUES (:nom_Login, :des_Contrasena, :des_Correo, :fec_Alta, :nom_Usuario_Alta, :fec_Baja, :nom_Usuario_Baja)";
                 $stmt = $conexion->conexion->prepare($consulta);
             //Si lo hay prepara un updste
             }else{
                 $consulta = "UPDATE tusuario SET NOM_LOGIN = :nom_Login, DES_CONTRASENA = :des_Contrasena, DES_CORREO = :des_Correo,
-                 FEC_ALTA = :fec_Alta, NOM_USUARIO_ALTA = :nom_Usuario_Alta WHERE COD_USUARIO = :cod_Usuario";
+                 FEC_ALTA = :fec_Alta, NOM_USUARIO_ALTA = :nom_Usuario_Alta, FEC_BAJA = :fec_Baja, NOM_USUARIO_BAJA = :nom_Usuario_Baja WHERE COD_USUARIO = :cod_Usuario";
                  $stmt = $conexion->conexion->prepare($consulta);
                  $stmt->bindValue('cod_Usuario', $this->cod_usuario, PDO::PARAM_INT);
             }
@@ -158,6 +158,9 @@ class Usuario{
             $stmt->bindValue('des_Correo', $this->des_correo, PDO::PARAM_STR);
             $stmt->bindValue('fec_Alta', $this->fec_alta->format('Y-m-d H:i:s'), PDO::PARAM_STR);
             $stmt->bindValue('nom_Usuario_Alta', $this->nom_usuario_alta, PDO::PARAM_STR);
+            $stmt->bindValue('fec_Baja', $this->fec_baja ? $this->fec_baja->format('Y-m-d H:i:s'):null, PDO::PARAM_STR);
+            $stmt->bindValue('nom_Usuario_Baja', $this->nom_usuario_baja ? $this->nom_usuario_baja:null, PDO::PARAM_STR);
+            
             $stmt->execute();
             return;
         } catch (PDOException $e) {
@@ -190,7 +193,7 @@ class Usuario{
     }
 
     //Método para dar de baja a un usuario
-    public function darBajaUsuario(int $empleado): bool {
+    public function darBajaUsuario($nom_usuario_baja): bool {
         try {
             $conexion = new Conexion();
             //prepara un update
