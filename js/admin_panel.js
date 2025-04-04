@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const panelUsuariosAsignados = document.getElementById('panelUsuariosAsignados');
         const panelAsignarRoles = document.getElementById('panelAsignarRoles');
         const panelAjustes = document.getElementById('panelAjustes');
+        const panelBienvenida = document.getElementById('panelBienvenida');
 
     //Métodos
     function cerrar_bloques() {
@@ -31,7 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
             'panelEmpleados', 'panelConfirmarBaja', 'panelExportarEmpleados',
             'panelUsuarios', 'panelDescriptores', 'panelEliminarDescriptor',
             'panelExportarUsuarios', 'panelListadoTransacciones', 'panelListadoMarcajes',
-            'panelRoles', 'panelUsuariosAsignados', 'panelAsignarRoles', 'panelAjustes'
+            'panelRoles', 'panelUsuariosAsignados', 'panelAsignarRoles', 'panelAjustes',
+            'panelBienvenida'
         ];
     
         paneles.forEach(id => {
@@ -251,6 +253,7 @@ document.addEventListener('click', function(e) {
     document.getElementById("filtrarTransacciones").addEventListener("click", function() {
         //Elementos de la página
         const listado = document.getElementById("listaTransacciones");
+        const listado2 = document.getElementById("exportarTransaccion");
         const desdeFecha = document.getElementById("fechaInicioTrans");
         const hastaFecha = document.getElementById("fechaFinTrans");
         const desdeUsuario = document.getElementById("usuarioInicioTrans");
@@ -274,12 +277,31 @@ document.addEventListener('click', function(e) {
         .then(html =>{
             listado.innerHTML = html;
         });
+
+        const data2 = {
+            accion: 'exportar_transacciones',
+            desdeFecha: desdeFecha.value.toString(),
+            hastaFecha: hastaFecha.value.toString(),
+            desdeUsuario: desdeUsuario.value,
+            hastaUsuario: hastaUsuario.value,
+            desdeActividad: desdeActividad.value,
+            hastaActividad: hastaActividad.value,
+        };
+        
+        // Limpiar formulario
+        listado2.innerHTML = "";
+        // Cargar el HTML
+        cargarHTML(data2)
+        .then(html =>{
+            listado2.innerHTML = html;
+        });
     });
 
     //CLICK en filtrar Marcajes
     document.getElementById("filtrarMarcajes").addEventListener("click", function() {
         //Elementos de la página
         const listado = document.getElementById("listaMarcajes");
+        const listado2 = document.getElementById("exportarMarcaje");
         const desdeFecha = document.getElementById("fechaInicioMarcaje");
         const hastaFecha = document.getElementById("fechaFinMarcaje");
         const desdeEmpleado = document.getElementById("empleadoInicioMarcaje");
@@ -302,6 +324,24 @@ document.addEventListener('click', function(e) {
         cargarHTML(data)
         .then(html =>{
             listado.innerHTML = html;
+        });
+
+        const data2 = {
+            accion: 'exportar_marcajes',
+            desdeFecha: desdeFecha.value.toString(),
+            hastaFecha: hastaFecha.value.toString(),
+            desdeEmpleado: desdeEmpleado.value,
+            hastaEmpleado: hastaEmpleado.value,
+            desdeTipo: desdeTipo.value,
+            hastaTipo: hastaTipo.value,
+        };
+        
+        // Limpiar formulario
+        listado2.innerHTML = "";
+        // Cargar el HTML
+        cargarHTML(data2)
+        .then(html =>{
+            listado2.innerHTML = html;
         });
     });
 
@@ -693,6 +733,57 @@ document.addEventListener('click', function(e) {
     
         if (!elemento) {
             console.error('No se encontró el elemento con ID "exportarUsuario"');
+            return null;
+        }
+    
+        // Clonar el elemento para no afectar el original
+        const clon = elemento.cloneNode(true);
+        elemento.style.display = 'none';
+        
+        exportar('pdf', clon.outerHTML); // Llama a la función de exportación  
+    });
+
+    document.getElementById('exportarEmpleados').addEventListener('click', async function() {
+        const elemento = document.getElementById('exportarEmpleado');
+        elemento.style.display = 'block';
+
+    
+        if (!elemento) {
+            console.error('No se encontró el elemento con ID "exportarEmpleado"');
+            return null;
+        }
+    
+        // Clonar el elemento para no afectar el original
+        const clon = elemento.cloneNode(true);
+        elemento.style.display = 'none';
+        
+        exportar('pdf', clon.outerHTML); // Llama a la función de exportación  
+    });
+
+    document.getElementById('exportarMarcajes').addEventListener('click', async function() {
+        const elemento = document.getElementById('exportarMarcaje');
+        elemento.style.display = 'block';
+
+    
+        if (!elemento) {
+            console.error('No se encontró el elemento con ID "exportarMarcaje"');
+            return null;
+        }
+    
+        // Clonar el elemento para no afectar el original
+        const clon = elemento.cloneNode(true);
+        elemento.style.display = 'none';
+        
+        exportar('pdf', clon.outerHTML); // Llama a la función de exportación  
+    });
+
+    document.getElementById('exportarTransacciones').addEventListener('click', async function() {
+        const elemento = document.getElementById('exportarTransaccion');
+        elemento.style.display = 'block';
+
+    
+        if (!elemento) {
+            console.error('No se encontró el elemento con ID "exportarTransaccion"');
             return null;
         }
     

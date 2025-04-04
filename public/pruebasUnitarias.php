@@ -290,3 +290,120 @@ function enviarCorreoBasico($destinatario, $asunto, $mensaje) {
 }
 
 //enviarCorreoBasico("usdital@gmail.com","Prueba de correo","Esto es una prueba de correo");
+$datos=[
+    'empleado' => 1,
+    'filtro' => 'week',
+    'startdate' => '',
+    'enddate' => ''
+];
+$codEmpleado = $datos['empleado'];
+            $empleado = new Empleado();
+            if ($empleado->cargarDatosEmpleado($codEmpleado)) {
+                $marcaje = new Marcaje();
+                $filtro = $datos['filtro']??'week';
+                $fechaInicio = null;
+                $fechaFin = new DateTime('now', new DateTimeZone('Europe/Madrid'));
+                
+                switch ($filtro) {
+                    case 'week':
+                        $fechaInicio = (clone $fechaFin)->modify('this week monday');
+                        break;
+                    case 'lastweek':
+                        $fechaInicio = (clone $fechaFin)->modify('last week monday');
+                        $fechaFin = $fechaFin->modify('last week sunday');
+                        break;
+                    case 'month':
+                        $fechaInicio = (clone $fechaFin)->modify('first day of this month');
+                        break;
+                    case 'lastmonth':
+                            $fechaInicio = (clone $fechaFin)->modify('first day of last month');
+                            $fechaFin = $fechaFin->modify('last day of last month');
+                            break;
+                    case 'year':
+                        $fechaInicio = (clone $fechaFin)->modify('first day of January');
+                        break;
+                    case 'lastyear':
+                        $fechaInicio = (clone $fechaFin)->modify('first day of January last year');
+                        $fechaFin = $fechaFin->modify('last day of December last year');
+                        break;
+                    case 'range':
+                        $fechaInicio = isset($datos['startdate']) ? new DateTime($datos['startdate'], new DateTimeZone('Europe/Madrid')) : null;
+                        $fechaFin = isset($datos['enddate']) ? new DateTime($datos['enddate'], new DateTimeZone('Europe/Madrid')) : null;
+                    break;
+                }
+                $datosMarcajes = array_filter(
+                    $marcaje->cargarMarcajesEntreFechas($codEmpleado, $codEmpleado, $fechaInicio, $fechaFin),
+                    function ($registro){
+                        return $registro['COD_TIPO_ACCESO']<100;
+                    }
+                );
+                // Procesa los datos para la gráfica
+                $horasPorDia = [];
+                //Crea un periodo de fechas para recorrerlas
+                $periodo = new DatePeriod($fechaInicio, new DateInterval('P1D'), $fechaFin->modify('+1 day'));
+                //Bucle sobre el periodo
+                foreach ($periodo as $fecha) {
+                    $horasTrabajadasGrafica = $marcaje->calcularHorasTrabajadas($codEmpleado, $fecha,0,89);
+                    $horasAusenciasGrafica = $marcaje->calcularHorasTrabajadas($codEmpleado, $fecha,90,99);
+                    $fechaFormateada = $fecha->format('Y-m-d');
+                    $horasPorDia[$fechaFormateada] = $horasTrabajadasGrafica;
+                    $horasPorDiaAusencia[$fechaFormateada] = $horasAusenciasGrafica;
+                }
+                //Ordena los datos
+                ksort($horasPorDia);
+                //Divide los datos en 2 arrays(para etiquetas y para valores)
+                $labels = array_keys($horasPorDia);
+                $valores = array_values($horasPorDia);
+                $ausencias = array_values($horasPorDiaAusencia);
+
+                //Agrupa los registros detallados
+                $registrosAgrupados = [];
+                foreach ($datosMarcajes as $registro) { 
+                    $fecha = (new DateTime($registro['FEC_MARCAJE']))->format('Y-m-d');
+                $registrosAgrupados[$fecha][] = $registro;
+                }
+
+                // Procesa los registros agrupados para emparejar entradas y salidas
+                $registrosDetallados = [];
+                foreach ($registrosAgrupados as $fecha => $registros) {
+                    $entradas = array_filter($registros, fn($r) => $r['COD_TIPO_MARCAJE'] == 1); // Entradas
+                    $salidas = array_filter($registros, fn($r) => $r['COD_TIPO_MARCAJE'] == 2); // Salidas
+
+                    // Empareja entradas y salidas
+                    $pares = [];
+                    while ($entrada = array_shift($entradas)) {
+                        $salida = array_shift($salidas); // Toma la primera salida disponible
+                        //Formato y parejas
+                        $pares[] = [
+                            'fecha' => $fecha,
+                            'tipoAccesoEntrada' => $tiposAcceso[$entrada['COD_TIPO_ACCESO']] ?? 'Desconocido',
+                            'horaEntrada' => (new DateTime($entrada['FEC_MARCAJE']))->format('H:i:s'),
+                            'tipoAccesoSalida' => $salida ? ($tiposAcceso[$salida['COD_TIPO_ACCESO']] ?? 'Desconocido') : '',
+                            'horaSalida' => $salida ? (new DateTime($salida['FEC_MARCAJE']))->format('H:i:s') : '',
+                            'incidencia' => $entrada['DES_OBSERVACIONES'] ?? '',
+                            'estado' => $entrada['IND_PENDIENTE'] == 1 ? 'Pendiente' : ''
+                        ];
+                    }
+
+                    // Agrega los pares procesados al resultado final
+                    $registrosDetallados = array_merge($registrosDetallados, $pares);
+
+                }
+                $respuesta = [
+                    'success' => true,
+                   
+                        'labels' => $labels,
+                        'valores' => $valores,
+                        'ausencias' => $ausencias,
+                        'average' => array_sum($valores) / count($valores),
+                        'registrosDetallados' => $registrosDetallados,
+                        'maxHoras' => $empleado->getMaxHorasDia(),
+                        'datosMarcajes' => $datosMarcajes
+                    
+                ];
+                var_dump(json_encode($respuesta));
+            }
+                // Establece las cabeceras y devuelve JSON
+                //header('Content-Type: application/json');
+                //echo json_encode($respuesta);
+                //exit;

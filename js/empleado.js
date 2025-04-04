@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const contextMenu = document.getElementById('context-menu');
-    const registroContainer = document.querySelector('.registro ul'); // Contenedor de los registros
+    const registroContainer = document.getElementById('registrosExportables');//document.querySelector('.registro ul'); // Contenedor de los registros
     const bloqueRevision = document.getElementById('bloque-revision');
     const bloqueMostrarDatos = document.getElementById('bloque-mostrardatos');
 
@@ -45,6 +45,33 @@ document.addEventListener('DOMContentLoaded', () => {
         bloque.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
     });
 
+    //Evento filtrado de datos
+    document.getElementById('filtroDatos').addEventListener('click', () => {
+        const listadoDatos= document.getElementById('registrosExportables');
+        const filterMode = filterModeSelect.value;
+        const startDate = document.getElementById('start-date');
+        const endDate = document.getElementById('end-date');
+        const cod_empleado = document.getElementById('employee-name').getAttribute('data-id');
+        const data = {
+            accion: 'filtrar_datos',
+            desdeFecha: startDate.value.toString(),
+            hastaFecha: endDate.value.toString(),
+            filtro: filterMode,
+            empleado: cod_empleado
+        };
+        
+        // Limpiar formulario
+        listadoDatos.innerHTML = "";
+        // Cargar el HTML
+        cargarHTML(data)
+        .then(html =>{
+            listadoDatos.innerHTML = html;
+        });
+        renderChart([], [], [], [], 0); // Limpiar la gráfica
+
+        
+    });
+    
     // Eventos para cerrar los bloques
     document.getElementById('cerrar-revision').addEventListener('click', () => {
         bloqueRevision.style.display = 'none';
@@ -245,85 +272,180 @@ async function exportar(tipo,data){
     }
 }
 
-// Configuración de la gráfica
-function renderChart(labels, data, ausencias, average, maxHorasDia) {
-    const ctx = document.getElementById('hours-chart').getContext('2d');
-    
-    // Divide las horas en normales y extras
-    const horasNormales = data.map(horas => Math.min(horas, maxHorasDia)); // Máximo permitido por día
-    const horasExtras = data.map(horas => Math.max(0, horas - maxHorasDia)); // Horas que exceden el máximo
+async function peticionDatos(labels, dato, ausencias, average, maxHorasDia) {
+    const cod_empleado = document.getElementById('employee-name').getAttribute('data-id');
+    const filterModeSelect = document.getElementById('filter-mode');
+    const startDate = document.getElementById('start-date');
+    const endDate = document.getElementById('end-date');
+    const data = {
+        accion: 'cargar_grafica',
+        empleado: Number(cod_empleado),
+        filtro: filterModeSelect.value,
+        startdate: startDate.value,
+        enddate: endDate.value
 
-    // Define los colores para las barras
-    const backgroundColors = labels.map(label => {
-        const date = new Date(label); // Convierte la etiqueta en una fecha
-        return date.getDay() === 0 // 0 corresponde a domingo
-            ? 'rgba(255, 99, 132, 0.5)' // Color para domingos
-            : 'rgba(54, 162, 235, 0.5)'; // Color para otros días
-    });
-
-    // Renderiza la gráfica
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Horas normales',
-                    data: horasNormales,
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)', // Color para horas normales
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                },
-                {
-                    label: 'Horas extras',
-                    data: horasExtras,
-                    backgroundColor: 'rgba(255, 99, 132, 0.5)', // Color para horas extras
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
-                },
-                {
-                    label: 'Ausencias',
-                    data: ausencias,
-                    backgroundColor: 'rgba(255, 206, 86, 0.5)', // Color para ausencias
-                    borderColor: 'rgba(255, 206, 86, 1)',
-                    borderWidth: 1
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true
-                },
-                x: {
-                    stacked: true // Habilita el apilado en el eje X
-                },
-                y: {
-                    stacked: true // Habilita el apilado en el eje Y
-                }
+    };
+    console.log(data);
+    try {
+        const response = await fetch('./logica/filtrar_registros.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
             },
-            plugins: {
-                annotation: {
-                    annotations: {
-                        line1: {
-                            type: 'line',
-                            yMin: average,
-                            yMax: average,
-                            borderColor: 'red',
-                            borderWidth: 2,
-                            label: {
-                                content: 'Media',
-                                enabled: true,
-                                position: 'end'
+            body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor');
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error("Error:", error);
+        return null;
+    }
+}
+// Configuración de la gráfica
+// Variable global para almacenar la instancia del gráfico
+let chartInstance = null;
+
+async function renderChart(labels, data, ausencias, average, maxHorasDia) {
+    try {
+        const ctx = document.getElementById('hours-chart').getContext('2d');
+        
+        // Destruir el gráfico anterior si existe
+        if (chartInstance) {
+            chartInstance.destroy();
+            chartInstance = null;
+        }
+
+        const datos = await peticionDatos(labels, data, ausencias, average, maxHorasDia);
+        
+        // Actualizar variables con los datos recibidos
+        labels = datos.labels;
+        data = datos.valores;
+        ausencias = datos.ausencias;
+        average = datos.average;
+        maxHorasDia = datos.maxHoras;
+        
+        console.log('Datos para gráfica:', datos);
+
+        // Divide las horas en normales y extras con validación
+        const horasNormales = data.map(horas => Math.min(Number(horas) || 0, Number(maxHorasDia) || 8));
+        const horasExtras = data.map(horas => Math.max(0, (Number(horas) || 0) - (Number(maxHorasDia) || 8)));
+
+        // Define los colores para las barras
+        const backgroundColors = labels.map(label => {
+            try {
+                const date = new Date(label);
+                return date.getDay() === 0 ? 'rgba(255, 99, 132, 0.5)' : 'rgba(54, 162, 235, 0.5)';
+            } catch (e) {
+                return 'rgba(54, 162, 235, 0.5)'; // Color por defecto si hay error con la fecha
+            }
+        });
+
+        // Crear nueva instancia del gráfico
+        chartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Horas normales',
+                        data: horasNormales,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Horas extras',
+                        data: horasExtras,
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Ausencias',
+                        data: ausencias,
+                        backgroundColor: 'rgba(255, 206, 86, 0.5)',
+                        borderColor: 'rgba(255, 206, 86, 1)',
+                        borderWidth: 1,
+                        type: 'line' // Cambiamos a tipo línea para mejor visualización
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        stacked: true
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        suggestedMax: (Number(maxHorasDia) || 8) + 2 // Margen adicional
+                    }
+                },
+                plugins: {
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                yMin: average,
+                                yMax: average,
+                                borderColor: 'red',
+                                borderWidth: 2,
+                                borderDash: [6, 6],
+                                label: {
+                                    content: `Media: ${average.toFixed(2)}`,
+                                    enabled: true,
+                                    position: 'end'
+                                }
+                            },
+                            line2: {
+                                type: 'line',
+                                yMin: maxHorasDia,
+                                yMax: maxHorasDia,
+                                borderColor: 'green',
+                                borderWidth: 2,
+                                borderDash: [6, 6],
+                                label: {
+                                    content: `Máximo: ${maxHorasDia}`,
+                                    enabled: true,
+                                    position: 'start'
+                                }
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.raw} horas`;
                             }
                         }
                     }
                 }
             }
+        });
+
+        return chartInstance; // Opcional: devolver la instancia para control externo
+
+    } catch (error) {
+        console.error('Error al renderizar gráfica:', error);
+        
+        // Limpiar instancia en caso de error
+        if (chartInstance) {
+            try {
+                chartInstance.destroy();
+            } catch (e) {
+                console.error('Error al destruir gráfica previa:', e);
+            }
+            chartInstance = null;
         }
-    });
+        
+        throw error; // Re-lanzar el error para manejo externo
+    }
 }
 
 function openTab(evt, tabName) {
@@ -360,4 +482,25 @@ function cerrarSecciones(){
 // Función de logout
 function logout() {
     alert("Has cerrado sesión.");
+}
+
+async function cargarHTML(data){
+    try {
+        const response = await fetch('./logica/filtrar_registros.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor');
+        }
+        
+        return await response.text();
+    } catch (error) {
+        console.error("Error:", error);
+        return `<p class="error-message">Error al cargar los datos: ${error.message}</p>`;
+    }
 }

@@ -225,7 +225,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                             <!-- Contenedor para el filtro -->
                             <div class="filter-container">
                                 <h3>Filtrar registros</h3>
-                                <form method="POST" action="empleado.php">
+                                <div>
                                     <!--Opciones del combo-->
                                     <select id="filter-mode" name="filter-mode">
                                         <option value="week" <?php echo ($filtro === 'week') ? 'selected' : ''; ?>>Semana actual</option>
@@ -240,60 +240,66 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                                     <input type="date" id="start-date" name="start-date" disabled>
                                     <input type="date" id="end-date" name="end-date" disabled>
                                         <!--Botón-->
-                                    <button type="submit">Filtrar</button>
-                                </form>
+                                    <button id="filtroDatos">Filtrar</button>
+                                </div>
                             </div>
-
+                                
                             <!-- Contenedor para la gráfica -->
                         
+                            
+                        </div>
+                    </div>
+                    <div>
+                        <div>
                             <canvas id="hours-chart"></canvas>
                             <script>
         
-                                // Datos generados desde PHP
-                                toggleDateInputs();
-                                const labels = <?php echo json_encode($labels); ?>; // Fechas
-                                const data = <?php echo json_encode($valores); ?>; // Horas trabajadas
-                                const average = <?php echo array_sum($valores) / count($valores); ?>; // a usar en js
-                                const ausencias = <?php echo json_encode($ausencias); ?>;
-                                const registros = <?php echo json_encode($registrosDetallados); ?>;
-                                var todosMarcajes = <?php echo json_encode($datosMarcajes); ?>;
-                                renderChart(labels, data, ausencias, average,<?php echo $maxHoras;?>);
+                            // Datos generados desde PHP
+                            toggleDateInputs();
+                            const labels = <?php echo json_encode($labels); ?>; // Fechas
+                            const data = <?php echo json_encode($valores); ?>; // Horas trabajadas
+                            const average = <?php echo array_sum($valores) / count($valores); ?>; // a usar en js
+                            const ausencias = <?php echo json_encode($ausencias); ?>;
+                            const registros = <?php echo json_encode($registrosDetallados); ?>;
+                            var todosMarcajes = <?php echo json_encode($datosMarcajes); ?>;
+                            renderChart(labels, data, ausencias, average,<?php echo $maxHoras;?>);
                                 
-                            </script>
+                        </script>
                         </div>
-                    <div> 
-                    <div class="cabeceraRegistros">
-                        <h3>Registros detallados</h3>
-                        <div>
-                            <button type="button" id="exp-reg-csv">CSV</button>
-                            <button type="button" id="exp-reg-xls">Excel</button>
-                            <button type="button" id="exp-reg-pdf">PDF</button>
+                         
+                        <div class="cabeceraRegistros">
+                            <h3>Registros detallados</h3>
+                            <div>
+                                <button type="button" id="exp-reg-csv">CSV</button>
+                                <button type="button" id="exp-reg-xls">Excel</button>
+                                <button type="button" id="exp-reg-pdf">PDF</button>
+                            </div>
                         </div>
-                    </div>
-                    <div id="registrosExportables" class="registro">
-                        <ul>
-                            <li class="registro-header">
-                                <span class="col-fecha">Fecha</span>
-                                <span class="col-tipo">Tipo</span>
-                                <span class="col-fecha">Entrada</span>
-                                <span class="col-tipo">Tipo</span>
-                                <span class="col-fecha">Salida</span>
-                                <span class="col-incidencia">Incidencia</span>
-                                <span class="col-estado">Estado</span>
-                            </li>
-                            <?php foreach ($registrosDetallados as $index=>$registro): ?>
-                            <li data-id="<?php echo $index;?>" 
-                                data-fecha="<?php echo $registro['fecha'];?>">
-                                <span class="fecha"><?php echo $registro['fecha']; ?></span>
-                                <span class="metodo"><?php echo $registro['tipoAccesoEntrada']; ?></span>
-                                <span class="hora"><?php echo $registro['horaEntrada']; ?></span>
-                                <span class="metodo"><?php echo $registro['tipoAccesoSalida']; ?></span>
-                                <span class="hora"><?php echo $registro['horaSalida']; ?></span>
-                                <span class="incidencia"><?php echo $registro['incidencia']; ?></span>
-                                <span class="estado"><?php echo $registro['estado']; ?></span>
-                            </li>
-                            <?php endforeach; ?>
-                        </ul>
+                        <div id="registrosExportables" class="registro">
+                            <ul>
+                                <li class="registro-header">
+                                    <span class="col-fecha">Fecha</span>
+                                    <span class="col-tipo">Tipo</span>
+                                    <span class="col-fecha">Entrada</span>
+                                    <span class="col-tipo">Tipo</span>
+                                    <span class="col-fecha">Salida</span>
+                                    <span class="col-incidencia">Incidencia</span>
+                                    <span class="col-estado">Estado</span>
+                                </li>
+                                <?php foreach ($registrosDetallados as $index=>$registro): ?>
+                                <li data-id="<?php echo $index;?>" 
+                                    data-fecha="<?php echo $registro['fecha'];?>">
+                                    <span class="fecha"><?php echo $registro['fecha']; ?></span>
+                                    <span class="metodo"><?php echo $registro['tipoAccesoEntrada']; ?></span>
+                                    <span class="hora"><?php echo $registro['horaEntrada']; ?></span>
+                                    <span class="metodo"><?php echo $registro['tipoAccesoSalida']; ?></span>
+                                    <span class="hora"><?php echo $registro['horaSalida']; ?></span>
+                                    <span class="incidencia"><?php echo $registro['incidencia']; ?></span>
+                                    <span class="estado"><?php echo $registro['estado']; ?></span>
+                                </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <!--             Bloques ocultos             -->

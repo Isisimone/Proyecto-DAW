@@ -761,8 +761,9 @@ label {
             <button class="nav-btn" id="menuCerrar">Cerrar sesión</button>
         </div>
 
-        <!-- Sección Principal con el Logo y mensaje de Bienvenida -->
+        <!-- Contenedor principal -->
         <div id="main" class="section">
+            <!--Sección fija con logo y reloj-->
             <div id="welcome-message">
                 <div class="logo-container">
                     <img src="../recursos/logo.png" alt="Logo" class="logo">
@@ -771,9 +772,11 @@ label {
             </div>
 
             <div id="dynamicContent" class="section">
-                <h1>Bienvenido al Panel de Administración</h1>
-                
                 <!--Paneles de la página principal-->
+                <!--Panel de Bienvenida-->
+                <div id="panelBienvenida" class="contenido" style="display:block;">
+                    <h1>Bienvenido al Panel de Administración</h1>
+                </div>
                 <!--Panel de datos del empleado administrador-->
                 <div id="panelDatosAdmin" class="contenido" style="display: none;">
                     
@@ -991,7 +994,7 @@ label {
                             
                         </div>
                         <div class="enLinea">
-                            <button id="exportarEmpleado">Exportar</button>
+                            <button id="exportarEmpleados">Exportar</button>
                         </div>
                     </div>
                     <div id="exportarEmpleado" style="display: none;">
@@ -1105,7 +1108,11 @@ label {
                                 
                         </div>
                     </div>
-                    <div class="contenedor" id="listaTransacciones"></div>                   
+                    <div class="contenedor" id="listaTransacciones"></div>
+                    <div class="enLinea">
+                        <button id="exportarTransacciones">Exportar</button>    
+                    </div>
+                    <div id="exportarTransaccion" style="display:none;"></div>                    
                 </div>
                 <!--Panel Listado Marcajes-->
                 <div id="panelListadoMarcajes" style="display: none;">
@@ -1149,8 +1156,13 @@ label {
                             </div>
                                 
                         </div>
+                        
                     </div>
-                    <div class="contenedor" id="listaMarcajes"></div>                   
+                    <div class="contenedor" id="listaMarcajes"></div>
+                    <div class="enLinea">
+                        <button id="exportarMarcajes">Exportar</button>    
+                    </div>
+                    <div id="exportarMarcaje" style="display:none;"></div>                   
                 </div>
                 <!--Paneles de la página Configuración-->
                 <!--Panel Mantenimiento de permisos por Rol-->

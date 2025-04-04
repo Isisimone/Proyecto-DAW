@@ -689,6 +689,35 @@ $nombrePrivilegios=[
                     exit;
             }
 
+            if ($datos['accion']=='exportar_transacciones'){
+                $transaccion = new Transaccion();
+                $transacciones = $transaccion->obtenerTransaccionesFiltradas(new DateTime($datos['desdeFecha']),new DateTime($datos['hastaFecha']),intval($datos['desdeUsuario']),intval($datos['hastaUsuario']),$datos['desdeActividad'],$datos['hastaActividad']);
+                $html= '
+                <ul class="marcoListados">
+                    <li class="cabecera_trans">
+                        <span class="">Fecha</span>
+                        <span class="">Usuario</span>
+                        <span class="">IP</span>
+                        <span class="">Tipo</span>
+                        <span class="">Descripción</span>
+                        <span class="">Nombre Objeto</span>
+                    </li>';
+                foreach ($transacciones as $registro){
+                $html=$html.'
+                    <li class="linea_trans" data-id="'.$registro['COD_TRANSACCION'].'">
+                        <span><b>'.$registro['FEC_SIS'].'</b></span>
+                        <span>'.$registro['COD_USUARIO'].'</span>
+                        <span>'.$registro['IP_USUARIO'].'</span>
+                        <span>'.$registro['TIP_TRANS'].'</span>
+                        <span>'.$registro['DESC_TRANS'].'</span>
+                        <span>'.$registro['NOM_OBJ'].'</span>
+                    </li>';
+                };
+                $html=$html.'</ul>';
+                header('Content-Type: text/html');
+                echo $html;
+                exit;
+            }
 
             if ($datos['accion']=='mostrar_transacciones'){
                 $transaccion = new Transaccion();
@@ -712,6 +741,36 @@ $nombrePrivilegios=[
                         <span>'.$registro['TIP_TRANS'].'</span>
                         <span>'.$registro['DESC_TRANS'].'</span>
                         <span>'.$registro['NOM_OBJ'].'</span>
+                    </li>';
+                };
+                $html=$html.'</ul>';
+                header('Content-Type: text/html');
+                echo $html;
+                exit;
+            }
+
+            if ($datos['accion']=='exportar_marcajes'){
+                $marcaje = new Marcaje();
+                $marcajes = $marcaje->cargarMarcajesFiltro(intval($datos['desdeEmpleado']),intval($datos['hastaEmpleado']),new DateTime($datos['desdeFecha']),new DateTime($datos['hastaFecha']),$datos['desdeTipo'],$datos['hastaTipo']);
+                $html= '
+                <ul class="marcoListados">
+                    <li class="cabecera_trans">
+                        <span class="">Fecha</span>
+                        <span class="">Empelado</span>
+                        <span class="">Foto</span>
+                        <span class="">Tipo</span>
+                        <span class="">Observaciones</span>
+                        <span class="">Pendiente</span>
+                    </li>';
+                foreach ($marcajes as $registro){
+                $html=$html.'
+                    <li class="linea_trans" data-id="'.$registro['COD_MARCAJE'].'">
+                        <span><b>'.$registro['FEC_MARCAJE'].'</b></span>
+                        <span>'.$registro['COD_EMPLEADO'].'</span>
+                        <span><img src="./logica/mostrar_imagen.php?archivo='.$registro['DES_FOTO'].'" alt="Foto acceso" class="foto-acceso"></span>
+                        <span>'.$registro['COD_TIPO_MARCAJE'].'</span>
+                        <span>'.$registro['DES_OBSERVACIONES'].'</span>
+                        <span>'.$registro['IND_PENDIENTE'].'</span>
                     </li>';
                 };
                 $html=$html.'</ul>';
