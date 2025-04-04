@@ -345,6 +345,95 @@ $nombrePrivilegios=[
                 exit;
             }
             
+            if ($datos['accion']=='exportar_empleado'){
+                $empleado = new Empleado();
+                $empleado->cargarDatosEmpleado($datos['cod_empleado']);
+                $fecha = $empleado->getFecAlta();
+                $fechaAlta = $fecha ? $fecha->format('Y-m-d') : '';
+                $fecha = $empleado->getFecBaja();
+                $fechaBaja = $fecha ? $fecha->format('Y-m-d') : '';
+                $usuario=new Usuario();
+                $usuarios=$usuario->obtenerUsuarios();
+                $html= '<div class="formulario-grid">
+                            <div class="fila-grid">
+                                <div style="grid-column: span 2;">
+                                    <img src="./logica/mostrar_imagen.php?perfil=perfil&archivo='.$empleado->getFoto().'" width="100" id="fotoEmpleado" data-foto="'.$empleado->getFoto().'" height="100" class="rounded-circle me-2">
+                                </div>
+                                <div style="grid-column: span 5;">
+                                    <label for="apellido1Empleado">1er apellido</label>
+                                    <input type="text" id="apellido1Empleado" value="'.$empleado->getApellido1().'">
+                                </div>
+                                <div style="grid-column: span 5;">
+                                    <label for="apellido2Empleado">2º apellido</label>
+                                    <input type="text" id="apellido2Empleado" value="'.$empleado->getApellido2().'">
+                                </div>
+                            </div>
+                            <div class="fila-grid">
+                                <div style="grid-column: span 6;">
+                                    <label for="nombreEmpleado">Nombre</label>
+                                    <input type="text" id="nombreEmpleado" value="'.$empleado->getNombre().'">
+                                    <input type="text" id="codEmpleado" value="'.$empleado->getCodEmpleado().'" hidden>
+                                </div>
+                                <div style="grid-column: span 3;">
+                                    <label for="fechaAltaEmpleado">Fecha Alta</label>
+                                    <input type="date" id="fechaAltaEmpleado" value="'.$fechaAlta.'" readonly>
+                                </div> 
+                                <div style="grid-column: span 3;">
+                                    <label for="fechaBajaEmpleado">Fecha Baja</label>
+                                    <input type="date" id="fechaBajaEmpleado" value="'.$fechaBaja.'" readonly>
+                                </div>
+                            </div>
+                            <div class="fila-grid fila-completa">
+                                <div style="grid-column: span 8;">
+                                    <label for="contactoEmpleado">Contacto</label>
+                                    <input type="text" id="contactoEmpleado" value="'.$empleado->getContacto().'">
+                                </div>
+                                <div style="grid-column: span 4;">
+                                    <label for="usuarioEmpleado">Usuario</label>
+                                    <select name="usuarioEmpleado" id="usuarioEmpleado" class="form-select" required>
+                                    ';
+                                    if (!empty($usuarios)){
+                                        foreach ($usuarios as $usuario){
+                                        if ($empleado->getCodUsuario() == $usuario['COD_USUARIO']){
+                                            $selected='selected';
+                                        } else {
+                                            $selected='';
+                                        }
+                                        $codigo = htmlspecialchars($usuario['COD_USUARIO'] ?? 0);
+                                        $nombreUsuario = $usuario['NOM_LOGIN'];
+                                        $html=$html.'    
+                                        <option value="'.$codigo.'" '.$selected.'>
+                                            '.$nombreUsuario.'
+                                        </option>';
+                                        }
+                                        }else{
+                                    $html=$html.'<option value="" disabled>No hay usuarios disponibles</option>';
+                                }
+                            
+                                $html=$html.'
+                                </select>
+                                </div>
+                            </div>
+                            <div class="fila-grid">
+                                <div style="grid-column: span 4;">
+                                    <label for="horarioEmpleado">Horario</label>
+                                    <input type="text" id="horarioEmpleado" value="'.$empleado->getHorario().'">
+                                </div>
+                                <div style="grid-column: span 4;">
+                                    <label for="horasEmpleado">Máx.horas</label>
+                                    <input type="number" id="horasEmpleado" value="'.$empleado->getMaxHorasDia().'">
+                                </div>
+                                <div style="grid-column: span 4;">
+                                    <label for="bolsaEmpleado">Bolsa de horas</label>
+                                    <input type="text" id="bolsaEmpleado" value="'.$empleado->getBolsa().'">
+                                </div>
+                            </div>
+                        </div>';
+                    header('Content-Type: text/html');
+                    echo $html;
+                    exit;
+            }
+
             if ($datos['accion']=='mostrar_empleado'){
                 $empleado = new Empleado();
                 $empleado->cargarDatosEmpleado($datos['cod_empleado']);
@@ -568,6 +657,31 @@ $nombrePrivilegios=[
                                 <button class="btn btn-primary" id="guardarUsuario">Guardar cambios</button>
                                 <button class="btn btn-danger" id="bajaUsuario">Dar de baja</button>
                                 <button class="btn btn-secondary" id="passUsuario">Generar Password</button>
+                            </div>
+                        </div>';
+                    header('Content-Type: text/html');
+                    echo $html;
+                    exit;
+            }
+            if ($datos['accion']=='exportar_usuario'){
+                $usuario = new Usuario();
+                $usuario->cargarUsuario($datos['cod_usuario']);
+                $html= '<div >
+                            <div >
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Código Usuario</label>
+                                        <input type="text" id="codigoUsuarioUsuario" class="form-control" value="'.$usuario->getCodUsuario().'" readonly>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Login</label>
+                                        <input type="text" id="loginUsuario" class="form-control" value="'.$usuario->getNomLogin().'">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Correo</label>
+                                        <input type="email" id="emailUsuario" class="form-control" value="'.$usuario->getDesCorreo().'">
+                                    </div>
+                                </div>
                             </div>
                         </div>';
                     header('Content-Type: text/html');

@@ -3,108 +3,117 @@
 require($_SERVER['DOCUMENT_ROOT'] . '/Proyecto-DAW/vendor/autoload.php');
 require($_SERVER['DOCUMENT_ROOT'] . '/Proyecto-DAW/public/logica/empleado_datos.php');
 
-// Verifica el tipo de exportación solicitado
-$tipo = $_GET['tipo'] ?? 'csv';
+use Dompdf\Dompdf;
 
-if ($tipo === 'csv') {
-    // Exportar a CSV
-    header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename=registros.csv');
+// Verificar si la solicitud es POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Obtener los datos del cuerpo de la solicitud POST
+    $datos = isset($_POST['datos']) ? $_POST['datos'] : null;
+    
+    if ($datos) {
+        // Decodificar si los datos vienen como JSON
+        if ($_POST['tipo'] == 'csv') {
+            $registros = is_string($datos) ? json_decode($datos, true) : $datos;
+            // Configurar cabeceras para descarga CSV
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: attachment; filename=exportacion_' . date('Y-m-d') . '.csv');
+            // Crear el archivo de salida
+            $output = fopen('php://output', 'w');
+            // Escribir encabezados (asumiendo que todos los registros tienen la misma estructura)
+            if (!empty($registros)) {
+                fputcsv($output, array_keys($registros[0]));
+                foreach ($registros as $registro) {
+                    fputcsv($output, $registro);
+                }
+            }
+            fclose($output);
+            exit;
+        } elseif ($_POST['tipo'] == 'xls') {
+            $registros = is_string($datos) ? json_decode($datos, true) : $datos;
+            $cabeceras = array_keys($registros[0]);
+        
+            // Exportar a Excel utilizando HTML
+            header('Content-Type: application/vnd.ms-excel');
+            header('Content-Disposition: attachment; filename=registros.xls');
+        
+            echo "<table border='1'>";
+            
+            echo '<tr>';
+            foreach ($cabeceras as $cabecera) {
+                // Opcional: transformar nombres de campos a más legibles
+                $nombreLegible = str_replace('_', ' ', ucfirst($cabecera));
+                echo '<th>' . htmlspecialchars($nombreLegible) . '</th>';
+            }
+            echo '</tr>';
+            foreach ($registros as $registro) {
+                echo '<tr>';
+                foreach ($cabeceras as $campo) {
+                    echo '<td>' . htmlspecialchars($registro[$campo] ?? '') . '</td>';
+                }
+                echo '</tr>';
+            }
+            echo '</table>';
+            exit;
+        } elseif ($_POST['tipo'] == 'pdf') {
+            /*$registros = is_string($datos) ? json_decode($datos, true) : $datos;
+            $cabeceras = array_keys($registros[0]);*/
+            if (!empty($registros)) {
+                /*
+                $html = '<h1>Registros Detallados</h1><table>';
 
-    $output = fopen('php://output', 'w');
-    fputcsv($output, ['Tipo de Marcaje', 'Tipo de Entrada', 'Fecha y Hora']);
+                // Cabeceras
+                $html .= '<tr>';
+                foreach ($cabeceras as $cabecera) {
+                    $html .= '<th style="background:#f2f2f2;padding:5px;">'.$cabecera.'</th>';
+                }
+                $html .= '</tr>';
 
-    foreach ($datosMarcajes as $registro) {
-        $tipoMarcaje = $registro['COD_TIPO_MARCAJE'] == 1 ? 'Entrada' : 'Salida';
-        $metodoEntrada = match ($registro['COD_TIPO_ACCESO']) {
-            1 => 'Facial',
-            2 => 'RFID',
-            3 => 'Manual',
-            default => 'Desconocido'
-        };
-        $fechaHora = (new DateTime($registro['FEC_MARCAJE']))->format('Y-m-d H:i:s');
-        fputcsv($output, [$tipoMarcaje, $metodoEntrada, $fechaHora]);
-    }
+                // Datos
+                foreach ($registros as $fila) {
+                    $html .= '<tr>';
+                    foreach ($fila as $valor) {
+                        $html .= '<td style="border:1px solid #ddd;padding:5px;">'.$valor.'</td>';
+                    }
+                    $html .= '</tr>';
+                }
+                $html .= '</table>';*/
+                $html=is_string($datos) ? json_decode($datos, true) : $datos;
 
-    fclose($output);
-    exit;
-} elseif ($tipo === 'excel') {
-    // Exportar a Excel utilizando HTML
-    header('Content-Type: application/vnd.ms-excel');
-    header('Content-Disposition: attachment; filename=registros.xls');
-
-    echo "<table border='1'>";
-    echo "<tr><th>Tipo de Marcaje</th><th>Metodo de Entrada</th><th>Fecha y Hora</th></tr>";
-
-    foreach ($datosMarcajes as $registro) {
-        $tipoMarcaje = $registro['COD_TIPO_MARCAJE'] == 1 ? 'Entrada' : 'Salida';
-        $metodoEntrada = match ($registro['COD_TIPO_ACCESO']) {
-            1 => 'Facial',
-            2 => 'RFID',
-            3 => 'Manual',
-            default => 'Desconocido'
-        };
-        $fechaHora = (new DateTime($registro['FEC_MARCAJE']))->format('Y-m-d H:i:s');
-
-        echo "<tr>";
-        echo "<td>{$tipoMarcaje}</td>";
-        echo "<td>{$metodoEntrada}</td>";
-        echo "<td>{$fechaHora}</td>";
-        echo "</tr>";
-    }
-
-    echo "</table>";
-    exit;
-} elseif ($tipo === 'pdf'){
-    // Exportar a PDF utilizando FPDF
-    class PDF extends FPDF {
-        // Encabezado del PDF
-        function Header() {
-            $this->SetFont('Arial', 'B', 12);
-            $this->Cell(0, 10, 'Registros Detallados', 0, 1, 'C');
-            $this->Ln(10);
+                $dompdf = new Dompdf();
+                $dompdf->loadHtml($html);
+                $dompdf->setPaper('A4', 'landscape');
+                $dompdf->render();
+                $dompdf->stream("document.pdf");
+                exit;
+            }else {
+                echo "Tipo de exportación no válido.";
+                exit;
+            }
+   
         }
 
-        // Pie de página del PDF
-        function Footer() {
-            $this->SetY(-15);
-            $this->SetFont('Arial', 'I', 8);
-            $this->Cell(0, 10, 'Pagina ' . $this->PageNo(), 0, 0, 'C');
-        }
+    } else {
+        http_response_code(400);
+        echo "Error: No se recibieron datos para exportar";
     }
-
-    // Crear el PDF
-    $pdf = new PDF();
-    $pdf->AddPage();
-    $pdf->SetFont('Arial', '', 12);
-
-    // Encabezados de la tabla
-    $pdf->Cell(50, 10, 'Tipo de Marcaje', 1);
-    $pdf->Cell(50, 10, 'Metodo de Entrada', 1);
-    $pdf->Cell(90, 10, 'Fecha y Hora', 1);
-    $pdf->Ln();
-
-    // Agregar los registros
-    foreach ($datosMarcajes as $registro) {
-        $tipoMarcaje = $registro['COD_TIPO_MARCAJE'] == 1 ? 'Entrada' : 'Salida';
-        $metodoEntrada = match ($registro['COD_TIPO_ACCESO']) {
-            1 => 'Facial',
-            2 => 'RFID',
-            3 => 'Manual',
-            default => 'Desconocido'
-        };
-        $fechaHora = (new DateTime($registro['FEC_MARCAJE']))->format('Y-m-d H:i:s');
-
-        $pdf->Cell(50, 10, $tipoMarcaje, 1);
-        $pdf->Cell(50, 10, $metodoEntrada, 1);
-        $pdf->Cell(90, 10, $fechaHora, 1);
-        $pdf->Ln();
-    }
-
-    // Salida del PDF
-    $pdf->Output('D', 'registros.pdf'); // 'D' fuerza la descarga
-    exit;
-}else {
-    echo "Tipo de exportación no válido.";
-    exit;
+} else {
+    http_response_code(405);
+    echo "Error: Método no permitido. Se requiere POST";
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

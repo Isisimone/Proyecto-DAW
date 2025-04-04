@@ -43,7 +43,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
         <div id="main" class="section">
             <div id="dynamicContent" class="section">
                 <div id="principal" style="display:block">
-                    <h1>Bienvenido a tu portal de empelado</h1>
+                    <h1>Bienvenido a tu portal de empleado</h1>
                 </div>
                 <div id="perfil" style="display:none;">
                     <h1 id="employee-name" data-id="<?php echo $empleado->getCodEmpleado();?>"><?php echo htmlspecialchars($nombreCompleto); ?></h1> 
@@ -255,6 +255,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                                 const data = <?php echo json_encode($valores); ?>; // Horas trabajadas
                                 const average = <?php echo array_sum($valores) / count($valores); ?>; // a usar en js
                                 const ausencias = <?php echo json_encode($ausencias); ?>;
+                                const registros = <?php echo json_encode($registrosDetallados); ?>;
                                 var todosMarcajes = <?php echo json_encode($datosMarcajes); ?>;
                                 renderChart(labels, data, ausencias, average,<?php echo $maxHoras;?>);
                                 
@@ -264,100 +265,83 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                     <div class="cabeceraRegistros">
                         <h3>Registros detallados</h3>
                         <div>
-                            <a href="./logica/exportar_registros.php?tipo=csv" class="export-button">CSV</a>
-                            <a href="./logica/exportar_registros.php?tipo=excel" class="export-button">Excel</a>
-                            <a href="./logica/exportar_registros.php?tipo=pdf" class="export-button">PDF</a>
+                            <button type="button" id="exp-reg-csv">CSV</button>
+                            <button type="button" id="exp-reg-xls">Excel</button>
+                            <button type="button" id="exp-reg-pdf">PDF</button>
                         </div>
                     </div>
-                    <div class="registro">
+                    <div id="registrosExportables" class="registro">
                         <ul>
-                        <li class="registro-header">
-                            <span class="col-fecha">Fecha</span>
-                            <span class="col-tipo">Tipo</span>
-                            <span class="col-fecha">Entrada</span>
-                            <span class="col-tipo">Tipo</span>
-                            <span class="col-fecha">Salida</span>
-                            <span class="col-incidencia">Incidencia</span>
-                            <span class="col-estado">Estado</span>
-                        </li>
-                        <?php foreach ($registrosDetallados as $index=>$registro): ?>
-                        <li data-id="<?php echo $index;?>" 
-                            data-fecha="<?php echo $registro['fecha'];?>">
-                            <span class="fecha"><?php echo $registro['fecha']; ?></span>
-                            <span class="metodo"><?php echo $registro['tipoAccesoEntrada']; ?></span>
-                            <span class="hora"><?php echo $registro['horaEntrada']; ?></span>
-                            <span class="metodo"><?php echo $registro['tipoAccesoSalida']; ?></span>
-                            <span class="hora"><?php echo $registro['horaSalida']; ?></span>
-                            <span class="incidencia"><?php echo $registro['incidencia']; ?></span>
-                            <span class="estado"><?php echo $registro['estado']; ?></span>
-                        </li>
-                        <?php endforeach; ?>
-                    </ul>
+                            <li class="registro-header">
+                                <span class="col-fecha">Fecha</span>
+                                <span class="col-tipo">Tipo</span>
+                                <span class="col-fecha">Entrada</span>
+                                <span class="col-tipo">Tipo</span>
+                                <span class="col-fecha">Salida</span>
+                                <span class="col-incidencia">Incidencia</span>
+                                <span class="col-estado">Estado</span>
+                            </li>
+                            <?php foreach ($registrosDetallados as $index=>$registro): ?>
+                            <li data-id="<?php echo $index;?>" 
+                                data-fecha="<?php echo $registro['fecha'];?>">
+                                <span class="fecha"><?php echo $registro['fecha']; ?></span>
+                                <span class="metodo"><?php echo $registro['tipoAccesoEntrada']; ?></span>
+                                <span class="hora"><?php echo $registro['horaEntrada']; ?></span>
+                                <span class="metodo"><?php echo $registro['tipoAccesoSalida']; ?></span>
+                                <span class="hora"><?php echo $registro['horaSalida']; ?></span>
+                                <span class="incidencia"><?php echo $registro['incidencia']; ?></span>
+                                <span class="estado"><?php echo $registro['estado']; ?></span>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <!--             Bloques ocultos             -->
-            <!--Bloque menú contextual -->
-            <div id="context-menu" class="context-menu">
+                <!--             Bloques ocultos             -->
+                <!--Bloque menú contextual -->
+                <div id="context-menu" class="context-menu">
                     <ul>
                         <li id="solicitar-revision">Solicitar revisión</li>
                         <li id="mostrar-datos">Mostrar datos</li>
                     </ul>
-             </div>
-
-             <!-- Bloque de Revisión -->
-            <div id="bloque-revision" style="display: none;">
-                <h3>Solicitar Revisión</h3>
-                <form id="form-revision" method="post" action="empleado.php">
-                    <input type="hidden" id="registro-id-revision" name="registro_id">
-                    <div>
-                        <label for="comentario-fecha">Fecha:</label>
-                        <input id="comentario-fecha" name="comentario-fecha" readonly>
-                    </div>
-                    <div>
-                        <label for="comentario-revision">Comentario:</label>
-                        <textarea id="comentario-revision" name="comentario" required></textarea>
-                    </div>
-                    <div>
-                        <label for="prioridad">Prioridad:</label>
-                        <select id="prioridad" name="prioridad">
-                            <option value="1">Baja</option>
-                            <option value="2">Media</option>
-                            <option value="3">Alta</option>
-                        </select>
-                    </div>
-                    <button type="submit" name="SolRevision">Enviar Revisión</button>
-                    <button type="button" id="cerrar-revision">Cancelar</button>
-                </form>
-            </div>
-
-            <!-- Bloque de Mostrar Datos -->
-            <div id="bloque-mostrardatos" style="display: none;">
-                <h3>Detalles del Registro</h3>
-                <div id="registro-id-datos"></div>
-                <div class="detalles-registro" id="detalles-registro" data-fecha="<?= $datosMarcajes ?>">
-                    <!-- Los datos se generarán dentro de este DIV-->
                 </div>
-                <button type="button" id="cerrar-mostrardatos">Cerrar</button>
+
+                <!-- Bloque de Revisión -->
+                <div id="bloque-revision" style="display: none;">
+                    <h3>Solicitar Revisión</h3>
+                    <form id="form-revision" method="post" action="empleado.php">
+                        <input type="hidden" id="registro-id-revision" name="registro_id">
+                        <div>
+                            <label for="comentario-fecha">Fecha:</label>
+                            <input id="comentario-fecha" name="comentario-fecha" readonly>
+                        </div>
+                        <div>
+                            <label for="comentario-revision">Comentario:</label>
+                            <textarea id="comentario-revision" name="comentario" required></textarea>
+                        </div>
+                        <div>
+                            <label for="prioridad">Prioridad:</label>
+                            <select id="prioridad" name="prioridad">
+                                <option value="1">Baja</option>
+                                <option value="2">Media</option>
+                                <option value="3">Alta</option>
+                            </select>
+                        </div>
+                        <button type="submit" name="SolRevision">Enviar Revisión</button>
+                        <button type="button" id="cerrar-revision">Cancelar</button>
+                    </form>
+                </div>
+
+                <!-- Bloque de Mostrar Datos -->
+                <div id="bloque-mostrardatos" style="display: none;">
+                    <h3>Detalles del Registro</h3>
+                    <div id="registro-id-datos"></div>
+                    <div class="detalles-registro" id="detalles-registro" data-fecha="<?= $datosMarcajes ?>">
+                        <!-- Los datos se generarán dentro de este DIV-->
+                    </div>
+                    <button type="button" id="cerrar-mostrardatos">Cerrar</button>
+                </div>
             </div>
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        
-
-    
-
+    </div>
 </body>
 </html>

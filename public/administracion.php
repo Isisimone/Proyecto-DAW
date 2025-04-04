@@ -991,10 +991,11 @@ label {
                             
                         </div>
                         <div class="enLinea">
-                            <input type="checkbox" id="incluirBajaEmpelados" name="incluirBajaEmpelados" value="1">
-                            <label for="incluirBajaEmpelados" style="text-align:left">Incluir empelados de baja.</label>
-                            <button id="exportarEmpleados">Exportar</button>    
+                            <button id="exportarEmpleado">Exportar</button>
                         </div>
+                    </div>
+                    <div id="exportarEmpleado" style="display: none;">
+                        
                     </div>    
                 </div>
                 <!--Subpanel Mantenimiento Descriptores-->
@@ -1050,11 +1051,13 @@ label {
                             
                         </div>
                         <div class="enLinea">
-                            <input type="checkbox" id="incluirBajaUsuarios" name="incluirBajaUsuarios" value="1">
-                            <label for="incluirBajaUsuarios" style="text-align:left">Incluir usuarios de baja.</label>
                             <button id="exportarUsuarios">Exportar</button>    
                         </div>
-                    </div> 
+                    </div>
+                    <div id="exportarUsuario" style="display: block;">
+                        
+                    </div>
+
                 
                 </div>
                 <!--Subpanel Exportar usuarios-->

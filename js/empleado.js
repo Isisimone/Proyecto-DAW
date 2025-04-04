@@ -192,7 +192,58 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    document.getElementById('exp-reg-csv').addEventListener('click', () => {
+        console.log(registros); // Asegúrate de que esta variable esté definida en tu PHP  
+        exportar('csv', registros); // Llama a la función de exportación  
+    });
+    document.getElementById('exp-reg-xls').addEventListener('click', () => {
+        console.log(registros); // Asegúrate de que esta variable esté definida en tu PHP  
+        exportar('xls', registros); // Llama a la función de exportación  
+    });
+    document.getElementById('exp-reg-pdf').addEventListener('click', () => {
+        console.log(registros); // Asegúrate de que esta variable esté definida en tu PHP 
+        const elemento = document.getElementById('registrosExportables');
+    
+        if (!elemento) {
+            console.error('No se encontró el elemento con ID "registrosExportables"');
+            return null;
+        }
+    
+        // Clonar el elemento para no afectar el original
+        const clon = elemento.cloneNode(true);
+    
+        
+        exportar('pdf', clon.outerHTML); // Llama a la función de exportación  
+    });
+
 });
+
+//Función exportar registros
+async function exportar(tipo,data){
+    try {
+        // Resto de tu lógica de exportación
+        const formData = new FormData();
+        formData.append('datos', JSON.stringify(data));
+        formData.append('tipo', tipo);
+
+        const response = await fetch(`./logica/exportar_registros.php`, {
+          method: 'POST',
+          body: formData
+        });
+        
+        // Manejar la descarga
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `registros_${new Date().toISOString().slice(0,10)}.${tipo}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } catch (error) {
+        console.error('Error al exportar:', error);
+    }
+}
 
 // Configuración de la gráfica
 function renderChart(labels, data, ausencias, average, maxHorasDia) {

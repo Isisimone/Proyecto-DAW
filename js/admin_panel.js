@@ -197,6 +197,21 @@ document.addEventListener('click', function(e) {
         .then(html =>{
             formulario.innerHTML = html;
         });
+
+        const formulario2 = document.getElementById("exportarEmpleado");
+            formulario2.style.display = 'none';
+            const data2 = {
+                accion: 'exportar_empleado',
+                cod_empleado: valorSeleccionado  // Parámetro adicional opcional
+            };
+        
+            // Limpiar formulario
+            formulario2.innerHTML = "";
+            // Cargar el HTML
+            cargarHTML(data2)
+            .then(html =>{
+                formulario2.innerHTML = html;
+        });
     });
 
     //CHANGE en el select del formularioUsuarios
@@ -214,6 +229,21 @@ document.addEventListener('click', function(e) {
         cargarHTML(data)
         .then(html =>{
             formulario.innerHTML = html;
+        });
+
+            const formulario2 = document.getElementById("exportarUsuario");
+            formulario2.style.display = 'none';
+            const data2 = {
+                accion: 'exportar_usuario',
+                cod_usuario: valorSeleccionado  // Parámetro adicional opcional
+            };
+        
+            // Limpiar formulario
+            formulario2.innerHTML = "";
+            // Cargar el HTML
+            cargarHTML(data2)
+            .then(html =>{
+                formulario2.innerHTML = html;
         });
     });
 
@@ -655,7 +685,52 @@ document.addEventListener('click', function(e) {
 
         
     });
+
+    document.getElementById('exportarUsuarios').addEventListener('click', async function() {
+        const elemento = document.getElementById('exportarUsuario');
+        elemento.style.display = 'block';
+
+    
+        if (!elemento) {
+            console.error('No se encontró el elemento con ID "exportarUsuario"');
+            return null;
+        }
+    
+        // Clonar el elemento para no afectar el original
+        const clon = elemento.cloneNode(true);
+        elemento.style.display = 'none';
+        
+        exportar('pdf', clon.outerHTML); // Llama a la función de exportación  
+    });
 });
+
+//Función exportar registros
+async function exportar(tipo,data){
+    try {
+        // Resto de tu lógica de exportación
+        const formData = new FormData();
+        formData.append('datos', JSON.stringify(data));
+        formData.append('tipo', tipo);
+
+        const response = await fetch(`./logica/exportar_registros.php`, {
+          method: 'POST',
+          body: formData
+        });
+        
+        // Manejar la descarga
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `registros_${new Date().toISOString().slice(0,10)}.${tipo}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } catch (error) {
+        console.error('Error al exportar:', error);
+    }
+}
+
 
 async function cargarHTML(data){
     try {
