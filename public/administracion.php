@@ -735,51 +735,62 @@ label {
         console.log(incidenciasP);
     </script>
 
-    <div class="admin-panel-container">
-        <!-- Barra de navegación -->
-        <div class="navbar">
-            <!-- Botón Principal -->
-            <button class="nav-btn" id="menuPrincipal">Principal</button>
 
-            <!-- Menú Admin -->
-            <div class="nav-btn-container">
-                <button class="nav-btn" id="menuAdmin">Admin</button>
-                <div class="dropdown-content">
-                    <a href="#" id="menuEmpleados"><button>Empleados</button></a>
-                    <a href="#" id="menuUsuarios"><button>Usuarios</button></a>
-                    <a href="#" id="menuMarcajes"><button>Marcajes</button></a>
-                    <a href="#" id="menuTransacciones"><button>Transacciones</button></a>
-                </div>
-            </div>
 
-            <!-- Menú Configuración -->
-            <div class="nav-btn-container">
-                <button class="nav-btn" id="menuConfiguracion">Configuración</button>
-                <div class="dropdown-content">
-                    <a href="#" id="menuRoles"><button>Roles</button></a>
-                    <a href="#" id="menuUsuariosRoles"><button>Usuarios y Roles</button></a>
-                    <a href="#" id="menuAjustes"><button>Ajustes</button></a>
-                </div>
-            </div>
-            <button class="nav-btn" id="menuCerrar">Cerrar sesión</button>
+
+ <!-- Barra de navegación -->
+<div class="navbar">
+    <!-- Botón Principal -->
+    <button class="nav-btn" id="menuPrincipal">Principal</button>
+
+    <!-- Menú Admin -->
+    <div class="nav-btn-container">
+        <button class="nav-btn" id="menuAdmin">Admin</button>
+        <div class="dropdown-content">
+            <a href="#" id="menuEmpleados"><button>Empleados</button></a>
+            <a href="#" id="menuUsuarios"><button>Usuarios</button></a>
+            <a href="#" id="menuMarcajes"><button>Marcajes</button></a>
+            <a href="#" id="menuTransacciones"><button>Transacciones</button></a>
         </div>
+    </div>
 
-        <!-- Contenedor principal -->
-        <div id="main" class="section">
-            <!--Sección fija con logo y reloj-->
-            <div id="welcome-message">
-                <div class="logo-container">
-                    <img src="../recursos/logo.png" alt="Logo" class="logo">
-                        <div id="current-time"></div>
-                </div>
+    <!-- Menú Configuración -->
+    <div class="nav-btn-container">
+        <button class="nav-btn" id="menuConfiguracion">Configuración</button>
+        <div class="dropdown-content">
+            <a href="#" id="menuRoles"><button>Roles</button></a>
+            <a href="#" id="menuUsuariosRoles"><button>Usuarios y Roles</button></a>
+            <a href="#" id="menuAjustes"><button>Ajustes</button></a>
+        </div>
+    </div>
+
+    <!-- Cerrar sesión -->
+    <button class="nav-btn" id="menuCerrar">Cerrar sesión</button>
+</div>
+
+<!-- Contenedor principal debajo de la barra de navegación -->
+<div class="user-panel-container">
+
+    <!-- Contenido principal -->
+    <div id="main" class="section">
+        <!-- Sección fija con logo y reloj -->
+        <div class="logo-container">
+            <img src="../recursos/logo.png" alt="Logo" class="logo">
+            <div id="current-time"></div>
             </div>
+    
 
-            <div id="dynamicContent" class="section">
-                <!--Paneles de la página principal-->
+
+            
+              
+                
+
+
                 <!--Panel de Bienvenida-->
                 <div id="panelBienvenida" class="contenido" style="display:block;">
                     <h1>Bienvenido al Panel de Administración</h1>
                 </div>
+
                 <!--Panel de datos del empleado administrador-->
                 <div id="panelDatosAdmin" class="contenido" style="display: none;">
                     

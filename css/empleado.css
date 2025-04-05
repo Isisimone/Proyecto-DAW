@@ -368,8 +368,25 @@ body {
     padding: 0;
     height: 100vh;
 }
+#main {
+    max-width: auto;        /* Ajusta el ancho máximo */
+    margin:  auto;              /* Centra el contenido */
+    padding: 20px;
+    box-sizing: border-box;
+    min-height: 100vh;
+}
+#main .logo-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+#main .logo-container img {
+    width: 150px; /* Ajusta el tamaño del logo */
+    height: auto;
+}
 
 /* Contenedor principal */
+/* Necesito esto o no?  */
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -424,21 +441,11 @@ body {
     text-align: center;
 }
 
+
 #main h1 {
     font-size: 2.5rem;
     color: #333;
     margin-bottom: 20px;
-}
-
-/* Logo en la parte superior */
-#logo-container {
-    width: 150px;
-    margin-bottom: 20px;
-}
-
-#logo-container img {
-    width: 100%;
-    height: auto;
 }
 
 /* Contenido dinámico */
@@ -594,26 +601,28 @@ body.dark-mode .ajustes-options select {
 }
 
 /* Ajuste en la parte inferior para el logo */
-#logo-container-inferior {
+.logo-container-inferior {
     text-align: center;
     margin-bottom: 30px;
 }
 
-#logo-container-inferior img {
-    width: 150px; /* Ajusta el tamaño del logo */
+.logo-container-inferior img {
+    width: 50px; /* Ajusta el tamaño del logo */
     height: auto;
 }
 
 /* Contenedor principal */
 .user-panel-container {
     max-width: 1200px;
-    margin: 0 auto;
+    margin:  auto;
     padding: 20px;
     box-sizing: border-box;
     min-height: 100vh;
     padding-top: 80px; /* Ajuste para el espacio debajo de la barra de navegación */
 }
-/*Barra de progreso de horas*/
+
+    /*Barra de progreso de horas*/
+
 .barra-progreso {
     height: 20px;
     background: #e0e0e0;
@@ -646,3 +655,8 @@ body.dark-mode .ajustes-options select {
     flex-direction: column;
     gap: 15px;
   }
+  #current-time {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #26D0CE;
+}

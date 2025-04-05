@@ -50,6 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Login</title>
   <link rel="stylesheet" href="../css/login.css">
 
+  <div id="welcome-message">
+                <div class="logo-container">
+                    <img src="../recursos/logo.png" alt="Logo" class="logo">
+                </div>
+            </div>
 </head>
 <body>
     <h1>Iniciar Sesión</h1>
@@ -69,4 +74,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 </body>
 </html>
+
 

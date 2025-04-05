@@ -27,7 +27,15 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
     <script src="../js/empleado.js"></script> 
 </head>
 <body>
-    <div class="user-panel-container">
+
+<div id="main" class="section">
+    <!--Sección fija con logo y reloj-->
+        <div class="logo-container">
+            <img src="../recursos/logo.png" alt="Logo" class="logo">
+            <div id="current-time"></div>
+    </div>
+
+<div class="user-panel-container">
         <div class="navbar">
             <button class="nav-btn" id="btnPerfil" onclick="updateContent('perfil')">Mi Perfil</button>
             <button class="nav-btn" id="btnActividades" onclick="updateContent('actividades')">Mis Actividades</button>
@@ -40,7 +48,10 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
             <?php endif; ?>
             <button class="nav-btn" id="btnLogout" onclick="logout()">Cerrar sesión</button>
         </div>
-        <div id="main" class="section">
+       
+
+
+            <!--<div id="main" class="section"> NO hace falta: isis-->
             <div id="dynamicContent" class="section">
                 <div id="principal" style="display:block">
                     <h1>Bienvenido a tu portal de empleado</h1>
