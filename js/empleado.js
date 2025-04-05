@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const contextMenu = document.getElementById('context-menu');
-    const registroContainer = document.getElementById('registrosExportables');//document.querySelector('.registro ul'); // Contenedor de los registros
+    const registroContainer = document.getElementById('registrosExportables');//.querySelector('.registro ul'); // Contenedor de los registros
     const bloqueRevision = document.getElementById('bloque-revision');
     const bloqueMostrarDatos = document.getElementById('bloque-mostrardatos');
 
@@ -108,8 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault(); // Evita el comportamiento predeterminado
 
             // Obtén las coordenadas del clic
-            const x = event.clientX;
-            const y = event.clientY;
+            const x = event.pageX;
+            const y = event.pageY;
 
             // Posiciona el menú contextual
             contextMenu.style.left = `${x}px`;
@@ -327,6 +327,7 @@ async function renderChart(labels, data, ausencias, average, maxHorasDia) {
         ausencias = datos.ausencias;
         average = datos.average;
         maxHorasDia = datos.maxHoras;
+        todosMarcajes = datos.datosMarcajes;
         
         console.log('Datos para gráfica:', datos);
 

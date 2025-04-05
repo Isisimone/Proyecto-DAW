@@ -24,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const panelAjustes = document.getElementById('panelAjustes');
         const panelBienvenida = document.getElementById('panelBienvenida');
 
+    //Aplicar permisos
+    aplicarPermisos();
     //Métodos
     function cerrar_bloques() {
         const paneles = [
@@ -143,6 +145,7 @@ document.addEventListener('click', function(e) {
                 cargarHTML(datos)
                 .then(html =>{
                 formulario.innerHTML = html;
+                aplicarPermisos();
             });
             
             // Mostrar la ventana
@@ -198,6 +201,7 @@ document.addEventListener('click', function(e) {
         cargarHTML(data)
         .then(html =>{
             formulario.innerHTML = html;
+            aplicarPermisos();
         });
 
         const formulario2 = document.getElementById("exportarEmpleado");
@@ -213,6 +217,7 @@ document.addEventListener('click', function(e) {
             cargarHTML(data2)
             .then(html =>{
                 formulario2.innerHTML = html;
+                aplicarPermisos();
         });
     });
 
@@ -231,6 +236,7 @@ document.addEventListener('click', function(e) {
         cargarHTML(data)
         .then(html =>{
             formulario.innerHTML = html;
+            aplicarPermisos();
         });
 
             const formulario2 = document.getElementById("exportarUsuario");
@@ -246,6 +252,7 @@ document.addEventListener('click', function(e) {
             cargarHTML(data2)
             .then(html =>{
                 formulario2.innerHTML = html;
+                aplicarPermisos();
         });
     });
 
@@ -276,6 +283,7 @@ document.addEventListener('click', function(e) {
         cargarHTML(data)
         .then(html =>{
             listado.innerHTML = html;
+            aplicarPermisos();
         });
 
         const data2 = {
@@ -294,6 +302,7 @@ document.addEventListener('click', function(e) {
         cargarHTML(data2)
         .then(html =>{
             listado2.innerHTML = html;
+            aplicarPermisos();
         });
     });
 
@@ -324,6 +333,7 @@ document.addEventListener('click', function(e) {
         cargarHTML(data)
         .then(html =>{
             listado.innerHTML = html;
+            aplicarPermisos();
         });
 
         const data2 = {
@@ -342,6 +352,7 @@ document.addEventListener('click', function(e) {
         cargarHTML(data2)
         .then(html =>{
             listado2.innerHTML = html;
+            aplicarPermisos();
         });
     });
 
@@ -360,6 +371,7 @@ document.addEventListener('click', function(e) {
         cargarHTML(data)
         .then(html =>{
             formulario.innerHTML = html;
+            aplicarPermisos();
         });
     });
 
@@ -378,6 +390,7 @@ document.addEventListener('click', function(e) {
         cargarHTML(data)
         .then(html =>{
             formulario.innerHTML = html;
+            aplicarPermisos();
         });
     });
 
@@ -394,6 +407,7 @@ document.addEventListener('click', function(e) {
         cargarHTML(data)
         .then(html =>{
             formulario.innerHTML = html;
+            aplicarPermisos();
         });
     });
 
@@ -426,6 +440,7 @@ document.addEventListener('click', function(e) {
             await cargarHTML(data)
             .then(html =>{
                 formulario.innerHTML = html;
+                aplicarPermisos();
             });
         }
 
@@ -521,6 +536,7 @@ document.addEventListener('click', function(e) {
             await cargarHTML(data)
             .then(html =>{
                 formulario.innerHTML = html;
+                aplicarPermisos();
             });
             
         }
@@ -541,6 +557,7 @@ document.addEventListener('click', function(e) {
         await cargarHTML(data)
         .then(html =>{
             formulario.innerHTML = html;
+            aplicarPermisos();
         });  
     
     });
@@ -613,8 +630,8 @@ document.addEventListener('click', function(e) {
             await cargarHTML(data)
             .then(html =>{
                 formulario.innerHTML = html;
+                aplicarPermisos();
             });  
-        
     });
     //CLICK en listaDescriptores
     document.getElementById('guardarDescriptor').addEventListener('click', async function(e) {
@@ -672,6 +689,7 @@ document.addEventListener('click', function(e) {
             .then(html =>{
                 formulario.innerHTML = html;
                 document.getElementById('panelDescriptores').style.display = 'block';
+                aplicarPermisos();
             });
         }
         
@@ -836,7 +854,6 @@ async function cargarHTML(data){
         if (!response.ok) {
             throw new Error('Error en la respuesta del servidor');
         }
-        
         return await response.text();
     } catch (error) {
         console.error("Error:", error);
@@ -966,4 +983,41 @@ function mensajeInformacion(mensaje) {
             resolve(true);
         };
     });
+}
+
+function aplicarPermisos() {
+    // Permisos
+    const elementos = {
+        'empCrear': 'nuevoEmpleado',
+        'empModificar': 'botoneraEmpleado',
+        'empBaja': 'bajaEmpleado',
+        'usrCrear': 'nuevoUsuario',
+        'usrModificar': 'botoneraUsuario',
+        'usrBaja': 'bajaUsuario',
+        'usrGenerarPass': 'passUsuario',
+        //'marCrearPropio': 'nuevoEmpleado',
+        //'marConsultarPropio': 'nuevoEmpleado',
+        //'marCrear': 'nuevoEmpleado',
+        //'marModificar': 'nuevoEmpleado',
+        //'marEliminar': 'nuevoEmpleado',
+        'marConsultar': 'menuMarcajes',
+        'marAuth': 'resolucionG',
+        'bioCrear': 'nuevoDescriptor',
+        'bioEliminar': 'eliminarDescriptor',
+        'rolCrear': 'nuevoRol',
+        'rolModificar': 'botoneraRol',
+        'rolEliminar': 'bajaRol',
+        'ajustesModificar': 'menuAjustes'
+    };
+
+    for (const [permiso, id] of Object.entries(elementos)) {
+        if (!permisos[permiso]) {
+            const elemento = document.getElementById(id);
+            if (elemento) { // Solo si el elemento existe
+                elemento.style.display = 'none';
+            } else {
+                console.warn(`Elemento con ID "${id}" no encontrado en el DOM.`);
+            }
+        }
+    }
 }

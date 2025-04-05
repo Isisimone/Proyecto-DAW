@@ -10,6 +10,7 @@ use Clases\Incidencia;
 use Clases\Empleado;
 use Clases\Marcaje;
 
+
 // Inicializa variables
 $nombreCompleto = '';
 $fotoEmpleado = '';

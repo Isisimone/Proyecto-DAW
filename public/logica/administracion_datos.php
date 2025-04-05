@@ -68,7 +68,47 @@ if (isset($_SESSION['COD_USUARIO'])) {
         //Obtención lista de roles;
         $rol = new Rol();
         $roles = $rol->cargarRoles();
-        
+
+        $ajuste = new Ajuste();
+            $ajustes = $ajuste->obtenerAjustes();
+            $privilegio = new Privilegio();
+            $rolesUsuario = new Rol();
+            $privilegios= array(
+                'empCrear' => false,
+                'empModificar' => false,
+                'empBaja' => false,
+                'usrCrear' => false,
+                'usrModificar' => false,
+                'usrBaja' => false,
+                'usrGenerarPass' => false,
+                'marCrearPropio' => false,
+                'marConsultarPropio' => false,
+                'marCrear' => false,
+                'marModificar' => false,
+                'marEliminar' => false,
+                'marConsultar' => false,
+                'marAuth' => false,
+                'bioCrear' => false,
+                'bioEliminar' => false,
+                'rolCrear' => false,
+                'rolModificar' => false,
+                'rolEliminar' => false,
+                'ajustesModificar' => false
+            );
+            foreach($_SESSION['ROLES'] as $rolUsuario){
+                $rolesUsuario->cargarRolNombre($rolUsuario);
+                $privilegio=$rolesUsuario->getPermisos();
+                //foreach($privilegio->getPrivilegios() as $clave=>$privi){
+                    $resultado = array_combine(array_keys($privilegios), // Mantener las claves del primer array
+                    array_map(
+                        fn($a, $b) => $a || $b,
+                        $privilegios,
+                        $privilegio->getPrivilegios()
+                    ));
+                   // $privilegios[0] = $privilegios[0] || $privilegio;
+                   $privilegios = $resultado;
+            }
+       
     }
 }
 

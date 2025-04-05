@@ -112,6 +112,43 @@ class Rol {
         }
     }
 
+    //Método para cargar rol de la bbdd a partir del nombre de rol
+    public function cargarRolNombre(string $rol): bool {
+        try{
+            // Crear la conexión
+            $conexion = new Conexion();
+            // Consulta SELECT
+            $sql = "SELECT * FROM trol WHERE NOM_ROL = :rol";
+            $stmt = $conexion->conexion->prepare($sql);
+            $stmt->bindValue(':rol', $rol);
+            $stmt->execute();
+            //Vuelca el resultado
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            //Si no hay resultado devuelve false
+            if (!$resultado) {
+                return false;
+            }
+            //Vuelca el resultado en los parámetros
+            $this->cod_Rol = $resultado['COD_ROL'];
+            $this->nom_Rol= $resultado['NOM_ROL'];
+            $this->descripcion= $resultado['DES_ROL'];
+            $this->fec_Alta= new DateTime($resultado['FEC_ALTA']);
+            $this->nom_Usuario_Alta= $resultado['NOM_USUARIO_ALTA'];
+            $this->fec_Baja= $resultado['FEC_BAJA'] ? new DateTime($resultado['FEC_BAJA']) : null;
+            $this->nom_Usuario_Baja= $resultado['NOM_USUARIO_BAJA'] ?? null;
+            if ($resultado['PRIVILEGIOS']){
+                $this->privilegios=unserialize($resultado['PRIVILEGIOS']);   
+            }
+            //Devuelve true
+            return true;
+        }catch(PDOException $e){
+            //Muestra error y devuelve false
+            error_log("Error al cargar el rol: " . $e->getMessage());
+            return false;
+        }
+    }
+
+
     //Método para grabar el rol en la bbdd
     public function grabar(): bool {
         try{

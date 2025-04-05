@@ -725,6 +725,9 @@ label {
         const incidenciasP = <?php echo json_encode($incidenciasPendientes); ?>;
         
         const empleados = <?php echo json_encode($empleados); ?>; 
+        const permisos = <?php echo json_encode($privilegios);?>;
+        const ajustes = <?php echo json_encode($ajustes);?>;
+                            
         //const usuario = <?php //echo json_encode($usuarios); ?>; 
         //const bios = <?php //echo json_encode($listaBios); ?>;
         //const transacciones = <?php //echo json_encode($transacciones); ?>; 

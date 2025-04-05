@@ -517,7 +517,7 @@ $nombrePrivilegios=[
                                     <input type="text" id="bolsaEmpleado" value="'.$empleado->getBolsa().'">
                                 </div>
                             </div>
-                            <div class="fila-botones">
+                            <div id="botoneraEmpleado" class="fila-botones">
                                 <button class="btn btn-primary" id="guardarEmpleado">Guardar cambios</button>
                                 <button class="btn btn-secondary" id="recalcularBolsa">Recalcular Bolsa</button>
                                 <button class="btn btn-success" id="bioEmpleado">Datos Biométricos</button>
@@ -627,7 +627,9 @@ $nombrePrivilegios=[
                                         <input type="email" id="emailUsuario" class="form-control" value="">
                                     </div>
                                 </div>
-                                <button class="btn btn-primary" id="guardarUsuario">Guardar cambios</button>
+                                <div id "botoneraUsuario">
+                                    <button class="btn btn-primary" id="guardarUsuario">Guardar cambios</button>
+                                </div>
                             </div>
                         </div>';
                     header('Content-Type: text/html');
@@ -654,9 +656,11 @@ $nombrePrivilegios=[
                                         <input type="email" id="emailUsuario" class="form-control" value="'.$usuario->getDesCorreo().'">
                                     </div>
                                 </div>
-                                <button class="btn btn-primary" id="guardarUsuario">Guardar cambios</button>
-                                <button class="btn btn-danger" id="bajaUsuario">Dar de baja</button>
-                                <button class="btn btn-secondary" id="passUsuario">Generar Password</button>
+                                <div id="botoneraUsuario">
+                                    <button class="btn btn-primary" id="guardarUsuario">Guardar cambios</button>
+                                    <button class="btn btn-danger" id="bajaUsuario">Dar de baja</button>
+                                    <button class="btn btn-secondary" id="passUsuario">Generar Password</button>
+                                </div>
                             </div>
                         </div>';
                     header('Content-Type: text/html');
@@ -846,7 +850,7 @@ $nombrePrivilegios=[
                                 }
                                 $html=$html.'
                                 </div>
-                                <div class="enLinea botonesRol">
+                                <div id="botoneraRol" class="enLinea botonesRol">
                                     <button class="btn btn-primary" id="guardarRol">Guardar cambios</button>
                                     <button class="btn btn-danger" id="bajaRol">Dar de baja</button>
                                 </div>
