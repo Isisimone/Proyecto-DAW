@@ -34,6 +34,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
             <img src="../recursos/logo.png" alt="Logo" class="logo">
             <div id="current-time"></div>
     </div>
+    
 
 <div class="user-panel-container">
         <div class="navbar">
@@ -48,10 +49,10 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
             <?php endif; ?>
             <button class="nav-btn" id="btnLogout" onclick="logout()">Cerrar sesión</button>
         </div>
-       
+        
 
 
-            <!--<div id="main" class="section"> NO hace falta: isis-->
+           
             <div id="dynamicContent" class="section">
                 <div id="principal" style="display:block">
                     <h1>Bienvenido a tu portal de empleado</h1>

@@ -386,7 +386,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
 
     .tipo-evento {
       font-weight: bold;
-      color: #1976D2;
+      color: #26D0CE;
     }
 
     .tipo-evento.salida {
@@ -779,12 +779,6 @@ label {
             <div id="current-time"></div>
             </div>
     
-
-
-            
-              
-                
-
 
                 <!--Panel de Bienvenida-->
                 <div id="panelBienvenida" class="contenido" style="display:block;">
