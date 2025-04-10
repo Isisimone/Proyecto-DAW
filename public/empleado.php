@@ -42,6 +42,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
             <button class="nav-btn" id="btnActividades" onclick="updateContent('actividades')">Mis Actividades</button>
             <button class="nav-btn" id="btnUltimos" onclick="updateContent('ultimos')">Ultimos Accesos</button>
             <button class="nav-btn" id="btnFiltrar" onclick="updateContent('filtrar')">Filtrar Registros</button>
+            <button class="nav-btn" id="btnCambiarPassword" onclick="updateContent('cambiarPassword')">Cambiar contraseña</button>
             <?php if (isset($admin) && $admin): ?>
                 <button class="nav-btn" id="btnAdmin" onclick="window.location.href='administracion.php'">
                     Administración
@@ -58,6 +59,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                     <h1>Bienvenido a tu portal de empleado</h1>
                 </div>
                 <div id="perfil" style="display:none;">
+        
                     <h1 id="employee-name" data-id="<?php echo $empleado->getCodEmpleado();?>"><?php echo htmlspecialchars($nombreCompleto); ?></h1> 
                     <img id="foto_empleado" class="foto" src="./logica/mostrar_imagen.php?perfil=perfil&archivo=<?php echo htmlspecialchars($fotoEmpleado); ?>" alt="Foto del empleado">
                     <input type='file' id='fileinput' accept='image/jpeg' style='display:none;'>
@@ -68,7 +70,8 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                             <button class="tab-button active" onclick="openTab(event, 'pendientes')">Pendientes</button>
                             <button class="tab-button" onclick="openTab(event, 'resueltas')">Resueltas</button>
                         </div>
-                        
+        
+
                         <div id="pendientes" class="tab-content" style="display:block;">
                             <h4>Incidencias Pendientes</h4>
                             <ul class="incidencias-list">
@@ -117,6 +120,17 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                         </div>
                     </div>
                 </div>
+
+                <div id="cambiarPassword" style="display:none;">
+    <h2>Cambiar contraseña</h2>
+    <form id="formCambiarPassword">
+        <label for="nuevaPassword">Nueva contraseña:</label><br>
+        <input type="password" id="nuevaPassword" name="nuevaPassword" required><br><br>
+        <button type="submit">Actualizar contraseña</button>
+    </form>
+    <p id="mensajePassword" style="color:green;"></p>
+</div>
+
                 <div id="actividades" style="display:none;">
                 
                         <div class="columna-progreso">
@@ -361,5 +375,5 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
             </div>
         </div>
     </div>
-</body>
+</body> 
 </html>

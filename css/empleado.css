@@ -370,7 +370,7 @@ body {
     overflow-x: hidden;
 }
 #main {
-    padding-top: 120px; /* Ajuste para la barra de navegación */
+    padding-top: 250px; /* Ajuste para la barra de navegación */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -385,7 +385,7 @@ body {
 }
 #main .logo-container {
     text-align: center;
-    margin-bottom: 30px;
+    margin-top: 150px;
 }
 
 #main .logo-container img {
@@ -401,7 +401,7 @@ body {
     padding: 20px;
     box-sizing: border-box;
     min-height: 100vh;
-    padding-top: 80px;
+    padding-top: 40px;
 }
 
 /* Barra de navegación superior */
@@ -608,18 +608,6 @@ body.dark-mode .ajustes-options select {
 .ajustes-options textarea {
     margin-top: 20px; /* Agregar espacio entre los campos */
 }
-
-/* Ajuste en la parte inferior para el logo */
-.logo-container-inferior {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.logo-container-inferior img {
-    width: 50px; /* Ajusta el tamaño del logo */
-    height: auto;
-}
-
 /* Contenedor principal */
 .user-panel-container {
     max-width: 1200px;

@@ -123,6 +123,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
         
+// Función para actualizar la hora en vivo
+function updateTime() {
+    const now = new Date();
+    document.getElementById('current-time').innerText = now.toLocaleTimeString();
+}
+setInterval(updateTime, 1000);
+updateTime();
+
 
     // Manejar opciones del menú contextual
     document.getElementById('solicitar-revision').addEventListener('click', () => {
