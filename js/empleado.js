@@ -227,6 +227,32 @@ updateTime();
         }
     });
 
+   document.getElementById('botonPassword').addEventListener('click', async function(event){
+    event.preventDefault();
+    document.getElementById("mensajePassword").innerHTML="";    
+    const pass = document.getElementById("nuevaPassword").value;
+        const pass2 = document.getElementById("nuevaPassword2").value;
+        const oldpass = document.getElementById("oldPassword").value;
+        if (pass!=pass2) {
+            document.getElementById("mensajePassword").innerHTML="Contraseña incorrecta";
+            return;
+
+        } else {
+            const datos={
+                accion:"cambiarPass",
+                valor:pass,
+                valorViejo: oldpass
+            };
+            if (await crud(datos)){
+                updateContent('perfil');
+                document.getElementById("nuevaPassword").value="";
+                document.getElementById("nuevaPassword2").value="";
+                document.getElementById("oldPassword").value="";
+            }
+        }
+        
+    });
+
     document.getElementById('exp-reg-csv').addEventListener('click', () => {
         console.log(registros); // Asegúrate de que esta variable esté definida en tu PHP  
         exportar('csv', registros); // Llama a la función de exportación  
@@ -489,8 +515,41 @@ function cerrarSecciones(){
     document.getElementById('filtrar').style.display = "none";
 }
 // Función de logout
-function logout() {
-    alert("Has cerrado sesión.");
+async function logout() {
+    const datos={
+        accion:"cerrarSesion"
+    };
+    if (await crud(datos)){
+        window.location.href = './login.php';
+    }
+}
+//función CRUD
+async function crud(datos){
+    console.error(datos);
+    try {
+        const respuesta = await fetch('./logica/filtrar_registros.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(datos)
+        });
+        if (!respuesta.ok) {
+            throw new Error(`Error HTTP: ${respuesta.status} - ${respuesta.statusText}`);
+        }
+        const resultado = await respuesta.json();
+        console.log(resultado);
+        if (resultado.success) {
+            if(resultado.mensaje){alert(resultado.mensaje);}
+            return true;          
+        } else {
+            throw new Error(resultado.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert(`Error: ${error.message}`);
+        return false;
+    }
 }
 
 async function cargarHTML(data){

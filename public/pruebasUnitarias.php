@@ -296,6 +296,7 @@ $datos=[
     'startdate' => '',
     'enddate' => ''
 ];
+/*
 $codEmpleado = $datos['empleado'];
             $empleado = new Empleado();
             if ($empleado->cargarDatosEmpleado($codEmpleado)) {
@@ -406,4 +407,19 @@ $codEmpleado = $datos['empleado'];
                 // Establece las cabeceras y devuelve JSON
                 //header('Content-Type: application/json');
                 //echo json_encode($respuesta);
-                //exit;
+                //exit;*/
+                $pass='Prueba';
+            $oldPass = 'Prueba2';
+            $usuario = 2;
+            try{
+                $usu = new Usuario();
+                $usu->cargarUsuario($usuario);
+                if ($usu->compararContrasena($oldPass,$usu->getDesContrasena())){
+                    $usu->setDesContrasena($pass);
+                    $usu->grabar();
+                }else {
+                    echo "falso";
+                }
+            }catch(Exception $e){
+
+            }

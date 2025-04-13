@@ -1,5 +1,5 @@
 <?php
-//session_start();
+session_start();
 
 // Verificar si la sesión es válida y tiene el rol requerido
 /*if (empty($_SESSION['COD_USUARIO']) && in_array('Empelado', $_SESSION['ROLES'])) {
@@ -12,6 +12,7 @@ require '../../vendor/autoload.php';
 
 use Clases\Marcaje;
 use Clases\Empleado;
+use Clases\Usuario;
 //require './empleado_datos.php';
 try {
     $datos = json_decode(file_get_contents('php://input'), true);
@@ -20,6 +21,7 @@ try {
     if (empty($datos['accion'])) {
         throw new Exception('Acción no válida');
     }else{
+        if ($datos['accion']=='cargar_grafica'){
         $codEmpleado = $datos['empleado'];
         $empleado = new Empleado();
         if ($empleado->cargarDatosEmpleado($codEmpleado)) {
@@ -112,6 +114,7 @@ try {
                     $registrosDetallados = array_merge($registrosDetallados, $pares);
 
                 }
+            }
         if ($datos['accion']=='cargar_grafica'){
             
                 $respuesta = [
@@ -132,6 +135,36 @@ try {
                 echo json_encode($respuesta);
                 exit;
             }
+        }
+
+        if ($datos['accion']=='cambiarPass'){
+            $pass=$datos['valor'];
+            $oldPass = $datos['valorViejo'];
+            $usuario = $_SESSION['COD_USUARIO'];
+            try{
+                $usu = new Usuario();
+                $usu->cargarUsuario($usuario);
+                if ($usu->compararContrasena($oldPass,$usu->getDesContrasena())){
+                    $usu->setDesContrasena($pass);
+                    $usu->grabar();
+                    echo json_encode(['success' => true,
+                    'mensaje'=>'Contraseña cambiada correctamente.']);
+                    
+                }else {
+                    echo json_encode(['success' => false,
+                'error'=>'Datos incorrectos']);
+                }
+            }catch(Exception $e){
+                echo json_encode(['success' => false,
+            'error'=>'Error con la BBDD']);
+            }
+
+        }
+
+        if ($datos['accion']=='cerrarSesion'){
+            session_unset(); // Elimina todas las variables de sesión
+            session_destroy(); // Destruye la sesión
+            echo json_encode(['success' => true, 'message' => 'Sesión cerrada correctamente.']);
         }
 
         if ($datos['accion']=='filtrar_datos'){
