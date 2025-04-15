@@ -81,7 +81,11 @@ $nombrePrivilegios=[
                 $incidencia->grabar();
             echo json_encode(['success' => true]);
             }
-
+            if ($datos['accion']=='cerrarSesion'){
+                session_unset(); // Elimina todas las variables de sesión
+                session_destroy(); // Destruye la sesión
+                echo json_encode(['success' => true, 'message' => 'Sesión cerrada correctamente.']);
+            }
             if ($datos['accion']=='asigna_rol'){
                 $usuario = new Usuario();
                 $cod_usuario = $datos['cod_usuario'];

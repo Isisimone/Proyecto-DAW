@@ -122,18 +122,18 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                 </div>
 
                 <div id="cambiarPassword" style="display:none;">
-    <h2>Cambiar contraseña</h2>
-    <form id="formCambiarPassword">
-        <label for="oldPassword">Contraseña actual:</label><br>
-        <input type="password" id="oldPassword" name="oldPassword" required><br><br>
-        <label for="nuevaPassword">Nueva contraseña:</label><br>
-        <input type="password" id="nuevaPassword" name="nuevaPassword" required><br><br>
-        <label for="nuevaPassword2">Repite nueva contraseña:</label><br>
-        <input type="password" id="nuevaPassword2" name="nuevaPassword2" required><br><br>
-        <button id="botonPassword" >Actualizar contraseña</button>
-    </form>
-    <p id="mensajePassword" style="color:green;"></p>
-</div>
+                    <h2>Cambiar contraseña</h2>
+                    <form id="formCambiarPassword">
+                        <label for="oldPassword">Contraseña actual:</label><br>
+                        <input type="password" id="oldPassword" name="oldPassword" required><br><br>
+                        <label for="nuevaPassword">Nueva contraseña:</label><br>
+                        <input type="password" id="nuevaPassword" name="nuevaPassword" required><br><br>
+                        <label for="nuevaPassword2">Repite nueva contraseña:</label><br>
+                        <input type="password" id="nuevaPassword2" name="nuevaPassword2" required><br><br>
+                        <button id="botonPassword" >Actualizar contraseña</button>
+                    </form>
+                    <p id="mensajePassword" style="color:green;"></p>
+                </div>
 
                 <div id="actividades" style="display:none;">
                 

@@ -99,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });  
 
     document.getElementById('menuCerrar').addEventListener('click', () => {
-        cerrar_bloques();
         logout();
     }); 
     
@@ -813,6 +812,16 @@ document.addEventListener('click', function(e) {
     });
 });
 
+//Función cerrar sesión
+async function logout() {
+    const datos={
+        accion:"cerrarSesion"
+    };
+    if (await crud(datos)){
+        window.location.href = './login.php';
+    }
+}
+
 //Función exportar registros
 async function exportar(tipo,data){
     try {
@@ -874,7 +883,12 @@ async function crud(datos){
         const resultado = await respuesta.json();
         
         if (resultado.success) {
-            await mensajeInformacion("Datos actualizados correctamente.");           
+            if(!resultado.mensaje) {
+                await mensajeInformacion("Datos actualizados correctamente.");           
+            }
+            else{
+                await mensajeInformacion(resultado.mensaje);
+            }
         } else {
             throw new Error(resultado.error || 'Error desconocido');
         }
@@ -938,10 +952,7 @@ function loadChart() {
     });
 }
 
-// Función de logout
-function logout() {
-    alert("Has cerrado sesión.");
-}
+
 
 function mensajeConfirmacion(mensaje) {
     return new Promise((resolve) => {
