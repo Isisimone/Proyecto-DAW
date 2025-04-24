@@ -86,7 +86,7 @@ body {
 
 /* Estilo para el contenido principal */
 #main {
-    padding-top: 120px; /* Ajuste para la barra de navegación */
+    padding-top: 30px; /* Ajuste para la barra de navegación */
     display: flex;
     flex-direction: column;
     align-items: center;

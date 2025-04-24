@@ -21,7 +21,7 @@ try {
     if (empty($datos['accion'])) {
         throw new Exception('Acción no válida');
     }else{
-        if ($datos['accion']=='cargar_grafica'){
+        if ($datos['accion']=='cargar_grafica' || $datos['accion']=='filtrar_datos'){
         $codEmpleado = $datos['empleado'];
         $empleado = new Empleado();
         if ($empleado->cargarDatosEmpleado($codEmpleado)) {
@@ -115,7 +115,7 @@ try {
 
                 }
             }
-        if ($datos['accion']=='cargar_grafica'){
+            if ($datos['accion']=='cargar_grafica'){
             
                 $respuesta = [
                     'success' => true,
@@ -135,6 +135,37 @@ try {
                 echo json_encode($respuesta);
                 exit;
             }
+            if ($datos['accion']=='filtrar_datos'){
+            
+                $html='    <ul>
+                                    <li class="registro-header">
+                                        <span class="col-fecha">Fecha</span>
+                                        <span class="col-tipo">Tipo</span>
+                                        <span class="col-fecha">Entrada</span>
+                                        <span class="col-tipo">Tipo</span>
+                                        <span class="col-fecha">Salida</span>
+                                        <span class="col-incidencia">Incidencia</span>
+                                        <span class="col-estado">Estado</span>
+                                    </li>';
+                                    foreach ($registrosDetallados as $index=>$registro){
+                                    $html=$html.'<li data-id="'.$index.'" 
+                                        data-fecha="'.$registro['fecha'].'">
+                                        <span class="fecha">'.$registro['fecha'].'</span>
+                                        <span class="metodo">'.$registro['tipoAccesoEntrada'].'</span>
+                                        <span class="hora">'.$registro['horaEntrada'].'</span>
+                                        <span class="metodo">'.$registro['tipoAccesoSalida'].'</span>
+                                        <span class="hora">'.$registro['horaSalida'].'</span>
+                                        <span class="incidencia">'.$registro['incidencia'].'</span>
+                                        <span class="estado">'.$registro['estado'].'</span>
+                                    </li>';
+                                    }
+                                $html=$html.'</ul>';
+                header('Content-Type: text/html');
+                echo $html;
+                exit;   
+            }
+        
+
         }
 
         if ($datos['accion']=='cambiarPass'){
@@ -167,35 +198,7 @@ try {
             echo json_encode(['success' => true, 'message' => 'Sesión cerrada correctamente.']);
         }
 
-        if ($datos['accion']=='filtrar_datos'){
-            
-            $html='    <ul>
-                                <li class="registro-header">
-                                    <span class="col-fecha">Fecha</span>
-                                    <span class="col-tipo">Tipo</span>
-                                    <span class="col-fecha">Entrada</span>
-                                    <span class="col-tipo">Tipo</span>
-                                    <span class="col-fecha">Salida</span>
-                                    <span class="col-incidencia">Incidencia</span>
-                                    <span class="col-estado">Estado</span>
-                                </li>';
-                                foreach ($registrosDetallados as $index=>$registro){
-                                $html=$html.'<li data-id="'.$index.'" 
-                                    data-fecha="'.$registro['fecha'].'">
-                                    <span class="fecha">'.$registro['fecha'].'</span>
-                                    <span class="metodo">'.$registro['tipoAccesoEntrada'].'</span>
-                                    <span class="hora">'.$registro['horaEntrada'].'</span>
-                                    <span class="metodo">'.$registro['tipoAccesoSalida'].'</span>
-                                    <span class="hora">'.$registro['horaSalida'].'</span>
-                                    <span class="incidencia">'.$registro['incidencia'].'</span>
-                                    <span class="estado">'.$registro['estado'].'</span>
-                                </li>';
-                                }
-                            $html=$html.'</ul>';
-            header('Content-Type: text/html');
-            echo $html;
-            exit;   
-        }
+        
     }
 } catch (Exception $e) {
 }

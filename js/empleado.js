@@ -513,6 +513,7 @@ function cerrarSecciones(){
     document.getElementById('actividades').style.display = "none";
     document.getElementById('ultimos').style.display = "none";
     document.getElementById('filtrar').style.display = "none";
+    document.getElementById('cambiarPassword').style.display = "none";
 }
 // Función de logout
 async function logout() {

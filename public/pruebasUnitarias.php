@@ -127,6 +127,7 @@ function pruebaRol(bool $crear, bool $modificar, bool $mostrar, ?int $id){
     global $fecha;
     $rol = new Rol();
     $privis = new Privilegio();
+    $privis->setRolModificar(true);
     if ($crear){
         $rol->setNombreRol('MdCrear');
         $rol->setDescripcion('Crear MD');
@@ -228,20 +229,20 @@ function pruebaUsuario(bool $crear, bool $modificar, bool $mostrar, ?int $id){
         //var_dump($_SESSION);*/
     }
 }
-$bio = new DatosBiometricos();
+/*$bio = new DatosBiometricos();
                     $bio->cargar(2);
-                    $bio->eliminar();
+                    $bio->eliminar();*/
 
 pruebaAjuste(false,false,false,1);
 pruebaDatosBio(false,false,false,1);
 pruebaEmpleado(false,false,false,5);
 pruebaMarcaje(false,false,false,2);
-pruebaRol(false,false,false,3);
+pruebaRol(false,true,false,2);
 pruebaTipoBio(false,false,false,1);
 pruebaTransaccion(false,false,false,6); //Sin pasar
 pruebaUsuario(false,false,false,2);
 
-
+/*
 function enviarCorreoBasico($destinatario, $asunto, $mensaje) {
     $so = PHP_OS;
         if (stripos($so, 'WIN') !== false) {
@@ -287,15 +288,15 @@ function enviarCorreoBasico($destinatario, $asunto, $mensaje) {
                 echo("No se pudo enviar el mensaje. Error: {$mail->ErrorInfo}");
             }
         }
-}
+}*/
 
 //enviarCorreoBasico("usdital@gmail.com","Prueba de correo","Esto es una prueba de correo");
-$datos=[
+/*$datos=[
     'empleado' => 1,
     'filtro' => 'week',
     'startdate' => '',
     'enddate' => ''
-];
+];*/
 /*
 $codEmpleado = $datos['empleado'];
             $empleado = new Empleado();
@@ -407,7 +408,7 @@ $codEmpleado = $datos['empleado'];
                 // Establece las cabeceras y devuelve JSON
                 //header('Content-Type: application/json');
                 //echo json_encode($respuesta);
-                //exit;*/
+                //exit;
                 $pass='Prueba';
             $oldPass = 'Prueba2';
             $usuario = 2;
@@ -422,4 +423,4 @@ $codEmpleado = $datos['empleado'];
                 }
             }catch(Exception $e){
 
-            }
+            }*/

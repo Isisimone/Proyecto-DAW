@@ -942,8 +942,16 @@ $nombrePrivilegios=[
                                     ';
 
                                     foreach($rolesUsuario as $clave=>$rolUsuario){
-                                        $rol->cargarRol($rolUsuario);
-                                        $nombreRol = $rol->getNombreRol();
+                                        try{
+                                            if ($rolUsuario>0){
+                                            $rol->cargarRol($rolUsuario);
+                                            $nombreRol = $rol->getNombreRol();
+                                            }else{
+                                                $nombreRol = "";
+                                            }
+                                        }catch(Exception $e){
+                                            
+                                        }
                                         $html=$html.'
                                         <div class="linea_roles rolesAsignados"  data-id="'.$rolUsuario.'" data-usuario="'.$datos['cod_usuario'].'">
                                             <label class="form-label">'.$nombreRol.'</label>
