@@ -21,9 +21,10 @@ class Usuario{
 
     //Método constructor
     public function __construct() {
-        $this->fec_Baja = null;
+        $this->nom_usuario_alta = '';
+        $this->fec_baja = null;
         $this->des_contrasena="";
-        $this->nom_Usuario_Baja = null;
+        $this->nom_usuario_baja = null;
         $this->cod_usuario=0;
         $this->roles[]=null;
     }
@@ -177,7 +178,7 @@ class Usuario{
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             $conexion = new Conexion();
             //Prepara un update
-            $consulta = "UPDATE tusuario SET NOM_LOGIN = :NOM_LOGIN, DES_CONTRASENA = :des_contrasena WHERE COD_USUARIO = :cod_Usuario";
+            $consulta = "UPDATE tusuario SET NOM_LOGIN = :NOM_LOGIN, DES_CONTRASENA = :DES_CONTRASENA WHERE COD_USUARIO = :COD_USUARIO";
             $stmt = $conexion->conexion->prepare($consulta);
             //parametriza yejecuta
             $stmt->bindParam(':NOM_LOGIN', $nombre, PDO::PARAM_STR);

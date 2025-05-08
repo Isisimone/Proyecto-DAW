@@ -23,7 +23,18 @@ class Marcaje{
 
     //Método constructor
     public function __construct(){
-        $this->cod_Marcaje = 0;        
+        $this->cod_Marcaje = 0;
+        $this->cod_bio = 0; 
+        $this->cod_Tipo_Marcaje = 0;
+        $this->cod_Empleado = 0;
+        $this->fec_Marcaje = new DateTime('now', new DateTimeZone('Europe/Madrid'));
+        $this->fec_Grabacion = new DateTime('now', new DateTimeZone('Europe/Madrid'));
+        $this->incidencia = false;
+        $this->pendiente = false;
+        $this->foto = '';
+        $this->tipoAcceso = '0';
+        $this->obs = '';
+
     }
 
 
@@ -375,7 +386,7 @@ class Marcaje{
             if ($this->cod_Tipo_Marcaje == 2) {
                 $this->actualizarBolsaHoras();
             }
-
+            $this->setCodMarcaje($this->ultimoMarcaje($this->cod_Empleado));
             //Elimina el objeto conexión
             $conexion = null;
             //Devuelve true

@@ -40,7 +40,9 @@ class Ajuste {
             $stmt = $conexion->conexion->prepare($consulta);
             $stmt->bindParam(':id_ajuste', $id, PDO::PARAM_INT);
             $stmt->execute();
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $resultado ? $resultado : [];
         }catch(PDOException $e){
             return[];
         }
