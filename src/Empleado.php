@@ -177,7 +177,9 @@ class Empleado {
             $stmt->bindValue(':bolsa', $this->bolsa, PDO::PARAM_INT);
 
             //Devuelve directamente el resultado como true o false
-            return $stmt->execute();
+            $resultado = $stmt->execute();
+            $this->setCodEmpleado($conexion->conexion->lastInsertId());
+            return $resultado;
         } catch (PDOException $e) {
             //Si hay error devuelve false y su mensaje
             error_log("Error al grabar empleado: " . $e->getMessage());

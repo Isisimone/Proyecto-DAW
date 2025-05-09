@@ -315,7 +315,7 @@ class Marcaje{
 
     //Método para marcar de una sola vez, rellena todos los parámetros
     public function marcar($tipo,$empleado,$cod_bio,$fec_Mar,$fec_Grab,$incidencia,$pendiente,$foto,$tipo_acceso,$obs){
-        $this->setCodTipoMarcaje($tipo);
+        try{$this->setCodTipoMarcaje($tipo);
         $this->setCodEmpleado($empleado);
         $this->setCodBio($cod_bio);
         $this->setFecMarcaje(new DateTime($fec_Mar));
@@ -326,6 +326,12 @@ class Marcaje{
         $this->setTipoAcceso($tipo_acceso);
         $this->setObs($obs);
         $this->grabar();
+        return true;
+        }catch(PDOException $e){
+            //Muestra error y devuelve false
+            error_log("Error al marcar: " . $e->getMessage());
+            return false;
+        }
     }
 
     //Método para obtener Lista de tipos de marcaje

@@ -163,6 +163,7 @@ class Usuario{
             $stmt->bindValue('nom_Usuario_Baja', $this->nom_usuario_baja ? $this->nom_usuario_baja:null, PDO::PARAM_STR);
             
             $stmt->execute();
+            $this->setCodUsuario($conexion->conexion->lastInsertId()); // Asigna el ID del último usuario insertado
             return;
         } catch (PDOException $e) {
             //Muestra error
@@ -202,9 +203,11 @@ class Usuario{
             $stmt = $conexion->conexion->prepare($consulta);
             $fec_Baja = new DateTime(); //define fecha baja a hoy
             //Parametriza y ejecuta
-            $stmt->bindParam(':FEC_BAJA', $fec_Baja->format('Y-m-d H:i:s')??null, PDO::PARAM_STR);
-            $stmt->bindParam(':NOM_USUARIO_BAJA', $nom_usuario_baja ?? '', PDO::PARAM_STR);
-            $stmt->bindParam(':COD_USUARIO', $this->cod_usuario, PDO::PARAM_INT);
+            $formattedFecBaja = $fec_Baja->format('Y-m-d H:i:s') ?? null;
+            $stmt->bindParam(':fec_Baja', $formattedFecBaja, PDO::PARAM_STR);
+            $nomUsuarioBaja = $nom_usuario_baja ?? '';
+            $stmt->bindParam(':nom_Usuario_Baja', $nomUsuarioBaja, PDO::PARAM_STR);
+            $stmt->bindParam(':cod_Usuario', $this->cod_usuario, PDO::PARAM_INT);
             $stmt->execute();
             return true;
         } catch (PDOException $e) {

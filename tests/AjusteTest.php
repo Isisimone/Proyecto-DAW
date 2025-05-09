@@ -25,9 +25,9 @@ class AjusteTest extends TestCase
     public function testObtenerAjuste()
     {
         // Asume que existe un ajuste con ID=1 en tu BD
-        $result = $this->ajuste->obtenerAjuste(27);
+        $result = $this->ajuste->obtenerAjuste(1);
         $this->assertIsArray($result);
-        $this->assertEquals(27, $result['ID_AJUSTE'] ?? null);
+        $this->assertEquals(1, $result['ID_AJUSTE'] ?? null);
     }
 
     // Prueba para crear y grabar un ajuste

@@ -1,0 +1,10 @@
+<phpunit bootstrap="tests/bootstrap.php" colors="true">
+    <testsuites>
+        <testsuite name="Ajuste Tests">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+    <logging>
+        <log type="testdox-html" target="reports/report.html"/>
+    </logging>
+</phpunit>

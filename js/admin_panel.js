@@ -103,15 +103,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }); 
     
     // Evento delegado para todos los elementos .cerrar
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('cerrar') || e.target.closest('.cerrar')) {
-        document.querySelectorAll('.ventana').forEach(ventana => {
-            ventana.style.display = 'none';
-        });
-        // También ocultamos el contenedor principal por si acaso
-        document.getElementById('panelFichaIncidencia').style.display = 'none';
-    }
-});
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('cerrar') || e.target.closest('.cerrar')) {
+            document.querySelectorAll('.ventana').forEach(ventana => {
+                ventana.style.display = 'none';
+            });
+            // También ocultamos el contenedor principal por si acaso
+            document.getElementById('panelFichaIncidencia').style.display = 'none';
+        }
+    });
 
     //Listeners de incidencias
     //CLICK en una incidencia pendiente
@@ -817,7 +817,7 @@ async function logout() {
     const datos={
         accion:"cerrarSesion"
     };
-    if (await crud(datos)){
+    if (await peticionWeb(datos)){
         window.location.href = './login.php';
     }
 }
@@ -895,6 +895,34 @@ async function crud(datos){
     } catch (error) {
         console.error('Error:', error);
         alert(`Error al guardar: ${error.message}`);
+    }
+}
+
+async function peticionWeb(datos){
+    console.error(datos);
+    try {
+        const respuesta = await fetch('./logica/filtrar_registros.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(datos)
+        });
+        if (!respuesta.ok) {
+            throw new Error(`Error HTTP: ${respuesta.status} - ${respuesta.statusText}`);
+        }
+        const resultado = await respuesta.json();
+        console.log(resultado);
+        if (resultado.success) {
+            if(resultado.mensaje){alert(resultado.mensaje);}
+            return true;          
+        } else {
+            throw new Error(resultado.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert(`Error: ${error.message}`);
+        return false;
     }
 }
 
