@@ -315,8 +315,8 @@ async function peticionDatos(labels, dato, ausencias, average, maxHorasDia) {
         accion: 'cargar_grafica',
         empleado: Number(cod_empleado),
         filtro: filterModeSelect.value,
-        startdate: startDate.value,
-        enddate: endDate.value
+        desdeFecha: startDate.value,
+        hastaFecha: endDate.value
 
     };
     console.log(data);

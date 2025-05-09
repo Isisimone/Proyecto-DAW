@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $rutaArchivo = $ruta_foto . $nombreArchivo;
         file_put_contents($rutaArchivo, $fotoBinaria);
         //Responde con mensaje de confirmación        
-        echo json_encode(['message' => 'Datos recibidos correctamente.']);
+        //echo json_encode(['message' => 'Datos recibidos correctamente.']);
     } else {
         //Responde con mensaje de error
         echo json_encode(['message' => 'Faltan datos en la solicitud.']);
@@ -86,5 +86,5 @@ if ($tipo_marca==1){
 $fecha_Grab=new DateTime();
 //Realizo el marcaje
 $marca->marcar($tipo_marca,$cod_Empleado,$cod_Bio,$fec_Marcaje,$fecha_Grab->format('Y-m-d H:i:s'),$incidencia,$pendiente,$nombreArchivo,$tipo_acceso,$obs);
-
+echo json_encode($tipo_marca);
 

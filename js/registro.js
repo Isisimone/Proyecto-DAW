@@ -39,7 +39,7 @@ function iniciarVideo() {
                 video.srcObject = stream;
                 video.style.display = 'block';
                 console.log("Video cargado.");
-                estado.innerHTML = 'Cargando reconocimiento facial...';//Cambiar a id de mensajes
+                estado.innerHTML = 'Video iniciado';//Cambiar a id de mensajes
             })
             //Si no muestra error
             .catch(function (error) {
@@ -167,7 +167,7 @@ function analizaVideo() {
                 const result = await response.json();
                 //Si devuelve match mostramos mensaje y cargamos datos.
                 if (result.match) {
-                    estado.innerHTML = `¡Persona reconocida! Coincidencia: ${result.nombre}, Distancia: ${result.distance}, Empleado:${result.empleado}`;
+                    estado.innerHTML = `Empleado: ${result.nombre}, ID:Reconocimiento:${result.empleado}`; //Distancia: ${result.distance}
                     ultimoID = `${result.empleado}`;
                     ultimoCodBio = `${result.cod_bio}`;
                     ultimoCodTipo = `${result.cod_tipo}`;
@@ -215,6 +215,7 @@ async function recargarDescriptores() {
         //Se espera la respuesta
         const result = await response.json();
         console.log(result.message); // Mostrar el mensaje del servidor
+        
     } catch (error) {
         //Mostramos el error
         console.error('Error al recargar los descriptores:', error);
@@ -259,12 +260,17 @@ async function fichar(idD){
         });
         //Esperamos respuesta
         const result = await response.json();
+        console.log(typeof result); // Mostrar el mensaje del servidor
+        estado.innerHTML = result; // Mostrar el mensaje del servidor
+        if (result==2) {estado.innerHTML = `<span style="color: red; font-weight: bold;">SALIDA: ¡Que tengas un buen día!</span>`;}
+        else if (result==1) {estado.innerHTML = `<span style="color: green; font-weight: bold;">ENTRADA: ¡Bienvenid@!</span>`;}
     } catch (error) {
         //Si falla mostramos error
         console.error('Error al fichar:', error);
     }
     //Mostramos mensaje de buen día
-    estado.innerHTML = `Que tengas un buen día.`;
+    
+
 }
 
 //Actualiza el reloj cada segundo

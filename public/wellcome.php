@@ -42,7 +42,7 @@ if (isset($_SESSION['COD_USUARIO'])) {
         <h1>Bienvenido</h1>
         <!--Reloj-->
         <p id="clock">Cargando hora...</p> <!-- Aquí se mostrará la hora -->
-        <p>Por favor, mire a la cámara para registrar su entrada o salida</p>
+        <p>Pulse en iniciar reconocimiento y mire a la cámara para registrar su entrada o salida</p>
         <div class="camera-container">
             <!-- Aquí se mostraría la vista de la cámara -->
             <video id="video" width="320" height="240" autoplay muted></video>
@@ -50,10 +50,6 @@ if (isset($_SESSION['COD_USUARIO'])) {
         <!--Botón para iniciar reconocimiento-->
         <div id="botonera">
             <button class="btnAzul" id="startRecognition">Iniciar Reconocimiento Facial</button>
-        </div>
-        <!--Botón para guardar rostros hasta que esté listo el backend-->
-        <div id="temporal">
-            <button class="btnAzul" onclick="guardarRostro()">Guardar Rostro</button>
         </div>
         <!--Necesario para PHP-->
         <input type="file" id="fileInput" style="display: none;"/>

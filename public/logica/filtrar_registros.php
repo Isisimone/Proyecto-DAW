@@ -53,8 +53,8 @@ try {
                     $fechaFin = $fechaFin->modify('last day of December last year');
                     break;
                 case 'range':
-                    $fechaInicio = isset($datos['startdate']) ? new DateTime($datos['startdate'], new DateTimeZone('Europe/Madrid')) : null;
-                    $fechaFin = isset($datos['enddate']) ? new DateTime($datos['enddate'], new DateTimeZone('Europe/Madrid')) : null;
+                    $fechaInicio = isset($datos['desdeFecha']) ? new DateTime($datos['desdeFecha'], new DateTimeZone('Europe/Madrid')) : null;
+                    $fechaFin = isset($datos['hastaFecha']) ? new DateTime($datos['hastaFecha'], new DateTimeZone('Europe/Madrid')) : null;
                     break;
             }
             $datosMarcajes = array_filter(

@@ -33,15 +33,14 @@ async function registrar(empleado, cod_bio,cod_tipo,foto,fec,incidencia,pendient
         obs: obs // Observaciones
     };
     // Enviar los datos con axios
-        axios.post('http://localhost/Proyecto-DAW/public/logica/registrar.php', datos)
-        .then(response => {
-            //Loggeamos la respuesta
-            console.log('Respuesta del servidor:', response.data);
-        })
-        .catch(error => {
-            //Mostramos error en caso contrario
-            console.error('Error al enviar los datos:', error.message);
-});
+    try {
+        const response = await axios.post('http://localhost/Proyecto-DAW/public/logica/registrar.php', datos);
+        console.log('Respuesta de PHP:', response.data);
+        return response.data; // Devuelve directamente 1, 2 o lo que sea que envíe PHP
+    } catch (error) {
+        console.error('Error al enviar datos a PHP:', error.message);
+        throw error; // Propaga el error para manejarlo en `/fichar`
+    }
 }
 
 // Función para cargar descriptores desde el archivo PHP
@@ -174,11 +173,12 @@ app.post('/fichar', async (req, res) => {
         // Eliminar la clave para que no pueda reutilizarse
         delete clavesTemporales[id];
         //Hacemos el marcaje en la BBDD
-        registrar(id_empleado,cod_bio,cod_tipo,'',fec,incidencia,pendiente,obs, foto);
+        const respuesta = await registrar(id_empleado,cod_bio,cod_tipo,'',fec,incidencia,pendiente,obs, foto);
         //Loggeamos el fichaje
+        console.log(respuesta);
         console.log(`Empleado que fichó: ${id_empleado} con Clave ${id}`); // Mostrar en consola
         //Devolvemos mensaje
-        res.json({ message: `Empleado ${id_empleado} fichado correctamente.` });
+        res.json(respuesta);
     }catch (error){
         //Si hay error lo mostramos
         console.error('Error al fichar:', error.message);
