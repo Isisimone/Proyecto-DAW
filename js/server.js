@@ -189,7 +189,7 @@ app.post('/fichar', async (req, res) => {
 
 
 // Iniciar el servicio web para escuchar las peticiones
-app.listen(port, async () => {
+app.listen(port, "0.0.0.0", async () => {
     //Loggeamos el estado del servidor node.js
     console.log(`Servidor corriendo en http://localhost:${port}`);
    try{
