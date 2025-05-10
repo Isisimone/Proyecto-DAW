@@ -82,6 +82,7 @@ if ($tipo_marca==1){
 } else {
     $tipo_marca=1;
 }
+$tipo_marca=2;
 //Marco la fecha actual como fecha de grabación.
 $fecha_Grab=new DateTime();
 //Realizo el marcaje
