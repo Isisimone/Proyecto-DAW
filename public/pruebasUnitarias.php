@@ -98,8 +98,8 @@ function pruebaMarcaje(bool $crear, bool $modificar, bool $mostrar, ?int $id){
     $marcaje = new Marcaje();
     if ($crear){
         $marcaje->setCodTipoMarcaje(1);
-        $marcaje->setCodEmpleado(1);
-        $marcaje->setCodBio(1);
+        $marcaje->setCodEmpleado($id);
+        $marcaje->setCodBio(14);
         $marcaje->setFecMarcaje($fecha);
         $marcaje->setFecGrabacion($fecha);
         $marcaje->setIncidencia(false);
@@ -236,7 +236,7 @@ function pruebaUsuario(bool $crear, bool $modificar, bool $mostrar, ?int $id){
 pruebaAjuste(false,false,false,1);
 pruebaDatosBio(false,false,false,1);
 pruebaEmpleado(false,false,false,5);
-pruebaMarcaje(false,false,false,2);
+pruebaMarcaje(true,false,false,2);
 pruebaRol(false,true,false,2);
 pruebaTipoBio(false,false,false,1);
 pruebaTransaccion(false,false,false,6); //Sin pasar
