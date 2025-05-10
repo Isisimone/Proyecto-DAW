@@ -62,7 +62,7 @@ function updateClock() {
 }
 
 //Guarda el rostro detectado en la base de datos
-async function guardarRostro(nombre="") {
+async function guardarRostro(nombre="",empleado) {
     //Captura el rostro destectado
     const rostro = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
     if (rostro) {
@@ -72,7 +72,7 @@ async function guardarRostro(nombre="") {
         if (nombre) {
             //Mandamos el descriptor empleado y usuario que realiza el alta
             //Modificar cuando haya <<<<<<<<<<< BACK-END >>>>>>>>>>>>>>>>
-            await guardarDescriptorEnServidor(nombre, descriptor,1,'Admon');
+            await guardarDescriptorEnServidor(nombre, descriptor,empleado,'Admon');
             //actualizarFaceMatcher();
         }
     }

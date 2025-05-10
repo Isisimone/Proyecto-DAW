@@ -344,6 +344,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                             <!-- Aquí se mostraría la vista de la cámara -->
                             <video id="video" width="100%" height="100%" autoplay muted style="padding:15px 0px 15px 0px; display: inline-block;"></video>
                         </div>
+                        <p id="status"></p>
                         <button id="guardarDescriptor" class="btn btn-primary">Guardar Rostro</button>
                     </div>
                 </div>

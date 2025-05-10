@@ -236,7 +236,7 @@ function pruebaUsuario(bool $crear, bool $modificar, bool $mostrar, ?int $id){
 pruebaAjuste(false,false,false,1);
 pruebaDatosBio(false,false,false,1);
 pruebaEmpleado(false,false,false,5);
-pruebaMarcaje(true,false,false,2);
+pruebaMarcaje(true,false,false,1);
 pruebaRol(false,false,false,2);
 pruebaTipoBio(false,false,false,1);
 pruebaTransaccion(false,false,false,6); //Sin pasar

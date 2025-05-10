@@ -357,6 +357,8 @@ class Marcaje{
 
     //Método para registrar el marcaje en la bbdd
     public function grabar(): bool {
+        $inci=0;
+        $resinci=0;
         try{
             $conexion = new Conexion();
             //Si no hay cod_Marcaje prepara un INSERT
@@ -375,14 +377,16 @@ class Marcaje{
                 $stmt->bindValue(':cod_Marcaje', $this->cod_Marcaje);
             }
             //Parametriza la consulta
+            if ($this->incidencia){$inci=1;}else{$inci=0;}
+            if ($this->pendiente){$resinci=1;}else{$resinci=0;}
             $stmt->bindValue(':COD_TIPO_MARCAJE', $this->cod_Tipo_Marcaje);
             $stmt->bindValue(':COD_EMPLEADO', $this->cod_Empleado);
             $stmt->bindValue(':COD_BIO', $this->cod_bio);
             $stmt->bindValue(':DES_FOTO', $this->foto);
             $stmt->bindValue(':FEC_MARCAJE', $this->fec_Marcaje->format('Y-m-d H:i:s'));
             $stmt->bindValue(':FEC_GRABACION', $this->fec_Grabacion->format('Y-m-d H:i:s'));
-            $stmt->bindValue(':IND_INCIDENCIA',$this->incidencia);
-            $stmt->bindValue(':IND_PENDIENTE', $this->pendiente);
+            $stmt->bindValue(':IND_INCIDENCIA',$inci);
+            $stmt->bindValue(':IND_PENDIENTE', $resinci);
             $stmt->bindValue(':COD_TIPO_ACCESO', $this->tipoAcceso);
             $stmt->bindValue(':DES_OBSERVACIONES', $this->obs);
             //Ejecuta la consulta

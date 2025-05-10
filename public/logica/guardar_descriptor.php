@@ -18,11 +18,11 @@ $bio = new DatosBiometricos();
 $ip_permitidas = ['127.0.0.1', '::1']; // Localhost
 
 // Verificar si la IP del cliente está en la lista de permitidas
-if (!in_array($_SERVER['REMOTE_ADDR'], $ip_permitidas)) {
+/*if (!in_array($_SERVER['REMOTE_ADDR'], $ip_permitidas)) {
     http_response_code(403); // Código de estado 403: Prohibido
     echo json_encode(['message' => 'Acceso no autorizado.']);
     exit;
-}
+}*/
 
 
 // Ruta al archivo que contiene la clave de encriptación

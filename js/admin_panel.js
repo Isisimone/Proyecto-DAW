@@ -636,7 +636,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('guardarDescriptor').addEventListener('click', async function(e) {
         const selectElement = document.getElementById('seleccionPanelEmpleado');
         const nombreCompleto = selectElement.options[selectElement.selectedIndex].text;
-        await guardarRostro(nombreCompleto);
+        const empleado = Number(document.getElementById('seleccionPanelEmpleado').value);
+        await guardarRostro(nombreCompleto, empleado);
         document.querySelectorAll('.ventana').forEach(ventana => {
             ventana.style.display = 'none';
         });
