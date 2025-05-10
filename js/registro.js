@@ -156,7 +156,7 @@ function analizaVideo() {
             }
             // Enviar el descriptor al servidor Node.js
             try {
-                const response = await fetch('https://recfacialch.myddns.me:3000/recognize', {
+                const response = await fetch('https://recfacialch.myddns.me/api/recognize', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -206,7 +206,7 @@ function detenerAnalisis() {
 async function recargarDescriptores() {
     //Se llama al servicio de node.js sin datos adicionales
     try {
-        const response = await fetch('https://recfacialch.myddns.me:3000/reload-descriptors', {
+        const response = await fetch('https://recfacialch.myddns.me/api/reload-descriptors', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -251,7 +251,7 @@ async function fichar(idD){
             foto: fotoBase64 // Incluir la imagen capturada
         };
         // Enviar los datos al servidor
-        const response = await fetch('https://recfacialch.myddns.me:3000/fichar', {
+        const response = await fetch('https://recfacialch.myddns.me/api/fichar', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

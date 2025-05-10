@@ -2,7 +2,7 @@
 session_start();
 
 // Verificar si la sesión es válida y tiene el rol requerido
-/*if (empty($_SESSION['COD_USUARIO']) && in_array('Empelado', $_SESSION['ROLES'])) {
+/*if (empty($_SESSION['COD_USUARIO']) && in_array('Empleado', $_SESSION['ROLES'])) {
     http_response_code(403); // Forbidden
     echo json_encode(['success' => false, 'error' => 'Acceso no autorizado']);
     exit;
