@@ -6,6 +6,13 @@ const { FaceMatcher, LabeledFaceDescriptors } = require('face-api.js');
 const axios = require('axios'); // Para hacer solicitudes HTTP
 const path = require('path');
 
+const https = require('https'); // Para Node.js
+
+// Configurar axios para ignorar certificados SSL no válidos
+const agent = new https.Agent({  
+  rejectUnauthorized: false
+});
+
 //Definición para el servicio web
 const app = express();
 const port = 3000;
@@ -50,7 +57,9 @@ async function cargarDescriptores() {
         descriptoresConocidos.length = 0;
 
         // Hacer una solicitud HTTP a listar_descriptores.PHP
-        const response = await axios.get('http://localhost/Proyecto-DAW/public/logica/listar_descriptores.php');
+        const response = await axios.get('https://localhost/Proyecto-DAW/public/logica/listar_descriptores.php', {
+  httpsAgent: agent 
+});
         //Guardamos los datos
         const data = response.data;
 

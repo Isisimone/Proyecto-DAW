@@ -229,9 +229,6 @@ function pruebaUsuario(bool $crear, bool $modificar, bool $mostrar, ?int $id){
         //var_dump($_SESSION);*/
     }
 }
-/*$bio = new DatosBiometricos();
-                    $bio->cargar(2);
-                    $bio->eliminar();*/
 
 pruebaAjuste(false,false,false,1);
 pruebaDatosBio(false,false,false,1);
