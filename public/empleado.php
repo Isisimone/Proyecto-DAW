@@ -290,7 +290,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
                             const data = <?php echo json_encode($valores); ?>; // Horas trabajadas
                             const average = <?php echo array_sum($valores) / count($valores); ?>; // a usar en js
                             const ausencias = <?php echo json_encode($ausencias); ?>;
-                            const registros = <?php echo json_encode($registrosDetallados); ?>;
+                            let registros = <?php echo json_encode($registrosDetallados); ?>;
                             var todosMarcajes = <?php echo json_encode($datosMarcajes); ?>;
                             renderChart(labels, data, ausencias, average,<?php echo $maxHoras;?>);
                                 

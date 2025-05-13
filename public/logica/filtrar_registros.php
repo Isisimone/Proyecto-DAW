@@ -147,6 +147,7 @@ try {
                                         <span class="col-incidencia">Incidencia</span>
                                         <span class="col-estado">Estado</span>
                                     </li>';
+
                                     foreach ($registrosDetallados as $index=>$registro){
                                     $html=$html.'<li data-id="'.$index.'" 
                                         data-fecha="'.$registro['fecha'].'">
@@ -160,8 +161,13 @@ try {
                                     </li>';
                                     }
                                 $html=$html.'</ul>';
-                header('Content-Type: text/html');
-                echo $html;
+                $response = [
+                    'html' => $html,
+                    'registros' => $registrosDetallados
+                ];
+
+                header('Content-Type: application/json');
+                echo json_encode($response);
                 exit;   
             }
         

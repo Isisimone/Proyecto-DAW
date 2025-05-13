@@ -63,9 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Limpiar formulario
         listadoDatos.innerHTML = "";
         // Cargar el HTML
-        cargarHTML(data)
-        .then(html =>{
-            listadoDatos.innerHTML = html;
+        cargarHTML(data,'json')
+        .then(respuesta =>{
+            listadoDatos.innerHTML = respuesta.html;
+            registros = respuesta.registros;
         });
         renderChart([], [], [], [], 0); // Limpiar la gráfica
 
@@ -254,15 +255,14 @@ updateTime();
     });
 
     document.getElementById('exp-reg-csv').addEventListener('click', () => {
-        console.log(registros); // Asegúrate de que esta variable esté definida en tu PHP  
+        console.log(registros);   
         exportar('csv', registros); // Llama a la función de exportación  
     });
     document.getElementById('exp-reg-xls').addEventListener('click', () => {
-        console.log(registros); // Asegúrate de que esta variable esté definida en tu PHP  
+        console.log(registros);   
         exportar('xls', registros); // Llama a la función de exportación  
     });
     document.getElementById('exp-reg-pdf').addEventListener('click', () => {
-        console.log(registros); // Asegúrate de que esta variable esté definida en tu PHP 
         const elemento = document.getElementById('registrosExportables');
     
         if (!elemento) {
@@ -553,23 +553,32 @@ async function crud(datos){
     }
 }
 
-async function cargarHTML(data){
+async function cargarHTML(data, formato = 'html') {
     try {
         const response = await fetch('./logica/filtrar_registros.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify({
+                ...data,
+                formato // Añadimos el formato solicitado a los datos
+            })
         });
         
         if (!response.ok) {
             throw new Error('Error en la respuesta del servidor');
         }
         
-        return await response.text();
+        if (formato === 'json') {
+            return await response.json(); // Devuelve objeto JSON
+        } else {
+            return await response.text(); // Devuelve HTML como antes
+        }
     } catch (error) {
         console.error("Error:", error);
-        return `<p class="error-message">Error al cargar los datos: ${error.message}</p>`;
+        return formato === 'json' 
+            ? { error: true, message: error.message }
+            : `<p class="error-message">Error al cargar los datos: ${error.message}</p>`;
     }
 }
