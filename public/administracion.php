@@ -42,10 +42,6 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
         const permisos = <?php echo json_encode($privilegios);?>;
         const ajustes = <?php echo json_encode($ajustes);?>;
                             
-        //const usuario = <?php //echo json_encode($usuarios); ?>; 
-        //const bios = <?php //echo json_encode($listaBios); ?>;
-        //const transacciones = <?php //echo json_encode($transacciones); ?>; 
-        //const marcajes = <?php //echo json_encode($marcajes); ?>; 
         console.log(incidenciasP);
     </script>
 

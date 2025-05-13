@@ -438,6 +438,17 @@ $nombrePrivilegios=[
                     exit;
             }
 
+            if ($datos['accion']=='recalcular_bolsa'){
+                $empleado = new Empleado();
+                $marcaje = new Marcaje();
+                $empleado->cargarDatosEmpleado($datos['cod_empleado']);
+                $empleado->setMaxHorasDia($datos['horas']);
+                $empleado->grabar();
+                $marcaje->calcularBolsaMensual($empleado->getCodEmpleado(),new DateTime('now'));
+                $empleado->cargarDatosEmpleado($datos['cod_empleado']);
+                $bolsa=$empleado->getBolsa();
+                echo $bolsa;
+            }
             if ($datos['accion']=='mostrar_empleado'){
                 $empleado = new Empleado();
                 $empleado->cargarDatosEmpleado($datos['cod_empleado']);

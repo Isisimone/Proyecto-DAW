@@ -644,37 +644,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     //CLICK en listaDescriptores
     document.getElementById('panelDescriptores').addEventListener('click', async function(e) {
-        if (e.target && e.target.id === 'nuevoDescriptor') {
-            const formulario = document.getElementById("panelDescriptores");
-            document.getElementById('panelCamara').style.display = 'block';
-            cargar();
-
-        }
-        const lineaBioElement = e.target.closest('.linea_bio');
-        if (lineaBioElement) {
-            lineaBioElement.classList.toggle('selected');
-        }
-        if (e.target && e.target.id === 'eliminarDescriptor' && document.querySelectorAll('.linea_bio.selected').length > 0) {
-            const respuesta = await mensajeConfirmacion("¿Estás seguro de eliminar los datos biométricos seleccionados?");
-            if (respuesta) {
-                // Corrección: Usar forEach desde la NodeList devuelta por querySelectorAll
-                document.querySelectorAll('.linea_bio.selected').forEach(async function(element) {
-                    const codBio = element.getAttribute('data-id');
-                    const datos = {
-                        accion: 'baja_bio',
-                        cod_bio: codBio
-                    };
-                    await crud(datos);
-                });
-                document.querySelectorAll('.ventana').forEach(ventana => {
-                    ventana.style.display = 'none';
-                });
-            }
-        }
     });
 
     //CLICK en grabar y baja empleado
     document.getElementById('formularioEmpleado').addEventListener('click', async function(e) {
+        if (e.target && e.target.id === 'recalcularBolsa') {
+            const campo = document.getElementById("bolsaEmpleado");
+            const valorSeleccionado = document.getElementById("seleccionPanelEmpleado").value; // Obtiene el valor del select
+            const horas = document.getElementById("horasEmpleado").value;
+            const data = {
+                accion: 'recalcular_bolsa',
+                cod_empleado: valorSeleccionado,  // Parámetro adicional opcional
+                horas: horas
+            };
+            // Cargar el HTML
+            cargarHTML(data)
+            .then(valor =>{
+                campo.value = valor;
+                //aplicarPermisos();
+            });
+            
+        }
+
         if (e.target && e.target.id === 'bioEmpleado') {
             const formulario = document.getElementById('listaDescriptores');
             const cod_empleado = document.getElementById('seleccionPanelEmpleado').value>""? Number(document.getElementById('seleccionPanelEmpleado').value) : 0;

@@ -5,7 +5,6 @@ namespace Clases;
 use DateTime;
 use PDO;
 use PDOException;
-
 class Empleado {
     // Atributos
     private int $cod_Empleado;
@@ -178,7 +177,7 @@ class Empleado {
 
             //Devuelve directamente el resultado como true o false
             $resultado = $stmt->execute();
-            $this->setCodEmpleado($conexion->conexion->lastInsertId());
+            if ($this->cod_Empleado==0 || is_null($this->cod_Empleado)){$this->setCodEmpleado($conexion->conexion->lastInsertId());}
             return $resultado;
         } catch (PDOException $e) {
             //Si hay error devuelve false y su mensaje
@@ -199,12 +198,12 @@ class Empleado {
     
             // Actualiza la bolsa con el excedente
             $conexion = new Conexion();
-            $sql = "UPDATE templeado SET BOLSA = :bolsa WHERE COD_EMPLEADO = :codEmpleado";
+            $sql = "UPDATE templeado SET BOLSA_HORAS = :bolsa WHERE COD_EMPLEADO = :codEmpleado";
             $stmt = $conexion->conexion->prepare($sql);
             $stmt->bindValue(':bolsa', $excedente);
             $stmt->bindValue(':codEmpleado', $this->cod_Empleado);
             $stmt->execute();
-    
+            $this->setBolsa($excedente);
             // Elimina el objeto conexión
             $conexion = null;
         } catch (PDOException $e) {
