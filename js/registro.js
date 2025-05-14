@@ -104,7 +104,7 @@ async function guardarDescriptorEnServidor(nombre, descriptor,empleado,usuario) 
         //Se espera la respuesta y se almacena en result
         const result = await response.json();
         //Mostramos en consola el resultado.
-        console.log(result.message);
+        //console.log(result.message);
     } catch (error) {
         //Si ocurre un error mostramos el error.
         console.error('Error al guardar el descriptor:', error);
@@ -226,7 +226,7 @@ async function recargarDescriptores() {
         });
         //Se espera la respuesta
         const result = await response.json();
-        console.log(result.message); // Mostrar el mensaje del servidor
+        //console.log(result.message); // Mostrar el mensaje del servidor
         
     } catch (error) {
         //Mostramos el error
@@ -272,7 +272,7 @@ async function fichar(idD){
         });
         //Esperamos respuesta
         const result = await response.json();
-        console.log(typeof result); // Mostrar el mensaje del servidor
+        //console.log(typeof result); // Mostrar el mensaje del servidor
         estado.innerHTML = result; // Mostrar el mensaje del servidor
         if (result==2) {estado.innerHTML = `<span style="color: red; font-weight: bold;">SALIDA: ¡Que tengas un buen día!</span>`;}
         else if (result==1) {estado.innerHTML = `<span style="color: green; font-weight: bold;">ENTRADA: ¡Bienvenid@!</span>`;}

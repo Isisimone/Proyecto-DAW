@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $options = new Options();
                 $options->set('isHtml5ParserEnabled', true); 
                 $options->set('isRemoteEnabled', true); // Permitir imágenes base64
-                file_put_contents('debug_html.html', $html);
+                //file_put_contents('debug_html.html', $html);
 
                 $dompdf = new Dompdf($options);
                 $dompdf->loadHtml($html);

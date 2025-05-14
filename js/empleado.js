@@ -217,7 +217,7 @@ updateTime();
                     return response.text(); // o response.json() si tu PHP devuelve JSON
                 })
                 .then(data => {
-                    console.log('Imagen subida con éxito:', data);
+                    //console.log('Imagen subida con éxito:', data);
                         location.reload();                    
                 })
                 .catch(error => {
@@ -255,11 +255,11 @@ updateTime();
     });
 
     document.getElementById('exp-reg-csv').addEventListener('click', () => {
-        console.log(registros);   
+        //console.log(registros);   
         exportar('csv', registros); // Llama a la función de exportación  
     });
     document.getElementById('exp-reg-xls').addEventListener('click', () => {
-        console.log(registros);   
+        //console.log(registros);   
         exportar('xls', registros); // Llama a la función de exportación  
     });
     document.getElementById('exp-reg-pdf').addEventListener('click', () => {
@@ -342,7 +342,7 @@ async function peticionDatos(labels, dato, ausencias, average, maxHorasDia) {
         hastaFecha: endDate.value
 
     };
-    console.log(data);
+    //console.log(data);
     try {
         const response = await fetch('./logica/filtrar_registros.php', {
             method: 'POST',
@@ -386,7 +386,7 @@ async function renderChart(labels, data, ausencias, average, maxHorasDia) {
         maxHorasDia = datos.maxHoras;
         todosMarcajes = datos.datosMarcajes;
         
-        console.log('Datos para gráfica:', datos);
+        //console.log('Datos para gráfica:', datos);
 
         // Divide las horas en normales y extras con validación
         const horasNormales = data.map(horas => Math.min(Number(horas) || 0, Number(maxHorasDia) || 8));
@@ -549,7 +549,7 @@ async function logout() {
 }
 //función CRUD
 async function crud(datos){
-    console.error(datos);
+    //console.error(datos);
     try {
         const respuesta = await fetch('./logica/filtrar_registros.php', {
             method: 'POST',
@@ -562,7 +562,7 @@ async function crud(datos){
             throw new Error(`Error HTTP: ${respuesta.status} - ${respuesta.statusText}`);
         }
         const resultado = await respuesta.json();
-        console.log(resultado);
+        //console.log(resultado);
         if (resultado.success) {
             if(resultado.mensaje){alert(resultado.mensaje);}
             return true;          

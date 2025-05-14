@@ -940,7 +940,7 @@ async function crud(datos){
 }
 
 async function peticionWeb(datos){
-    console.error(datos);
+    //console.error(datos);
     try {
         const respuesta = await fetch('./logica/filtrar_registros.php', {
             method: 'POST',
@@ -953,7 +953,7 @@ async function peticionWeb(datos){
             throw new Error(`Error HTTP: ${respuesta.status} - ${respuesta.statusText}`);
         }
         const resultado = await respuesta.json();
-        console.log(resultado);
+        //console.log(resultado);
         if (resultado.success) {
             if(resultado.mensaje){alert(resultado.mensaje);}
             return true;          

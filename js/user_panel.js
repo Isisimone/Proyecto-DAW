@@ -1,7 +1,7 @@
 function applyFilters() {
     const date = document.getElementById('filterDate').value;
     const user = document.getElementById('filterUser').value;
-    console.log(`Filtrando por fecha: ${date} y usuario: ${user}`);
+    //console.log(`Filtrando por fecha: ${date} y usuario: ${user}`);
 }
 
 function exportToCSV() {
