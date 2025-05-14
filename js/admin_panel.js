@@ -97,7 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
         cerrar_bloques();
         panelAjustes.style.display = 'block';
     });  
-
+    document.getElementById('menuPortalEmpleado').addEventListener('click', () => {
+        window.location.href = './empleado.php';
+    });
     document.getElementById('menuCerrar').addEventListener('click', () => {
         logout();
     }); 

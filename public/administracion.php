@@ -72,7 +72,8 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
             <a href="#" id="menuAjustes"><button>Ajustes</button></a>
         </div>
     </div>
-
+    <!-- Cerrar sesión -->
+    <button class="nav-btn" id="menuPortalEmpleado">Portal empleado</button>
     <!-- Cerrar sesión -->
     <button class="nav-btn" id="menuCerrar">Cerrar sesión</button>
 </div>
