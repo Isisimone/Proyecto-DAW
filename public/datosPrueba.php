@@ -31,6 +31,9 @@ function generarMarcajesEmpleado($empleado, $fecha) {
 'empleado_1_1742830016.jpg',
 'empleado_1_1742832595.jpg',
 'empleado_1_1742837544.jpg',
+'empleado_1_1742848138.jpg',
+'empleado_1_1742848306.jpg',
+'empleado_1_1742848317.jpg',
 'empleado_1_1742889590.jpg',
 'empleado_1_1742891899.jpg',
 'empleado_1_1742900460.jpg',
@@ -39,12 +42,19 @@ function generarMarcajesEmpleado($empleado, $fecha) {
 'empleado_1_1742981114.jpg',
 'empleado_1_1742981762.jpg',
 'empleado_1_1742982244.jpg',
+'empleado_1_1742997438.jpg',
+'empleado_1_1742997614.jpg',
+'empleado_1_1742997741.jpg',
+'empleado_1_1742998169.jpg',
 'empleado_1_1743011885.jpg',
 'empleado_1_1743060817.jpg',
 'empleado_1_1743080252.jpg',
 'empleado_1_1743146363.jpg',
 'empleado_1_1743148134.jpg',
 'empleado_1_1743148139.jpg',
+'empleado_1_1743273358.jpg',
+'empleado_1_1743273473.jpg',
+'empleado_1_1743274535.jpg',
 'empleado_1_1743402990.jpg',
 'empleado_1_1743431511.jpg',
 'empleado_1_1743488616.jpg',
@@ -53,21 +63,13 @@ function generarMarcajesEmpleado($empleado, $fecha) {
 'empleado_1_1743660474.jpg',
 'empleado_1_1743680355.jpg',
 'empleado_1_1743680780.jpg',
-'empleado_1_1746803756.jpg',
-'empleado_1_1746804613.jpg',
-'empleado_1_1746805098.jpg',
-'empleado_1_1746805219.jpg',
-'empleado_1_1746805273.jpg',
-'empleado_1_1746805308.jpg',
-'empleado_1_1746805373.jpg',
-'empleado_1_1746805495.jpg',
-'empleado_1_1746805783.jpg',
-'empleado_1_1746805931.jpg',
-'empleado_1_1746806036.jpg',
-'empleado_1_1746806045.jpg',
-'empleado_1_1746806176.jpg',
-'empleado_1_1746806184.jpg',
-'empleado_1_1746806194.jpg',];
+'empleado_1_1746994071.jpg',
+'empleado_1_1746994082.jpg',
+'empleado_1_1747047401.jpg',
+'empleado_1_1747071089.jpg'];
+$fotosEmpleado9=['empleado_9_1747223453.jpg',
+'empleado_9_1747223460.jpg'];
+
     // Obtener los códigos biométricos del empleado
     $datosBio = new DatosBiometricos();
     $biometricos = $datosBio->biosPorEmpleado($empleado->getCodEmpleado());
@@ -93,7 +95,9 @@ function generarMarcajesEmpleado($empleado, $fecha) {
     $fechaSalida->setTime($h, $m, $s);
     if ($empleado->getCodEmpleado()==1) {
         $fotos = $fotosEmpleado[array_rand($fotosEmpleado)];
-    } else {
+    } else if ($empleado->getCodEmpleado()==9) {
+        $fotos = $fotosEmpleado9[array_rand($fotosEmpleado9)];
+    } else{
         $fotos='empleado_'.$empleado->getCodEmpleado().'_foto.jpg';
     };
     // Crear marcaje de entrada

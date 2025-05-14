@@ -54,7 +54,7 @@ try {
                     break;
                 case 'range':
                     $fechaInicio = isset($datos['desdeFecha']) ? new DateTime($datos['desdeFecha'], new DateTimeZone('Europe/Madrid')) : null;
-                    $fechaFin = isset($datos['hastaFecha']) ? new DateTime($datos['hastaFecha'], new DateTimeZone('Europe/Madrid')) : null;
+                    $fechaFin = isset($datos['hastaFecha']) ? (new DateTime($datos['hastaFecha'], new DateTimeZone('Europe/Madrid')))->setTime(23, 59, 59) : null;
                     break;
             }
             $datosMarcajes = array_filter(
