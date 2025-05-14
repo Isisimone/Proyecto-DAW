@@ -15,13 +15,21 @@ if (isset($_GET['perfil']) && $_GET['perfil'] === 'perfil') {
 }
 //Obtenemos los datos del archivo mediante GET
 $archivo = isset($_GET['archivo']) ? basename($_GET['archivo']) : '';
+$base64 = isset($_GET['base64']) ? true : false;
 //Completamos la ruta
 $rutaCompleta = $rutaBase . $archivo;
 
 //Si existe devolvemos la imagen 
 if (file_exists($rutaCompleta)) {
-    header('Content-Type: image/jpeg');
-    readfile($rutaCompleta);
+    if ($base64){
+        $tipoImagen = mime_content_type($rutaCompleta);
+        // Leer la imagen y convertirla en base64
+        $datosImagen = base64_encode(file_get_contents($rutaCompleta));
+        echo "data:$tipoImagen;base64,$datosImagen";
+    }else{
+        header('Content-Type: image/jpeg');
+        readfile($rutaCompleta);
+    }
 } else {
     //Si no existe devolvemos un 404
     http_response_code(404);

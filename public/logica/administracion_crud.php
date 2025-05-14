@@ -812,15 +812,19 @@ $nombrePrivilegios=[
                         <span class="">Pendiente</span>
                     </li>';
                 foreach ($marcajes as $registro){
+                $nombreArchivo = $registro['DES_FOTO']; 
+                $base64Imagen = file_get_contents("http://".$_SERVER['HTTP_HOST']."/Proyecto-DAW/public/logica/mostrar_imagen.php?base64=true&archivo=$nombreArchivo");
                 $html=$html.'
                     <li class="linea_trans" data-id="'.$registro['COD_MARCAJE'].'">
                         <span><b>'.$registro['FEC_MARCAJE'].'</b></span>
                         <span>'.$registro['COD_EMPLEADO'].'</span>
-                        <span><img src="./logica/mostrar_imagen.php?archivo='.$registro['DES_FOTO'].'" alt="Foto acceso" class="foto-acceso"></span>
+                        <span><img src="'.$base64Imagen.'" alt="Foto acceso" class="foto-acceso"></span>
                         <span>'.$registro['COD_TIPO_MARCAJE'].'</span>
                         <span>'.$registro['DES_OBSERVACIONES'].'</span>
                         <span>'.$registro['IND_PENDIENTE'].'</span>
                     </li>';
+                    //<span><img src="./logica/mostrar_imagen.php?archivo='.$registro['DES_FOTO'].'" alt="Foto acceso" class="foto-acceso"></span>
+                        
                 };
                 $html=$html.'</ul>';
                 header('Content-Type: text/html');
