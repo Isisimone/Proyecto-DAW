@@ -274,11 +274,34 @@ updateTime();
         const clon = elemento.cloneNode(true);
     
         
-        exportar('pdf', clon.outerHTML); // Llama a la función de exportación  
+        exportarHTML('pdf', clon.outerHTML); // Llama a la función de exportación  
     });
 
 });
 
+async function exportarHTML(tipo, data) {
+    try {
+        const formData = new FormData();
+        formData.append('datos', data); // Enviar el HTML directamente
+        formData.append('tipo', tipo);
+
+        const response = await fetch(`./logica/exportar_registros.php`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `registros_${new Date().toISOString().slice(0,10)}.${tipo}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    } catch (error) {
+        console.error('Error al exportar:', error);
+    }
+}
 //Función exportar registros
 async function exportar(tipo,data){
     try {

@@ -149,7 +149,7 @@ try {
                                     </li>';
 
                                     foreach ($registrosDetallados as $index=>$registro){
-                                    $html=$html.'<li data-id="'.$index.'" 
+                                    $html=$html.'<li class="linea_trans" data-id="'.$index.'" 
                                         data-fecha="'.$registro['fecha'].'">
                                         <span class="fecha">'.$registro['fecha'].'</span>
                                         <span class="metodo">'.$registro['tipoAccesoEntrada'].'</span>

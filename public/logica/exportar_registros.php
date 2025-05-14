@@ -4,6 +4,7 @@ require($_SERVER['DOCUMENT_ROOT'] . '/Proyecto-DAW/vendor/autoload.php');
 require($_SERVER['DOCUMENT_ROOT'] . '/Proyecto-DAW/public/logica/empleado_datos.php');
 
 use Dompdf\Dompdf;
+use Dompdf\Options;
 
 // Verificar si la solicitud es POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -54,32 +55,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             echo '</table>';
             exit;
-        } elseif ($_POST['tipo'] == 'pdf') {
-            /*$registros = is_string($datos) ? json_decode($datos, true) : $datos;
-            $cabeceras = array_keys($registros[0]);*/
-            if (!empty($registros)) {
-                /*
-                $html = '<h1>Registros Detallados</h1><table>';
+            } elseif ($_POST['tipo'] == 'pdf') {
+                $html = "<!DOCTYPE html>
+            <html lang='es'>
+            <head>
+                <meta charset='UTF-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                <title>Exportación de Registros</title>
+                <style>
+                    body { font-family: Arial, sans-serif; }
+                    table { width: 100%; border-collapse: collapse; }
+                    th, td { border: 1px solid black; padding: 8px; text-align: left; }
+                    th { background-color: #f2f2f2; }
+                    img { max-width: 100px; height: auto; }
+                        .cabecera_trans, .registro_header {
+                            display: table;
+                            width: 100%;
+                            border-collapse: collapse;
+                            background-color: #333;
+                            color: white;
+                        }
+                            .linea_trans {
+                            display: table;
+                            width: 100%;
+                            border-collapse: collapse;
+                            background-color: #fff;
+                            color: black;
+                        }
+                        .linea_trans span, .cabecera_trans span {
+                            display: table-cell;
+                            padding: 8px;
+                        }
+                </style>
+            </head>
+            <body>
+                <h1>Exportación de Registros</h1>
+                $datos
+            </body>
+            </html>";
+            
+                $options = new Options();
+                $options->set('isHtml5ParserEnabled', true); 
+                $options->set('isRemoteEnabled', true); // Permitir imágenes base64
+                file_put_contents('debug_html.html', $html);
 
-                // Cabeceras
-                $html .= '<tr>';
-                foreach ($cabeceras as $cabecera) {
-                    $html .= '<th style="background:#f2f2f2;padding:5px;">'.$cabecera.'</th>';
-                }
-                $html .= '</tr>';
-
-                // Datos
-                foreach ($registros as $fila) {
-                    $html .= '<tr>';
-                    foreach ($fila as $valor) {
-                        $html .= '<td style="border:1px solid #ddd;padding:5px;">'.$valor.'</td>';
-                    }
-                    $html .= '</tr>';
-                }
-                $html .= '</table>';*/
-                $html=is_string($datos) ? json_decode($datos, true) : $datos;
-
-                $dompdf = new Dompdf();
+                $dompdf = new Dompdf($options);
                 $dompdf->loadHtml($html);
                 $dompdf->setPaper('A4', 'landscape');
                 $dompdf->render();
@@ -90,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
    
-        }
+        
 
     } else {
         http_response_code(400);

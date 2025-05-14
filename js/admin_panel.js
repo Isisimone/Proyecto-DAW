@@ -780,7 +780,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const clon = elemento.cloneNode(true);
         elemento.style.display = 'none';
         
-        exportar('pdf', clon.outerHTML); // Llama a la función de exportación  
+        exportarHTML('pdf', clon.outerHTML); // Llama a la función de exportación  
     });
 
     document.getElementById('exportarEmpleados').addEventListener('click', async function() {
@@ -797,25 +797,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const clon = elemento.cloneNode(true);
         elemento.style.display = 'none';
         
-        exportar('pdf', clon.outerHTML); // Llama a la función de exportación  
+        exportarHTML('pdf', clon.outerHTML); // Llama a la función de exportación  
     });
 
     document.getElementById('exportarMarcajes').addEventListener('click', async function() {
-        const elemento = document.getElementById('exportarMarcaje');
-        elemento.style.display = 'block';
-
+    const elemento = document.getElementById('listaMarcajes');
     
-        if (!elemento) {
-            console.error('No se encontró el elemento con ID "exportarMarcaje"');
-            return null;
-        }
-    
-        // Clonar el elemento para no afectar el original
-        const clon = elemento.cloneNode(true);
-        elemento.style.display = 'none';
-        
-        exportar('pdf', clon.outerHTML); // Llama a la función de exportación  
-    });
+    if (!elemento) {
+        console.error('No se encontró el elemento con ID "exportarMarcaje"');
+        return;
+    }
+    const htmlContent = elemento.outerHTML; // Capturar el HTML completo del contenedor
+    exportarHTML('pdf', htmlContent); // Llama a la nueva función de exportación  
+});
 
     document.getElementById('exportarTransacciones').addEventListener('click', async function() {
         const elemento = document.getElementById('exportarTransaccion');
@@ -831,7 +825,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const clon = elemento.cloneNode(true);
         elemento.style.display = 'none';
         
-        exportar('pdf', clon.outerHTML); // Llama a la función de exportación  
+        exportarHTML('pdf', clon.outerHTML); // Llama a la función de exportación  
     });
 });
 
@@ -844,6 +838,31 @@ async function logout() {
         window.location.href = './login.php';
     }
 }
+
+async function exportarHTML(tipo, data) {
+    try {
+        const formData = new FormData();
+        formData.append('datos', data); // Enviar el HTML directamente
+        formData.append('tipo', tipo);
+
+        const response = await fetch(`./logica/exportar_registros.php`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `registros_${new Date().toISOString().slice(0,10)}.${tipo}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    } catch (error) {
+        console.error('Error al exportar:', error);
+    }
+}
+
 
 //Función exportar registros
 async function exportar(tipo,data){

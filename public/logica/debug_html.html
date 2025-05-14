@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+            <html lang='es'>
+            <head>
+                <meta charset='UTF-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                <title>Exportación de Registros</title>
+                <style>
+                    body { font-family: Arial, sans-serif; }
+                    table { width: 100%; border-collapse: collapse; }
+                    th, td { border: 1px solid black; padding: 8px; text-align: left; }
+                    th { background-color: #f2f2f2; }
+                    img { max-width: 100px; height: auto; }
+                        .cabecera_trans, .registro_header {
+                            display: table;
+                            width: 100%;
+                            border-collapse: collapse;
+                            background-color: #333;
+                            color: white;
+                        }
+                            .linea_trans {
+                            display: table;
+                            width: 100%;
+                            border-collapse: collapse;
+                            background-color: #fff;
+                            color: black;
+                        }
+                        .linea_trans span, .cabecera_trans span {
+                            display: table-cell;
+                            padding: 8px;
+                        }
+                </style>
+            </head>
+            <body>
+                <h1>Exportación de Registros</h1>
+                <div id="registrosExportables" class="registro">    <ul>
+                                    <li class="registro-header">
+                                        <span class="col-fecha">Fecha</span>
+                                        <span class="col-tipo">Tipo</span>
+                                        <span class="col-fecha">Entrada</span>
+                                        <span class="col-tipo">Tipo</span>
+                                        <span class="col-fecha">Salida</span>
+                                        <span class="col-incidencia">Incidencia</span>
+                                        <span class="col-estado">Estado</span>
+                                    </li><li class="linea_trans" data-id="0" data-fecha="2025-05-12">
+                                        <span class="fecha">2025-05-12</span>
+                                        <span class="metodo">RecFacial</span>
+                                        <span class="hora">08:03:00</span>
+                                        <span class="metodo">RecFacial</span>
+                                        <span class="hora">16:14:00</span>
+                                        <span class="incidencia"></span>
+                                        <span class="estado"></span>
+                                    </li><li class="linea_trans" data-id="1" data-fecha="2025-05-13">
+                                        <span class="fecha">2025-05-13</span>
+                                        <span class="metodo">RecFacial</span>
+                                        <span class="hora">07:55:00</span>
+                                        <span class="metodo">RecFacial</span>
+                                        <span class="hora">15:58:00</span>
+                                        <span class="incidencia"></span>
+                                        <span class="estado"></span>
+                                    </li><li class="linea_trans" data-id="2" data-fecha="2025-05-14">
+                                        <span class="fecha">2025-05-14</span>
+                                        <span class="metodo">RecFacial</span>
+                                        <span class="hora">07:57:00</span>
+                                        <span class="metodo"></span>
+                                        <span class="hora"></span>
+                                        <span class="incidencia"></span>
+                                        <span class="estado"></span>
+                                    </li></ul></div>
+            </body>
+            </html>
