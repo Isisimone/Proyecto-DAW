@@ -813,7 +813,7 @@ $nombrePrivilegios=[
                     </li>';
                 foreach ($marcajes as $registro){
                 $nombreArchivo = $registro['DES_FOTO']; 
-                $base64Imagen = file_get_contents("http://".$_SERVER['HTTP_HOST']."/Proyecto-DAW/public/logica/mostrar_imagen.php?base64=true&archivo=$nombreArchivo");
+                $base64Imagen = file_get_contents("https://".$_SERVER['HTTP_HOST']."/Proyecto-DAW/public/logica/mostrar_imagen.php?base64=true&archivo=$nombreArchivo");
                 $html=$html.'
                     <li class="linea_trans" data-id="'.$registro['COD_MARCAJE'].'">
                         <span><b>'.$registro['FEC_MARCAJE'].'</b></span>
