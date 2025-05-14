@@ -13,8 +13,8 @@ class Rol {
     private string $descripcion;
     private DateTime $fec_Alta;
     private string $nom_Usuario_Alta;
-    private ?DateTime $fec_Baja;
-    private ?string $nom_Usuario_Baja;
+    private ?DateTime $fec_Baja=null;
+    private ?string $nom_Usuario_Baja=null;
     private Privilegio $privilegios;
 // Constructor
     public function __construct() {
@@ -43,8 +43,8 @@ class Rol {
         string $descripcion,
         DateTime $fec_Alta,
         string $nom_Usuario_Alta,
-        ?DateTime $fec_Baja = null,
-        ?string $nom_Usuario_Baja = null,
+        ?DateTime $fec_Baja ,
+        ?string $nom_Usuario_Baja ,
         Privilegio $privilegios
     ): void {
         $this->nom_Rol = $nom_Rol;

@@ -41,8 +41,7 @@ $fechaDiaHoy = (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format(
         const empleados = <?php echo json_encode($empleados); ?>; 
         const permisos = <?php echo json_encode($privilegios);?>;
         const ajustes = <?php echo json_encode($ajustes);?>;
-                            
-        console.log(incidenciasP);
+        
     </script>
 
 

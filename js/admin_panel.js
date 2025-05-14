@@ -637,13 +637,42 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectElement = document.getElementById('seleccionPanelEmpleado');
         const nombreCompleto = selectElement.options[selectElement.selectedIndex].text;
         const empleado = Number(document.getElementById('seleccionPanelEmpleado').value);
+        document.getElementById('status').textContent  = "Analizando rostro...";
         await guardarRostro(nombreCompleto, empleado);
         document.querySelectorAll('.ventana').forEach(ventana => {
             ventana.style.display = 'none';
+            document.getElementById('status').textContent  = "";
         });
     });
     //CLICK en listaDescriptores
     document.getElementById('panelDescriptores').addEventListener('click', async function(e) {
+    if (e.target && e.target.id === 'nuevoDescriptor') {
+            const formulario = document.getElementById("panelDescriptores");
+            document.getElementById('panelCamara').style.display = 'block';
+            cargar();
+
+        }
+        const lineaBioElement = e.target.closest('.linea_bio');
+        if (lineaBioElement) {
+            lineaBioElement.classList.toggle('selected');
+        }
+        if (e.target && e.target.id === 'eliminarDescriptor' && document.querySelectorAll('.linea_bio.selected').length > 0) {
+            const respuesta = await mensajeConfirmacion("¿Estás seguro de eliminar los datos biométricos seleccionados?");
+            if (respuesta) {
+                // Corrección: Usar forEach desde la NodeList devuelta por querySelectorAll
+                document.querySelectorAll('.linea_bio.selected').forEach(async function(element) {
+                    const codBio = element.getAttribute('data-id');
+                    const datos = {
+                        accion: 'baja_bio',
+                        cod_bio: codBio
+                    };
+                    await crud(datos);
+                });
+                document.querySelectorAll('.ventana').forEach(ventana => {
+                    ventana.style.display = 'none';
+                });
+            }
+        }
     });
 
     //CLICK en grabar y baja empleado
@@ -863,7 +892,6 @@ async function cargarHTML(data){
 }
 
 async function crud(datos){
-    console.error(datos);
     try {
         const respuesta = await fetch('./logica/administracion_crud.php', {
             method: 'POST',
@@ -943,7 +971,11 @@ function seleccionarEmpleado(elemento) {
 // Función para actualizar la hora en vivo
 function updateTime() {
     const now = new Date();
-    document.getElementById('current-time').innerText = now.toLocaleTimeString();
+    const reloj = document.getElementById('current-time');
+    if (!reloj) {
+        return; // Si el elemento no existe, no hacemos nada
+    }
+    reloj.innerText = now.toLocaleTimeString();
 }
 setInterval(updateTime, 1000);
 updateTime();

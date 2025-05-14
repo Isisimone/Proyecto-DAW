@@ -54,20 +54,30 @@ function iniciarVideo() {
 
 //Actualiza el reloj en la página
 function updateClock() {
+    const clockElement = document.getElementById("clock");
+    
+    // Verificamos si el elemento existe antes de continuar
+    if (!clockElement) {
+        return; // Salimos de la función si no existe el elemento
+    }
+    
     let now = new Date();
     let hours = now.getHours().toString().padStart(2, "0");
     let minutes = now.getMinutes().toString().padStart(2, "0");
     let seconds = now.getSeconds().toString().padStart(2, "0");
-    document.getElementById("clock").textContent = `${hours}:${minutes}:${seconds}`;
+    
+    clockElement.textContent = `${hours}:${minutes}:${seconds}`;
 }
 
 //Guarda el rostro detectado en la base de datos
 async function guardarRostro(nombre="",empleado) {
     //Captura el rostro destectado
+    
     const rostro = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
     if (rostro) {
         //si lo hay pide un nombre y guarda en el servidor y actualiza el detector de rostros.
         const descriptor = rostro.descriptor;
+        
         if (nombre=="") {nombre = prompt("Introduce un nombre para este rostro:");}
         if (nombre) {
             //Mandamos el descriptor empleado y usuario que realiza el alta
@@ -104,19 +114,21 @@ async function guardarDescriptorEnServidor(nombre, descriptor,empleado,usuario) 
 }
 
 // Agregar un event listener al div con id "botonera"
-botonera.addEventListener("click", function(event) {
-    //Evento para reconocer al empleado identificado y fichar
-    if (event.target && event.target.id === "reconocido") {
-        detenerAnalisis();
-        fichar(ultimoID);
-    //Evento para indicar que se ha equivocado.
-    } else if (event.target && event.target.id === "noReconocido") {
-        analizaVideo(); //analiza nuevamente o envía error a administración.
-    //Evento para iniciar el reconocimiento
-    } else if (event.target && event.target.id === "startRecognition") {
-        analizaVideo();
-    }
-});
+if (botonera) {
+    botonera.addEventListener("click", function(event) {
+        //Evento para reconocer al empleado identificado y fichar
+        if (event.target && event.target.id === "reconocido") {
+            detenerAnalisis();
+            fichar(ultimoID);
+        //Evento para indicar que se ha equivocado.
+        } else if (event.target && event.target.id === "noReconocido") {
+            analizaVideo(); //analiza nuevamente o envía error a administración.
+        //Evento para iniciar el reconocimiento
+        } else if (event.target && event.target.id === "startRecognition") {
+            analizaVideo();
+        }
+    });
+}
 
 //Función que analiza el video en busca de rostros
 function analizaVideo() {
