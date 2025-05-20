@@ -1111,6 +1111,8 @@ function enviarCorreoBasico($destinatario, $asunto, $mensaje) {
             try {
                 // Configuración del servidor SMTP de Gmail
                 $mail->isSMTP();
+                $mail->Mailer ="smtp";
+                $mail->SMTPSecure = 'tls';
                 $mail->Host = $smtp;
                 $mail->SMTPAuth = true;
                 $mail->Username = $localMail;

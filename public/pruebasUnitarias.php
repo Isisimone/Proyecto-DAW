@@ -264,9 +264,9 @@ function enviarCorreoBasico($destinatario, $asunto, $mensaje) {
                 // Configuración del servidor SMTP de Gmail
                 $mail->isSMTP();
                 $mail->Mailer ="smtp";
+                $mail->SMTPSecure = 'tls';
                 $mail->Host = $smtp;
                 $mail->SMTPAuth = true;
-                $mail->SMTPSecure = 'tls';
                 $mail->Username = $localMail;
                 $mail->Password = $localPass;
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // TLS
