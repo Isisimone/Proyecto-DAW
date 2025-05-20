@@ -233,13 +233,13 @@ function pruebaUsuario(bool $crear, bool $modificar, bool $mostrar, ?int $id){
 pruebaAjuste(false,false,false,1);
 pruebaDatosBio(false,false,false,1);
 pruebaEmpleado(false,false,false,5);
-pruebaMarcaje(true,false,false,1);
+pruebaMarcaje(false,false,false,1);
 pruebaRol(false,false,false,2);
 pruebaTipoBio(false,false,false,1);
 pruebaTransaccion(false,false,false,6); //Sin pasar
 pruebaUsuario(false,false,false,2);
 
-/*
+
 function enviarCorreoBasico($destinatario, $asunto, $mensaje) {
     $so = PHP_OS;
         if (stripos($so, 'WIN') !== false) {
@@ -263,8 +263,10 @@ function enviarCorreoBasico($destinatario, $asunto, $mensaje) {
             try {
                 // Configuración del servidor SMTP de Gmail
                 $mail->isSMTP();
+                $mail->Mailer ="smtp";
                 $mail->Host = $smtp;
                 $mail->SMTPAuth = true;
+                $mail->SMTPSecure = 'tls';
                 $mail->Username = $localMail;
                 $mail->Password = $localPass;
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // TLS
@@ -285,9 +287,9 @@ function enviarCorreoBasico($destinatario, $asunto, $mensaje) {
                 echo("No se pudo enviar el mensaje. Error: {$mail->ErrorInfo}");
             }
         }
-}*/
+}
 
-//enviarCorreoBasico("usdital@gmail.com","Prueba de correo","Esto es una prueba de correo");
+enviarCorreoBasico("usdital@gmail.com","Prueba de correo","Esto es una prueba de correo");
 /*$datos=[
     'empleado' => 1,
     'filtro' => 'week',
