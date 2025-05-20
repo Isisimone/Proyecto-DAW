@@ -10,8 +10,7 @@ const https = require('https'); // Para Node.js
 
 // Configurar axios para ignorar certificados SSL no válidos
 const agent = new https.Agent({  
-  rejectUnauthorized: false,
-  secureProtocol: 'TLSv1_2_method'
+  rejectUnauthorized: false
 });
 
 //Definición para el servicio web
@@ -42,7 +41,9 @@ async function registrar(empleado, cod_bio,cod_tipo,foto,fec,incidencia,pendient
     };
     // Enviar los datos con axios
     try {
-        const response = await axios.post('http://localhost/Proyecto-DAW/public/logica/registrar.php', datos);
+        const response = await axios.post('https://localhost/Proyecto-DAW/public/logica/registrar.php', datos,{
+  httpsAgent: agent 
+});
         console.log('Respuesta de PHP:', response.data);
         return response.data; // Devuelve directamente 1, 2 o lo que sea que envíe PHP
     } catch (error) {
@@ -59,7 +60,7 @@ async function cargarDescriptores() {
 
         // Hacer una solicitud HTTP a listar_descriptores.PHP
         const response = await axios.get('https://localhost/Proyecto-DAW/public/logica/listar_descriptores.php', {
-  //httpsAgent: agent 
+  httpsAgent: agent 
 });
         //Guardamos los datos
         const data = response.data;
