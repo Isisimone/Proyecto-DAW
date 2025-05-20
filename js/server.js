@@ -111,7 +111,7 @@ app.post('/recognize', (req, res) => {
     const mejorMatch = faceMatcher.findBestMatch(descriptor);
     //Si está por debajo del umbral se descompone el campo label para obtener datos de
     //identificación. El umbral, cuanto más bajo, más exigente es
-    if (mejorMatch.distance < 0.7) { // Ajusta el umbral según sea necesario<<<<<< PARAMETRO >>>>>>>>
+    if (mejorMatch.distance < 0.4) { // Ajusta el umbral según sea necesario<<<<<< PARAMETRO >>>>>>>>
         //Descomponemos label
         const [id_empleado, nombre,codtipo,codbio] = mejorMatch.label.split('-');
         // Generar una clave aleatoria
