@@ -178,7 +178,7 @@ function analizaVideo() {
                 //Esperamos respuesta del servidor
                 const result = await response.json();
                 //Si devuelve match mostramos mensaje y cargamos datos.
-                if (result.match && result.empleado !== "undefined" && result.empleado !== null) {
+                if (result.match && result.nombre !== "undefined" && result.nombre !== null) {
                     estado.innerHTML = `Empleado: ${result.nombre}, ID:Reconocimiento:${result.empleado}`; //Distancia: ${result.distance}
                     ultimoID = `${result.empleado}`;
                     ultimoCodBio = `${result.cod_bio}`;
