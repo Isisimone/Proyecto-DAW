@@ -5,7 +5,7 @@ namespace Clases;
 use PDO;
 use PDOEception;
 use DateTime;
-use Empelado;
+use Empleado;
 
 class Usuario{
     // Atributos
@@ -112,7 +112,7 @@ class Usuario{
                 $this->cod_usuario = $usuario['COD_USUARIO'];
                 //carga roles
                 $this->cargarRol();
-                //Cargamos el empelado asignado
+                //Cargamos el empleado asignado
                 $empleado = new Empleado();
                 $roles=[];
                 $empleado->cargarDatosPorUsuario($usuario['COD_USUARIO']);

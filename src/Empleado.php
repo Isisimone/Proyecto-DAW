@@ -249,7 +249,7 @@ class Empleado {
         }
     }
 
-    // Método para eliminar el empelado actual en la BBDD, solo para pruebas
+    // Método para eliminar el empleado actual en la BBDD, solo para pruebas
     public function eliminar(): bool {
         try {
             //Crea una conexión y sentencia DELETE

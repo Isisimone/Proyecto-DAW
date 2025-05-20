@@ -180,7 +180,7 @@ $nombrePrivilegios=[
                 $empleado = new Empleado();
                 $empleado->cargarDatosEmpleado($datos['cod_empleado']);
                 $empleado->procesarHorasExtrasMensuales($empleado->getMaxHorasDia());
-                $empelado->grabar();
+                $empleado->grabar();
                 echo json_encode(['success' => true]);
             }
             
@@ -775,7 +775,7 @@ $nombrePrivilegios=[
                 <ul class="marcoListados">
                     <li class="cabecera_trans">
                         <span class="">Fecha</span>
-                        <span class="">Empelado</span>
+                        <span class="">Empleado</span>
                         <span class="">Foto</span>
                         <span class="">Tipo</span>
                         <span class="">Observaciones</span>
@@ -805,7 +805,7 @@ $nombrePrivilegios=[
                 <ul class="marcoListados">
                     <li class="cabecera_trans">
                         <span class="">Fecha</span>
-                        <span class="">Empelado</span>
+                        <span class="">Empleado</span>
                         <span class="">Foto</span>
                         <span class="">Tipo</span>
                         <span class="">Observaciones</span>
