@@ -5,7 +5,6 @@ namespace Clases;
 use PDO;
 use PDOEception;
 use DateTime;
-use Empleado;
 
 class Usuario{
     // Atributos
