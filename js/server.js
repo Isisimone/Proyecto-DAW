@@ -10,7 +10,8 @@ const https = require('https'); // Para Node.js
 
 // Configurar axios para ignorar certificados SSL no válidos
 const agent = new https.Agent({  
-  rejectUnauthorized: false
+  rejectUnauthorized: false,
+  secureProtocol: 'TLSv1_2_method'
 });
 
 //Definición para el servicio web
@@ -58,7 +59,7 @@ async function cargarDescriptores() {
 
         // Hacer una solicitud HTTP a listar_descriptores.PHP
         const response = await axios.get('https://localhost/Proyecto-DAW/public/logica/listar_descriptores.php', {
-  httpsAgent: agent 
+  //httpsAgent: agent 
 });
         //Guardamos los datos
         const data = response.data;
