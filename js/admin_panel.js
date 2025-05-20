@@ -602,13 +602,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (e.target && e.target.id === 'passUsuario') {
+        const boton = e.target;
         const cod_usuario = document.getElementById('seleccionPanelUsuario').value>""? Number(document.getElementById('seleccionPanelUsuario').value) : 0;
         if (cod_usuario>0){
             const datos ={
                 accion:'pass_usuario',
                 cod_usuario: cod_usuario
             };
-            await crud(datos);
+            boton.textContent = "Generando...";
+            boton.disabled = true;
+
+            try {
+                await crud(datos); // Esperamos a que termine la operación
+            } catch (error) {
+                console.error("Error en crud():", error);
+            } finally {
+                // Restauramos el texto y la funcionalidad (haya éxito o error)
+                boton.textContent = "Generar Password";
+                boton.disabled = false;
+            }
         }
                
         }
@@ -636,11 +648,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     //CLICK en listaDescriptores
     document.getElementById('guardarDescriptor').addEventListener('click', async function(e) {
+        const boton=document.getElementById('guardarDescriptor');
         const selectElement = document.getElementById('seleccionPanelEmpleado');
         const nombreCompleto = selectElement.options[selectElement.selectedIndex].text;
         const empleado = Number(document.getElementById('seleccionPanelEmpleado').value);
         document.getElementById('status').textContent  = "Analizando rostro...";
-        await guardarRostro(nombreCompleto, empleado);
+        boton.textContent = "Guardando...";
+        boton.disabled=true;
+        try{
+            await guardarRostro(nombreCompleto, empleado);
+        } catch (error) {
+            console.error("Error guardando descriptor:", error);
+        } finally{
+            boton.textContent = "Guardar Rostro";
+            boton.disabled=false;
+            await mensajeInformacion("Datos actualizados correctamente.");
+        }
+        
         document.querySelectorAll('.ventana').forEach(ventana => {
             ventana.style.display = 'none';
             document.getElementById('status').textContent  = "";
